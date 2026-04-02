@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프론트엔드 vs 백엔드 | 강의 자료</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+  :root {
+    --front: #FF6B35;
+    --front-light: #FFF0EB;
+    --back: #2D6A9F;
+    --back-light: #E8F1FA;
+    --gas: #2ECC71;
+    --gas-light: #E8FAF1;
+    --neutral: #1A1A2E;
+    --muted: #6B7280;
+    --surface: #F8F7F4;
+    --card: #FFFFFF;
+    --border: #E5E0D8;
+    --text: #1A1A2E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Layout ── */
+  .shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--neutral);
+    color: #fff;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .slide-counter {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .nav-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 16px 32px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    justify-content: center;
+  }
+
+  .pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .pill:hover { background: var(--surface); color: var(--text); }
+  .pill.active { background: var(--neutral); color: #fff; border-color: var(--neutral); }
+
+  .main {
+    flex: 1;
+    padding: 40px 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── Slides ── */
+  .slide { display: none; animation: fadeIn 0.35s ease; }
+  .slide.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Typography ── */
+  .slide-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .slide-heading {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  .slide-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 680px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .card-head {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .card-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  /* ── Two-column grid ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  @media(max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── Color accents ── */
+  .accent-front { color: var(--front); }
+  .accent-back  { color: var(--back); }
+  .accent-gas   { color: var(--gas); }
+
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .tag-front { background: var(--front-light); color: var(--front); }
+  .tag-back  { background: var(--back-light);  color: var(--back);  }
+  .tag-gas   { background: var(--gas-light);   color: #1a7a46;      }
+  .tag-neutral { background: #F1EFE8; color: #444; }
+
+  /* ── Restaurant analogy ── */
+  .restaurant {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .rest-side {
+    padding: 32px 24px;
+  }
+
+  .rest-front { background: var(--front-light); }
+  .rest-back  { background: var(--back-light);  }
+
+  .rest-divider {
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    position: relative;
+  }
+
+  .rest-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: var(--card);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rest-icon { font-size: 36px; margin-bottom: 12px; }
+  .rest-title { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+  .rest-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .rest-items {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rest-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .rest-item::before {
+    content: '▸';
+    font-size: 10px;
+    opacity: 0.5;
+  }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .flow-node {
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--muted);
+    padding: 0 4px;
+  }
+
+  .node-user   { background: #F3F0FF; color: #5B4FDB; }
+  .node-front  { background: var(--front-light); color: var(--front); }
+  .node-server { background: #FFF3CD; color: #856404; }
+  .node-back   { background: var(--back-light); color: var(--back); }
+  .node-db     { background: #E8FAF1; color: #1a7a46; }
+
+  /* ── Tech list ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .tech-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .tech-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    background: var(--card);
+  }
+
+  .tech-emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+
+  /* ── Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    padding-bottom: 28px;
+  }
+
+  .step:last-child { padding-bottom: 0; }
+
+  .step-left { display: flex; flex-direction: column; align-items: center; }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--neutral);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin-top: 8px;
+    min-height: 20px;
+  }
+
+  .step:last-child .step-line { display: none; }
+
+  .step-content {
+    flex: 1;
+    padding-top: 8px;
+  }
+
+  .step-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .step-body {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .step-code {
+    background: #1A1A2E;
+    color: #7DD3FC;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 10px;
+    overflow-x: auto;
+  }
+
+  .code-comment { color: #4ADE80; }
+  .code-keyword { color: #F472B6; }
+  .code-string  { color: #FACC15; }
+  .code-func    { color: #60A5FA; }
+
+  /* ── GAS specific ── */
+  .gas-card {
+    background: linear-gradient(135deg, #0F2027, #2C5364);
+    color: #fff;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gas-card::before {
+    content: 'G';
+    position: absolute;
+    right: 24px;
+    top: -10px;
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .gas-card-title {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+
+  .gas-card-desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    max-width: 500px;
+  }
+
+  .gas-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .gas-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ── Quiz ── */
+  .quiz-q {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .quiz-opt {
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--card);
+    text-align: left;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+  }
+
+  .quiz-opt:hover { border-color: var(--neutral); background: var(--surface); }
+  .quiz-opt.correct { background: #E8FAF1; border-color: #2ECC71; color: #1a7a46; }
+  .quiz-opt.wrong   { background: #FEE2E2; border-color: #EF4444; color: #B91C1C; }
+
+  .quiz-result {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+  }
+
+  .quiz-result.show { display: block; }
+  .quiz-result.ok { background: #E8FAF1; color: #1a7a46; }
+  .quiz-result.no { background: #FEE2E2; color: #B91C1C; }
+
+  /* ── Nav buttons ── */
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 40px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { background: var(--surface); }
+  .btn-primary { background: var(--neutral); color: #fff; border-color: var(--neutral); }
+  .btn-primary:hover { background: #2D2D4E; }
+
+  /* ── Highlight box ── */
+  .highlight {
+    border-left: 4px solid;
+    padding: 16px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .hl-front { border-color: var(--front); background: var(--front-light); }
+  .hl-back  { border-color: var(--back);  background: var(--back-light);  }
+  .hl-info  { border-color: #8B5CF6; background: #F3F0FF; }
+  .hl-gas   { border-color: var(--gas);   background: var(--gas-light);   }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--front);
+    transition: width 0.3s ease;
+  }
+
+  /* ── Comparison table ── */
+  .comp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .comp-table th {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-table td {
+    padding: 14px 20px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .comp-table tr:last-child td { border-bottom: none; }
+  .th-front { color: var(--front); }
+  .th-back  { color: var(--back); }
+
+  /* ── Image placeholder ── */
+  .img-placeholder {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* Inline emoji text */
+  .em { font-style: normal; }
+
+  /* ── URL display ── */
+  .url-display {
+    background: #1A1A2E;
+    color: #7DD3FC;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    word-break: break-all;
+    margin: 10px 0;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="shell">
+
+  <div class="topbar">
+    <div class="topbar-title">웹 개발 기초 | 프론트엔드 &amp; 백엔드</div>
+    <div class="slide-counter" id="counter">1 / 8</div>
+  </div>
+
+  <div class="nav-pills" id="pills"></div>
+
+  <div class="main">
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 1 — 오늘 배울 것
+    ═══════════════════════════════════════ -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-eyebrow">오늘의 강의</div>
+      <div class="slide-heading">웹사이트는 어떻게<br>만들어지나요?</div>
+      <div class="slide-sub">
+        우리가 매일 사용하는 웹사이트 뒤에는 어떤 원리가 숨어있을까요?
+        오늘은 <strong>프론트엔드</strong>와 <strong>백엔드</strong>의 차이를 식당에 비유해서 쉽게 알아보고,
+        구글 앱스크립트로 여러분의 첫 웹 서비스를 배포해봅니다.
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="tag tag-front">1부</div>
+          <div class="card-head">프론트엔드 vs 백엔드</div>
+          <div class="card-body">눈에 보이는 것과 보이지 않는 것. 웹의 두 얼굴을 식당 비유로 이해해봐요.</div>
+        </div>
+        <div class="card">
+          <div class="tag tag-gas">2부</div>
+          <div class="card-head">구글 앱스크립트 배포</div>
+          <div class="card-body">코드를 짜서 실제 인터넷에 올리는 방법. 구글이 서버를 대신 관리해줘요!</div>
+        </div>
+      </div>
+
+      <div class="highlight hl-info">
+        💡 <strong>오늘의 핵심 질문:</strong> 내가 네이버에 검색어를 입력하면 도대체 무슨 일이 일어나는 걸까요?
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 2 — 웹의 기본 개념
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-2">
+      <div class="slide-eyebrow">기초 개념</div>
+      <div class="slide-heading">웹사이트란 무엇인가요?</div>
+      <div class="slide-sub">아직 HTML도 모르는 게 당연해요. 먼저 그림으로 전체 흐름을 봐봐요.</div>
+
+      <div class="flow">
+        <div class="flow-node node-user">👤<br>나 (사용자)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node node-front">🖥️<br>화면<br><small style="font-weight:400;font-size:11px;">(프론트엔드)</small></div>
+        <div class="flow-arrow">↔</div>
+        <div class="flow-node node-back">⚙️<br>처리<br><small style="font-weight:400;font-size:11px;">(백엔드)</small></div>
+        <div class="flow-arrow">↔</div>
+        <div class="flow-node node-db">🗄️<br>데이터<br><small style="font-weight:400;font-size:11px;">(데이터베이스)</small></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head">🌐 웹사이트 = 파일 모음</div>
+          <div class="card-body">
+            웹사이트는 사실 <strong>파일 모음</strong>이에요.<br>
+            HTML 파일, CSS 파일, 이미지 파일들이 서버 컴퓨터에 저장되어 있고,
+            우리가 주소(URL)를 입력하면 그 파일들을 받아오는 거예요.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">📬 주소 = URL</div>
+          <div class="card-body">
+            <code>https://www.naver.com</code> 이게 바로 <strong>주소</strong>예요.<br>
+            마치 택배 주소처럼, 내 브라우저가 이 주소로 파일을 요청하고 받아오는 거랍니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">🏠 쉽게 비유하자면</div>
+        <div class="card-body">
+          웹사이트는 <strong>편의점</strong>이에요.<br>
+          편의점 진열대(화면) = 프론트엔드, 창고·계산 시스템(뒷부분) = 백엔드. 
+          손님은 진열대만 보지만, 실제 일은 뒤에서 훨씬 많이 일어나죠!
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 3 — 프론트엔드 vs 백엔드 (식당 비유)
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-3">
+      <div class="slide-eyebrow">핵심 개념</div>
+      <div class="slide-heading">식당으로 이해하는<br>프론트 vs 백엔드</div>
+      <div class="slide-sub">웹사이트는 식당과 똑같아요. 손님이 보는 곳과 보지 못하는 곳이 있거든요.</div>
+
+      <div class="restaurant">
+        <div class="rest-side rest-front">
+          <div class="rest-icon">🍽️</div>
+          <div class="tag tag-front">프론트엔드 (Front-end)</div>
+          <div class="rest-title">홀 (손님 공간)</div>
+          <div class="rest-desc">손님이 직접 보고, 만지고, 경험하는 모든 것</div>
+          <div class="rest-items">
+            <div class="rest-item">메뉴판 → 웹사이트 화면</div>
+            <div class="rest-item">테이블 배치 → 레이아웃 디자인</div>
+            <div class="rest-item">조명, 인테리어 → 색상, 폰트, 애니메이션</div>
+            <div class="rest-item">직원이 주문받기 → 버튼 클릭 처리</div>
+          </div>
+        </div>
+
+        <div class="rest-divider">
+          <div style="font-size:24px; position:relative;z-index:1;">↔</div>
+        </div>
+
+        <div class="rest-side rest-back">
+          <div class="rest-icon">👨‍🍳</div>
+          <div class="tag tag-back">백엔드 (Back-end)</div>
+          <div class="rest-title">주방 (숨겨진 공간)</div>
+          <div class="rest-desc">손님 눈에 보이지 않지만 핵심 처리가 이루어지는 곳</div>
+          <div class="rest-items">
+            <div class="rest-item">재료 보관 창고 → 데이터베이스</div>
+            <div class="rest-item">요리하는 과정 → 데이터 처리</div>
+            <div class="rest-item">주문서 관리 → 서버 로직</div>
+            <div class="rest-item">레시피 규칙 → 비즈니스 로직</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight hl-info">
+        🎯 <strong>핵심 포인트:</strong> 식당에서 맛있는 음식이 나오려면 <em>홀과 주방 모두</em> 필요하듯,
+        좋은 웹사이트도 프론트엔드와 백엔드가 함께 일해야 해요!
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 4 — 프론트엔드 상세
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-4">
+      <div class="slide-eyebrow">프론트엔드</div>
+      <div class="slide-heading"><span class="accent-front">눈에 보이는</span> 모든 것<br>프론트엔드</div>
+      <div class="slide-sub">프론트엔드는 <strong>브라우저(크롬, 엣지)</strong>가 처리해요. 사용자가 직접 경험하는 모든 것이에요.</div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="tag tag-front">HTML</div>
+          <div class="card-head" style="color:var(--front)">🧱 뼈대</div>
+          <div class="card-body">
+            웹페이지의 <strong>구조</strong>를 만들어요.<br>
+            마치 건물의 철골 뼈대처럼요.<br><br>
+            제목, 문단, 버튼, 이미지 등 모든 요소의 <em>위치와 종류</em>를 정해요.
+          </div>
+        </div>
+        <div class="card">
+          <div class="tag tag-front">CSS</div>
+          <div class="card-head" style="color:var(--front)">🎨 꾸미기</div>
+          <div class="card-body">
+            웹페이지를 <strong>예쁘게</strong> 만들어요.<br>
+            건물의 인테리어와 외관 디자인처럼요.<br><br>
+            색상, 크기, 폰트, 간격, 애니메이션을 담당해요.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tag tag-front">JavaScript</div>
+        <div class="card-head" style="color:var(--front)">⚡ 움직임 (가장 중요!)</div>
+        <div class="card-body">
+          웹페이지를 <strong>살아있게</strong> 만들어요. 건물의 자동문, 엘리베이터, 조명 제어 시스템처럼요.<br>
+          버튼 클릭 반응, 데이터 전송, 실시간 업데이트 등 모든 <em>동적인 기능</em>을 담당해요.
+        </div>
+      </div>
+
+      <div class="highlight hl-front">
+        🖥️ <strong>눈에 보이는 모든 것 = 프론트엔드</strong><br>
+        여러분이 지금 보고 있는 이 강의자료 화면도 HTML + CSS + JavaScript로 만들어졌어요!
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 5 — 백엔드 상세
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-5">
+      <div class="slide-eyebrow">백엔드</div>
+      <div class="slide-heading"><span class="accent-back">눈에 보이지 않는</span> 핵심<br>백엔드</div>
+      <div class="slide-sub">백엔드는 <strong>서버 컴퓨터</strong>가 처리해요. 데이터를 저장하고 처리하는 두뇌 역할이에요.</div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="tag tag-back">서버 (Server)</div>
+          <div class="card-head" style="color:var(--back)">💻 항상 켜있는 컴퓨터</div>
+          <div class="card-body">
+            24시간 365일 켜있는 컴퓨터예요.<br>
+            우리가 요청하면 <strong>언제든지</strong> 응답해요.<br><br>
+            네이버 서버는 전 세계 수백만 명이 동시에 접속해도 답해줘야 하거든요!
+          </div>
+        </div>
+        <div class="card">
+          <div class="tag tag-back">데이터베이스 (DB)</div>
+          <div class="card-head" style="color:var(--back)">🗄️ 정보 창고</div>
+          <div class="card-body">
+            모든 <strong>데이터</strong>가 저장되는 곳이에요.<br>
+            회원정보, 게시글, 주문내역, 사진 등<br><br>
+            엑셀처럼 행과 열로 데이터를 정리해서 저장해요.
+          </div>
+        </div>
+      </div>
+
+      <table class="comp-table">
+        <tr>
+          <th>구분</th>
+          <th class="th-front">프론트엔드</th>
+          <th class="th-back">백엔드</th>
+        </tr>
+        <tr>
+          <td><strong>위치</strong></td>
+          <td>내 컴퓨터 브라우저</td>
+          <td>서버 컴퓨터 (멀리 있음)</td>
+        </tr>
+        <tr>
+          <td><strong>볼 수 있나요?</strong></td>
+          <td>✅ 보여요</td>
+          <td>❌ 안 보여요</td>
+        </tr>
+        <tr>
+          <td><strong>주요 언어</strong></td>
+          <td>HTML, CSS, JavaScript</td>
+          <td>Python, Java, Node.js 등</td>
+        </tr>
+        <tr>
+          <td><strong>하는 일</strong></td>
+          <td>화면 표시, 사용자 조작</td>
+          <td>데이터 처리, 저장, 보안</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 6 — 퀴즈
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-6">
+      <div class="slide-eyebrow">확인 퀴즈</div>
+      <div class="slide-heading">잘 이해했나요?<br>퀴즈로 확인해봐요!</div>
+
+      <!-- 퀴즈 1 -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="quiz-q">Q1. 인스타그램에서 피드 사진이 화면에 예쁘게 나타나도록 하는 것은?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answer(this, true)">⭕ 프론트엔드 — 사용자 눈에 보이는 화면 담당</button>
+          <button class="quiz-opt" onclick="answer(this, false)">❌ 백엔드 — 서버에서 처리하는 부분</button>
+        </div>
+        <div class="quiz-result" id="q1-result"></div>
+      </div>
+
+      <!-- 퀴즈 2 -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="quiz-q">Q2. 내가 쿠팡에서 주문할 때 주문 정보를 저장하고 결제를 처리하는 것은?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answer2(this, false)">❓ 프론트엔드 — 화면을 담당하는 부분</button>
+          <button class="quiz-opt" onclick="answer2(this, true)">⭕ 백엔드 — 데이터 처리와 저장 담당</button>
+        </div>
+        <div class="quiz-result" id="q2-result"></div>
+      </div>
+
+      <!-- 퀴즈 3 -->
+      <div class="card">
+        <div class="quiz-q">Q3. 다음 중 프론트엔드 기술이 아닌 것은?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answer3(this, false)">HTML — 웹페이지 구조 만들기</button>
+          <button class="quiz-opt" onclick="answer3(this, false)">CSS — 디자인과 스타일링</button>
+          <button class="quiz-opt" onclick="answer3(this, false)">JavaScript — 동적 기능 추가</button>
+          <button class="quiz-opt" onclick="answer3(this, true)">Python (Flask) — 서버에서 실행되는 언어</button>
+        </div>
+        <div class="quiz-result" id="q3-result"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 7 — 구글 앱스크립트 소개
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-7">
+      <div class="slide-eyebrow">배포 준비</div>
+      <div class="slide-heading">구글 앱스크립트로<br>무료 백엔드 만들기</div>
+      <div class="slide-sub">백엔드 서버를 직접 만들려면 비용이 들어요. 하지만 구글이 무료로 서버를 빌려줘요!</div>
+
+      <div class="gas-card">
+        <div class="tag tag-gas">Google Apps Script (GAS)</div>
+        <div class="gas-card-title">구글이 서버가 되어준다!</div>
+        <div class="gas-card-desc">
+          구글 드라이브, 시트, Gmail과 연동되는 서버 코드를 작성하면,
+          구글이 직접 실행시켜줘요. 서버 컴퓨터 없이도 진짜 백엔드 기능을 만들 수 있어요!
+        </div>
+        <div class="gas-badges">
+          <span class="gas-badge">✅ 완전 무료</span>
+          <span class="gas-badge">✅ 구글 계정만 있으면 OK</span>
+          <span class="gas-badge">✅ JavaScript로 작성</span>
+          <span class="gas-badge">✅ URL로 배포 가능</span>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head">🤔 일반 백엔드 (어려움)</div>
+          <div class="card-body">
+            서버 컴퓨터 구매/임대 → 서버 설정 → 도메인 구매 → 보안 설정 → 유지보수...
+            <br><br>
+            💰 월 몇 만원~몇십 만원 비용 발생
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">😊 구글 앱스크립트 (쉬움)</div>
+          <div class="card-body">
+            구글 드라이브 접속 → 새 파일 → 코드 작성 → 배포 버튼 클릭!
+            <br><br>
+            🎉 무료! 구글이 서버 관리해줌!
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight hl-gas">
+        🚀 <strong>오늘 목표:</strong> 구글 앱스크립트로 폼 데이터를 받아서 구글 시트에 저장하는 웹앱을 배포해봐요!
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SLIDE 8 — 배포 단계별 가이드
+    ═══════════════════════════════════════ -->
+    <div class="slide" id="slide-8">
+      <div class="slide-eyebrow">실습 가이드</div>
+      <div class="slide-heading">구글 앱스크립트<br>배포 단계별 가이드</div>
+      <div class="slide-sub">따라하면 누구나 할 수 있어요! 차근차근 진행해봐요.</div>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-left">
+            <div class="step-num">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">🗂️ 구글 시트 만들기</div>
+            <div class="step-body">
+              구글 드라이브에서 새 <strong>구글 스프레드시트</strong>를 만들어요.
+              데이터가 저장될 창고예요. A1셀에 "이름", B1셀에 "이메일" 등 헤더를 적어두세요.
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left">
+            <div class="step-num">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">📝 앱스크립트 에디터 열기</div>
+            <div class="step-body">
+              구글 시트 상단 메뉴에서 <strong>확장 프로그램 → Apps Script</strong> 클릭.
+              코드 에디터 창이 열려요. 여기가 백엔드 코드를 작성하는 곳이에요.
+            </div>
+            <div class="step-code">
+<span class="code-comment">// 이 함수는 폼에서 데이터가 올 때 자동 실행돼요</span>
+<span class="code-keyword">function</span> <span class="code-func">doPost</span>(e) {
+  <span class="code-comment">// 현재 스프레드시트 열기</span>
+  <span class="code-keyword">const</span> sheet = SpreadsheetApp
+    .<span class="code-func">getActiveSpreadsheet</span>()
+    .<span class="code-func">getActiveSheet</span>();
+  
+  <span class="code-comment">// 폼에서 받은 데이터 꺼내기</span>
+  <span class="code-keyword">const</span> name  = e.parameter.name;
+  <span class="code-keyword">const</span> email = e.parameter.email;
+  
+  <span class="code-comment">// 시트에 새 행 추가하기</span>
+  sheet.<span class="code-func">appendRow</span>([name, email, <span class="code-keyword">new</span> <span class="code-func">Date</span>()]);
+  
+  <span class="code-comment">// 완료 응답 보내기</span>
+  <span class="code-keyword">return</span> ContentService
+    .<span class="code-func">createTextOutput</span>(<span class="code-string">'저장 완료!'</span>);
+}
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left">
+            <div class="step-num">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">🚀 웹앱으로 배포하기</div>
+            <div class="step-body">
+              오른쪽 상단 <strong>배포 → 새 배포</strong> 클릭.
+              유형: <strong>웹 앱</strong> 선택.
+              "다음 사용자로 실행": <strong>나</strong>.
+              "액세스 권한": <strong>모든 사용자</strong> 선택 후 배포!
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left">
+            <div class="step-num">4</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">🔗 URL 복사하기</div>
+            <div class="step-body">배포 후 <strong>웹 앱 URL</strong>이 생성돼요. 이게 바로 우리의 백엔드 주소예요!</div>
+            <div class="url-display">https://script.google.com/macros/s/<span style="color:#4ADE80">ABC123XYZ.../exec</span></div>
+            <div class="step-body" style="margin-top:8px">이 URL로 데이터를 보내면 구글 시트에 자동 저장돼요!</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left">
+            <div class="step-num">5</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">🖥️ 프론트엔드(HTML) 연결하기</div>
+            <div class="step-body">이제 HTML 폼에서 위 URL로 데이터를 전송하면 끝!</div>
+            <div class="step-code">
+<span class="code-comment">&lt;!-- HTML 폼 예시 --&gt;</span>
+&lt;<span class="code-keyword">form</span> <span class="code-func">id</span>=<span class="code-string">"myForm"</span>&gt;
+  &lt;<span class="code-keyword">input</span> <span class="code-func">name</span>=<span class="code-string">"name"</span> <span class="code-func">placeholder</span>=<span class="code-string">"이름"</span>&gt;
+  &lt;<span class="code-keyword">input</span> <span class="code-func">name</span>=<span class="code-string">"email"</span> <span class="code-func">placeholder</span>=<span class="code-string">"이메일"</span>&gt;
+  &lt;<span class="code-keyword">button</span>&gt;제출&lt;/<span class="code-keyword">button</span>&gt;
+&lt;/<span class="code-keyword">form</span>&gt;
+
+<span class="code-comment">&lt;script&gt;</span>
+<span class="code-keyword">const</span> GAS_URL = <span class="code-string">'여기에 배포 URL 붙여넣기'</span>;
+
+document.<span class="code-func">getElementById</span>(<span class="code-string">'myForm'</span>)
+  .<span class="code-func">addEventListener</span>(<span class="code-string">'submit'</span>, (e) =&gt; {
+    e.<span class="code-func">preventDefault</span>();
+    <span class="code-keyword">const</span> data = <span class="code-keyword">new</span> <span class="code-func">FormData</span>(e.target);
+    <span class="code-func">fetch</span>(GAS_URL, {
+      method: <span class="code-string">'POST'</span>, body: data
+    }).<span class="code-func">then</span>(() =&gt; <span class="code-func">alert</span>(<span class="code-string">'✅ 제출 완료!'</span>));
+  });
+<span class="code-comment">&lt;/script&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left">
+            <div class="step-num" style="background:var(--gas);color:#fff;">✓</div>
+          </div>
+          <div class="step-content">
+            <div class="step-title" style="color:var(--gas)">🎉 완성! 프론트 + 백엔드가 연결됐어요</div>
+            <div class="step-body">
+              HTML 파일 = <strong>프론트엔드</strong> (사용자가 보는 화면)<br>
+              구글 앱스크립트 = <strong>백엔드</strong> (데이터 처리)<br>
+              구글 시트 = <strong>데이터베이스</strong> (데이터 저장)<br><br>
+              이제 여러분은 프론트엔드부터 백엔드까지 갖춘 <strong>풀스택 웹앱</strong>을 만든 거예요! 🚀
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 네비게이션 버튼 -->
+    <div class="nav-btns">
+      <button class="btn" id="prevBtn" onclick="prevSlide()" style="display:none">← 이전</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextSlide()">다음 →</button>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+  const SLIDES = [
+    { id: 'slide-1', label: '👋 시작' },
+    { id: 'slide-2', label: '🌐 웹 기초' },
+    { id: 'slide-3', label: '🍽️ 식당 비유' },
+    { id: 'slide-4', label: '🖥️ 프론트엔드' },
+    { id: 'slide-5', label: '⚙️ 백엔드' },
+    { id: 'slide-6', label: '❓ 퀴즈' },
+    { id: 'slide-7', label: '🔧 앱스크립트' },
+    { id: 'slide-8', label: '🚀 배포 실습' },
+  ];
+
+  let current = 0;
+
+  // Build pills
+  const pillContainer = document.getElementById('pills');
+  SLIDES.forEach((s, i) => {
+    const p = document.createElement('button');
+    p.className = 'pill' + (i === 0 ? ' active' : '');
+    p.textContent = s.label;
+    p.onclick = () => goTo(i);
+    pillContainer.appendChild(p);
+  });
+
+  function goTo(idx) {
+    document.getElementById(SLIDES[current].id).classList.remove('active');
+    document.querySelectorAll('.pill')[current].classList.remove('active');
+    current = idx;
+    document.getElementById(SLIDES[current].id).classList.add('active');
+    document.querySelectorAll('.pill')[current].classList.add('active');
+    updateUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextSlide() { if (current < SLIDES.length - 1) goTo(current + 1); }
+  function prevSlide() { if (current > 0) goTo(current - 1); }
+
+  function updateUI() {
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + SLIDES.length;
+    document.getElementById('prevBtn').style.display = current === 0 ? 'none' : 'inline-block';
+    document.getElementById('nextBtn').textContent = current === SLIDES.length - 1 ? '처음으로 ↩' : '다음 →';
+    document.getElementById('nextBtn').onclick = current === SLIDES.length - 1 ? () => goTo(0) : nextSlide;
+    const pct = ((current + 1) / SLIDES.length * 100).toFixed(0);
+    document.getElementById('progress').style.width = pct + '%';
+  }
+
+  updateUI();
+
+  // Quiz handlers
+  function answer(btn, correct) {
+    const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    const res = document.getElementById('q1-result');
+    res.className = 'quiz-result show ' + (correct ? 'ok' : 'no');
+    res.textContent = correct
+      ? '✅ 정답! 화면에 사진을 보여주는 것은 프론트엔드예요!'
+      : '❌ 아쉬워요! 화면에 표시되는 것은 프론트엔드가 담당해요.';
+  }
+
+  function answer2(btn, correct) {
+    const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    const res = document.getElementById('q2-result');
+    res.className = 'quiz-result show ' + (correct ? 'ok' : 'no');
+    res.textContent = correct
+      ? '✅ 정답! 주문 처리, 결제, 데이터 저장은 모두 백엔드 담당이에요!'
+      : '❌ 아쉬워요! 데이터 처리와 저장은 백엔드가 담당해요.';
+  }
+
+  function answer3(btn, correct) {
+    const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct) btn.classList.add('wrong');
+    const res = document.getElementById('q3-result');
+    res.className = 'quiz-result show ' + (correct ? 'ok' : 'no');
+    res.textContent = correct
+      ? '✅ 정답! Python(Flask)은 서버에서 실행되는 백엔드 언어예요. HTML, CSS, JS는 모두 프론트엔드!'
+      : '❌ 아쉬워요! HTML/CSS/JavaScript는 모두 프론트엔드 기술이에요. 서버가 아닌 브라우저에서 실행돼요.';
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+  });
+</script>
+
+</body>
+</html>
