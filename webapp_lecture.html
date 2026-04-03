@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>웹앱 구조와 필수요소 — 강의자료</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg2: #131720;
+    --bg3: #1a2030;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0f2f6;
+    --text2: #8a94a8;
+    --text3: #4e5768;
+    --accent: #00c2a8;
+    --accent2: #0096ff;
+    --accent3: #ffaa00;
+    --accent4: #ff5e7d;
+    --accent5: #a78bfa;
+    --mono: 'Space Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,14,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 40px;
+    height: 56px;
+    gap: 32px;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .nav-links { display: flex; gap: 20px; margin-left: auto; }
+  .nav-links a {
+    font-size: 12px; color: var(--text2); text-decoration: none;
+    letter-spacing: 0.3px; transition: color .2s;
+    white-space: nowrap;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 420px;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -80px; right: -60px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,194,168,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: 200px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,150,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-kicker {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-kicker::before {
+    content: ''; display: block;
+    width: 32px; height: 1px; background: var(--accent);
+  }
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+    max-width: 700px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-desc {
+    font-size: 16px; color: var(--text2); max-width: 520px; line-height: 1.7;
+  }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+  .chip {
+    font-size: 11px; font-family: var(--mono); padding: 5px 12px;
+    border: 1px solid var(--border2); border-radius: 100px;
+    color: var(--text2); letter-spacing: 0.5px;
+  }
+
+  /* ── SECTION ── */
+  section {
+    padding: 72px 60px;
+    border-top: 1px solid var(--border);
+  }
+  .section-label {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 3px; color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label .num {
+    background: rgba(0,194,168,0.12);
+    color: var(--accent); padding: 2px 8px;
+    border-radius: 4px; font-size: 10px;
+  }
+  h2 {
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 800; letter-spacing: -1px;
+    margin-bottom: 8px; line-height: 1.25;
+  }
+  .section-sub {
+    font-size: 14px; color: var(--text2);
+    margin-bottom: 48px;
+  }
+
+  /* ── COMPARE GRID ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 40px;
+  }
+  .ccard {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative; overflow: hidden;
+    transition: border-color .25s, transform .2s;
+  }
+  .ccard:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .ccard.blue { border-top: 3px solid var(--accent2); }
+  .ccard.green { border-top: 3px solid var(--accent); }
+  .ccard::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 120px; height: 120px;
+    opacity: 0.06; border-radius: 50%;
+    background: currentColor;
+  }
+  .ccard.blue::before { background: var(--accent2); }
+  .ccard.green::before { background: var(--accent); }
+  .ccard-icon { font-size: 32px; margin-bottom: 12px; }
+  .ccard h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .ccard p { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.7; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 10px; font-family: var(--mono);
+    padding: 3px 10px; border-radius: 100px;
+    border: 1px solid; letter-spacing: 0.3px;
+  }
+  .tag-blue  { border-color: rgba(0,150,255,0.4); color: #60c0ff; background: rgba(0,150,255,0.08); }
+  .tag-green { border-color: rgba(0,194,168,0.4); color: var(--accent); background: rgba(0,194,168,0.08); }
+  .tag-amber { border-color: rgba(255,170,0,0.4); color: #ffc94d; background: rgba(255,170,0,0.08); }
+  .tag-pink  { border-color: rgba(255,94,125,0.4); color: #ff8fa8; background: rgba(255,94,125,0.08); }
+  .tag-purple{ border-color: rgba(167,139,250,0.4); color: var(--accent5); background: rgba(167,139,250,0.08); }
+
+  /* ── COMPARE TABLE ── */
+  .ctable-wrap {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg3); }
+  th {
+    padding: 14px 20px; text-align: left;
+    font-size: 11px; font-family: var(--mono);
+    letter-spacing: 1px; color: var(--text3);
+    text-transform: uppercase;
+  }
+  td {
+    padding: 14px 20px;
+    font-size: 13px; border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td.col-a { color: #60c0ff; }
+  td.col-b { color: var(--accent); }
+  td:first-child { color: var(--text2); font-size: 12px; }
+
+  /* ── WEB TYPES ── */
+  .types-timeline {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative;
+  }
+  .types-timeline::before {
+    content: '';
+    position: absolute; left: 19px; top: 0; bottom: 0;
+    width: 2px; background: var(--border2);
+  }
+  .type-item {
+    display: flex; gap: 24px;
+    padding: 24px 0;
+    position: relative;
+  }
+  .type-dot {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    border: 2px solid;
+    position: relative; z-index: 1;
+    background: var(--bg);
+  }
+  .type-dot.d1 { border-color: var(--text3); color: var(--text3); }
+  .type-dot.d2 { border-color: var(--accent2); color: var(--accent2); }
+  .type-dot.d3 { border-color: var(--accent); color: var(--accent); }
+  .type-dot.d4 { border-color: var(--accent3); color: var(--accent3); }
+  .type-body { flex: 1; }
+  .type-gen {
+    font-size: 10px; font-family: var(--mono);
+    letter-spacing: 2px; margin-bottom: 4px;
+  }
+  .type-body h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .type-body p { font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.7; }
+  .type-examples { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+
+  /* ── ARCH LAYERS ── */
+  .arch-container {
+    display: flex; gap: 0;
+    flex-direction: column;
+    position: relative;
+  }
+  .arch-layer {
+    border-radius: 14px; padding: 24px 28px;
+    border: 1px solid;
+    position: relative;
+    transition: transform .2s;
+  }
+  .arch-layer:hover { transform: translateX(4px); }
+  .arch-layer + .arch-layer { margin-top: 3px; border-radius: 14px; }
+  .arch-arrow {
+    text-align: center; padding: 6px 0;
+    color: var(--text3); font-size: 18px;
+    font-family: var(--mono);
+  }
+  .arch-layer.front { background: rgba(0,150,255,0.06); border-color: rgba(0,150,255,0.25); }
+  .arch-layer.back  { background: rgba(0,194,168,0.06); border-color: rgba(0,194,168,0.25); }
+  .arch-layer.db    { background: rgba(255,170,0,0.06);  border-color: rgba(255,170,0,0.25); }
+  .arch-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .arch-icon { font-size: 22px; }
+  .arch-title { font-size: 16px; font-weight: 700; }
+  .arch-desc { font-size: 12px; color: var(--text2); margin-bottom: 14px; line-height: 1.65; }
+  .arch-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .arch-chip {
+    font-size: 11px; font-family: var(--mono);
+    padding: 4px 12px; border-radius: 100px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+  .analogy-box {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 16px 20px;
+    margin-top: 32px;
+    font-size: 13px; color: var(--text2);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .analogy-box .icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+
+  /* ── ELEMENTS GRID ── */
+  .elements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .elem-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: border-color .25s, transform .2s;
+    position: relative; overflow: hidden;
+  }
+  .elem-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+  .elem-num {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 1px; margin-bottom: 10px;
+    display: inline-block; padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .elem-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .elem-card .role {
+    font-size: 11px; font-family: var(--mono);
+    margin-bottom: 10px;
+    padding: 2px 8px; border-radius: 100px;
+    display: inline-block; letter-spacing: 0.5px;
+  }
+  .elem-card p { font-size: 12px; color: var(--text2); line-height: 1.7; }
+  /* UI element accents */
+  .elem-header  { border-top: 2px solid #60c0ff; }
+  .elem-nav     { border-top: 2px solid var(--accent5); }
+  .elem-hero    { border-top: 2px solid #ff7849; }
+  .elem-button  { border-top: 2px solid var(--accent); }
+  .elem-form    { border-top: 2px solid #ffd44d; }
+  .elem-card-ui { border-top: 2px solid var(--accent3); }
+  .elem-modal   { border-top: 2px solid #ff8fa8; }
+  .elem-footer  { border-top: 2px solid var(--text3); }
+
+  /* ── UI PREVIEW (미리보기 미니 시안) ── */
+  .ui-preview {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 12px; overflow: hidden;
+    margin-bottom: 8px; font-size: 11px;
+  }
+  .prev-header {
+    background: var(--bg3); border-bottom: 1px solid var(--border);
+    padding: 7px 12px; display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; color: var(--text3);
+  }
+  .prev-logo { width: 28px; height: 8px; background: var(--accent2); border-radius: 2px; }
+  .prev-nav-links { display: flex; gap: 8px; margin-left: auto; }
+  .prev-nav-link { width: 22px; height: 5px; background: var(--border2); border-radius: 2px; }
+
+  /* ── PAGE LAYOUT MAP ── */
+  .layout-map {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 4px;
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 16px; padding: 12px; margin-bottom: 40px;
+    font-family: var(--mono); font-size: 11px;
+  }
+  .lm-row { display: flex; gap: 4px; }
+  .lm-block {
+    border-radius: 8px; padding: 10px 14px;
+    border: 1px dashed; display: flex; align-items: center;
+    gap: 8px; cursor: default;
+    transition: opacity .2s;
+    font-size: 11px; letter-spacing: 0.5px;
+  }
+  .lm-block .lm-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .lm-header { border-color: rgba(96,192,255,0.5); color: #60c0ff; background: rgba(96,192,255,0.05); flex: 1; }
+  .lm-nav    { border-color: rgba(167,139,250,0.5); color: var(--accent5); background: rgba(167,139,250,0.05); flex: 1; }
+  .lm-hero   { border-color: rgba(255,120,73,0.5); color: #ff7849; background: rgba(255,120,73,0.05); height: 56px; flex: 1; justify-content: center; }
+  .lm-card   { border-color: rgba(255,170,0,0.4); color: var(--accent3); background: rgba(255,170,0,0.04); flex: 1; height: 48px; justify-content: center; }
+  .lm-form   { border-color: rgba(255,212,77,0.4); color: #ffd44d; background: rgba(255,212,77,0.04); flex: 1; height: 48px; justify-content: center; }
+  .lm-btn    { border-color: rgba(0,194,168,0.5); color: var(--accent); background: rgba(0,194,168,0.06); padding: 8px 16px; border-radius: 6px; border-style: solid; font-size: 10px; white-space: nowrap; }
+  .lm-modal  { border-color: rgba(255,143,168,0.5); color: #ff8fa8; background: rgba(255,143,168,0.05); flex: 1; height: 48px; justify-content: center; }
+  .lm-footer { border-color: rgba(78,87,104,0.6); color: var(--text3); background: rgba(78,87,104,0.05); flex: 1; }
+  .lm-label  { font-weight: 700; }
+
+  /* ── PROCESS STEPS ── */
+  .process-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .proc-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px;
+    transition: border-color .25s, transform .2s;
+  }
+  .proc-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+  .proc-step {
+    font-family: var(--mono); font-size: 10px;
+    color: var(--text3); letter-spacing: 1px; margin-bottom: 10px;
+  }
+  .proc-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .proc-card p { font-size: 12px; color: var(--text2); line-height: 1.65; }
+  .proc-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text3); font-size: 18px;
+    margin: 4px 0;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight {
+    background: rgba(0,194,168,0.07);
+    border: 1px solid rgba(0,194,168,0.25);
+    border-radius: 14px; padding: 22px 24px;
+    margin-top: 40px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .highlight .hi-icon { font-size: 22px; flex-shrink: 0; }
+  .highlight strong { color: var(--accent); }
+  .highlight p { font-size: 14px; line-height: 1.7; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer p { font-size: 12px; color: var(--text3); }
+  footer .mono { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+  /* ── WEB-APP DISTINCTION ── */
+  .webapp-banner {
+    background: linear-gradient(135deg, rgba(0,150,255,0.08) 0%, rgba(0,194,168,0.08) 100%);
+    border: 1px solid rgba(0,194,168,0.2);
+    border-radius: 18px; padding: 32px 36px;
+    display: flex; gap: 24px; align-items: flex-start;
+    margin-bottom: 32px;
+  }
+  .webapp-banner .big-icon { font-size: 44px; flex-shrink: 0; }
+  .webapp-banner h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .webapp-banner p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .webapp-examples { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .ex-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 18px;
+    transition: border-color .2s, transform .15s;
+  }
+  .ex-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .ex-card .ex-icon { font-size: 24px; margin-bottom: 8px; }
+  .ex-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .ex-card p { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; gap: 16px; }
+    .nav-links { display: none; }
+    section, .hero, footer { padding-left: 24px; padding-right: 24px; }
+    .compare-grid, .elements-grid, .process-grid, .webapp-examples { grid-template-columns: 1fr; }
+    h2 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">// WEB APP LECTURE</div>
+  <div class="nav-links">
+    <a href="#compare">웹 vs 앱</a>
+    <a href="#webapp">웹앱이란</a>
+    <a href="#types">웹의 종류</a>
+    <a href="#arch">웹앱 구조</a>
+    <a href="#elements">필수 요소</a>
+    <a href="#process">개발 과정</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-kicker">Web Application Development</div>
+  <h1>웹앱의 <span>구조</span>와<br>필수 요소</h1>
+  <p class="hero-desc">
+    웹과 앱의 차이부터 시작해, 웹앱이 어떻게 구성되고 동작하는지
+    기초부터 차근차근 이해해봅시다.
+  </p>
+  <div class="hero-chips">
+    <div class="chip">HTML · CSS · JS</div>
+    <div class="chip">프론트엔드 / 백엔드</div>
+    <div class="chip">데이터베이스</div>
+    <div class="chip">API 통신</div>
+    <div class="chip">웹 vs 앱 비교</div>
+  </div>
+</div>
+
+<!-- SECTION 1: 웹 vs 앱 비교 -->
+<section id="compare">
+  <div class="section-label"><span class="num">01</span> Web vs App</div>
+  <h2>웹(Web)과 앱(App),<br>무엇이 다를까?</h2>
+  <p class="section-sub">두 개념을 정확하게 이해하는 것이 시작입니다</p>
+
+  <div class="compare-grid">
+    <div class="ccard blue">
+      <div class="ccard-icon">🌐</div>
+      <h3>웹 (Web)</h3>
+      <p>인터넷 브라우저(크롬, 사파리, 엣지 등)를 통해 접속하는 디지털 공간입니다. 주소창에 URL을 입력하면 바로 접근할 수 있어요.</p>
+      <div class="tag-row">
+        <span class="tag tag-blue">설치 불필요</span>
+        <span class="tag tag-blue">URL로 접근</span>
+        <span class="tag tag-blue">모든 기기에서 접속</span>
+      </div>
+    </div>
+    <div class="ccard green">
+      <div class="ccard-icon">📱</div>
+      <h3>앱 (App / Application)</h3>
+      <p>기기에 직접 설치하여 사용하는 소프트웨어입니다. 앱스토어나 플레이스토어에서 다운로드해야 사용할 수 있어요.</p>
+      <div class="tag-row">
+        <span class="tag tag-green">스마트폰에 설치</span>
+        <span class="tag tag-green">앱스토어 배포</span>
+        <span class="tag tag-green">기기 기능(카메라 등) 활용</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctable-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>비교 항목</th>
+          <th>🌐 웹</th>
+          <th>📱 앱</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>접근 방법</td>
+          <td class="col-a">브라우저 주소창에 URL 입력</td>
+          <td class="col-b">앱스토어에서 설치 후 아이콘 클릭</td>
+        </tr>
+        <tr>
+          <td>업데이트</td>
+          <td class="col-a">서버에서 자동 업데이트 (사용자 불필요)</td>
+          <td class="col-b">사용자가 직접 업데이트 다운로드</td>
+        </tr>
+        <tr>
+          <td>개발 난이도</td>
+          <td class="col-a">상대적으로 진입 장벽이 낮음</td>
+          <td class="col-b">iOS/Android 플랫폼별 별도 개발 필요</td>
+        </tr>
+        <tr>
+          <td>속도</td>
+          <td class="col-a">인터넷 환경에 따라 달라짐</td>
+          <td class="col-b">기기에 설치되어 상대적으로 빠름</td>
+        </tr>
+        <tr>
+          <td>기기 기능 활용</td>
+          <td class="col-a">제한적 (최근 개선되는 중)</td>
+          <td class="col-b">카메라, GPS, 알림 등 완전 활용</td>
+        </tr>
+        <tr>
+          <td>예시</td>
+          <td class="col-a">네이버 뉴스, 유튜브 웹</td>
+          <td class="col-b">카카오톡, 인스타그램 앱</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION 2: 웹앱이란? -->
+<section id="webapp">
+  <div class="section-label"><span class="num">02</span> What is a Web App</div>
+  <h2>그렇다면 웹앱(Web App)은?</h2>
+  <p class="section-sub">웹과 앱, 두 가지 장점을 결합한 새로운 형태</p>
+
+  <div class="webapp-banner">
+    <div class="big-icon">⚡</div>
+    <div>
+      <h3>웹앱 = 웹 기술로 만들어졌지만, 앱처럼 동작하는 서비스</h3>
+      <p>
+        브라우저에서 실행되지만 화면 전환, 실시간 데이터 업데이트, 복잡한 사용자 상호작용이 가능한 웹 서비스입니다.
+        과거 웹이 단순히 정보를 보여주는 역할에 그쳤다면, 웹앱은 <strong style="color:var(--accent)">사용자가 직접 작업을 수행</strong>하고 결과를 저장·공유할 수 있습니다.
+      </p>
+    </div>
+  </div>
+
+  <div class="webapp-examples">
+    <div class="ex-card">
+      <div class="ex-icon">📧</div>
+      <h4>Gmail</h4>
+      <p>설치 없이 브라우저만으로 이메일 작성, 첨부파일, 검색, 라벨 관리까지 완전한 이메일 앱 경험</p>
+    </div>
+    <div class="ex-card">
+      <div class="ex-icon">📊</div>
+      <h4>Google 스프레드시트</h4>
+      <p>웹에서 엑셀처럼 표를 편집하고, 여러 명이 동시에 작업하는 실시간 협업 앱</p>
+    </div>
+    <div class="ex-card">
+      <div class="ex-icon">🎵</div>
+      <h4>Spotify Web Player</h4>
+      <p>설치 없이 브라우저에서 음악을 검색하고 재생 목록을 관리하는 스트리밍 앱</p>
+    </div>
+    <div class="ex-card">
+      <div class="ex-icon">💬</div>
+      <h4>Slack (웹 버전)</h4>
+      <p>브라우저에서 팀 채팅, 파일 공유, 화상회의 링크까지 연결되는 협업 플랫폼</p>
+    </div>
+    <div class="ex-card">
+      <div class="ex-icon">🎨</div>
+      <h4>Figma</h4>
+      <p>웹브라우저에서 UI 디자인 작업을 하고 팀원과 실시간으로 피드백을 주고받는 디자인 도구</p>
+    </div>
+    <div class="ex-card">
+      <div class="ex-icon">🛒</div>
+      <h4>쿠팡 / 배민</h4>
+      <p>상품 검색, 장바구니, 결제, 주문 관리까지 모두 웹 기술로 구현된 쇼핑·주문 앱</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: 웹의 종류 -->
+<section id="types">
+  <div class="section-label"><span class="num">03</span> Types of Web</div>
+  <h2>웹의 종류</h2>
+  <p class="section-sub">시간 순서대로 보면 왜 웹앱이 등장했는지 이해됩니다</p>
+
+  <div class="types-timeline">
+    <div class="type-item">
+      <div class="type-dot d1">1</div>
+      <div class="type-body">
+        <div class="type-gen" style="color:var(--text3)">1세대 — 1990년대</div>
+        <h3>정적 웹사이트 (Static Website)</h3>
+        <p>HTML 파일 자체가 콘텐츠입니다. 누가 접속해도 같은 화면이 보이고, 내용을 바꾸려면 개발자가 직접 파일을 수정해야 합니다. 로그인, 검색, 장바구니 같은 기능은 없어요.</p>
+        <div class="type-examples">예시: 회사 소개 페이지, 이력서 사이트, 단순 포트폴리오</div>
+      </div>
+    </div>
+
+    <div class="type-item">
+      <div class="type-dot d2">2</div>
+      <div class="type-body">
+        <div class="type-gen" style="color:#60c0ff">2세대 — 2000년대 초반</div>
+        <h3>동적 웹사이트 (Dynamic Website)</h3>
+        <p>서버가 사용자의 요청에 따라 다른 페이지를 생성해서 보여줍니다. 로그인 기능, 검색 결과, 게시판 댓글 등이 가능해졌어요. 하지만 버튼 하나 클릭해도 페이지 전체가 새로 로딩됩니다.</p>
+        <div class="type-examples">예시: 초기 네이버·다음 포털, 게시판 서비스, 초창기 쇼핑몰</div>
+      </div>
+    </div>
+
+    <div class="type-item">
+      <div class="type-dot d3">3</div>
+      <div class="type-body">
+        <div class="type-gen" style="color:var(--accent)">3세대 — 2010년대</div>
+        <h3>웹앱 / SPA (Single Page Application)</h3>
+        <p>페이지 전체를 새로 불러오지 않고, 필요한 부분만 바뀝니다. 화면 전환이 부드럽고 앱처럼 빠릅니다. 데이터는 API를 통해 실시간으로 주고받아요. React, Vue, Angular 같은 프레임워크로 개발합니다.</p>
+        <div class="type-examples">예시: Gmail, 트위터/X, 카카오페이, 쿠팡</div>
+      </div>
+    </div>
+
+    <div class="type-item">
+      <div class="type-dot d4">4</div>
+      <div class="type-body">
+        <div class="type-gen" style="color:#ffc94d">최신 — 2020년대</div>
+        <h3>PWA (Progressive Web App)</h3>
+        <p>웹이지만 스마트폰 홈 화면에 추가하고, 인터넷이 없어도 일부 기능을 사용할 수 있고, 푸시 알림도 받을 수 있습니다. 앱스토어 없이 앱 수준의 경험을 제공합니다.</p>
+        <div class="type-examples">예시: 트위터 라이트, 스타벅스 웹앱, 핀터레스트 PWA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: 웹앱의 구조 -->
+<section id="arch">
+  <div class="section-label"><span class="num">04</span> Web App Architecture</div>
+  <h2>웹앱의 구조</h2>
+  <p class="section-sub">웹앱은 3가지 층(Layer)으로 나뉩니다 — 레스토랑에 비유해볼게요 🍽️</p>
+
+  <div class="arch-container">
+    <div class="arch-layer front">
+      <div class="arch-header">
+        <span class="arch-icon">🖥️</span>
+        <div>
+          <div style="font-size:11px;font-family:var(--mono);color:rgba(96,192,255,0.7);letter-spacing:1px;margin-bottom:2px;">LAYER 01 — 프론트엔드 (Front-End)</div>
+          <div class="arch-title" style="color:#60c0ff">홀 — 손님이 보고 경험하는 공간</div>
+        </div>
+      </div>
+      <div class="arch-desc">
+        사용자가 실제로 눈으로 보고 클릭하며 상호작용하는 화면입니다. 브라우저에서 직접 실행됩니다.
+        디자인, 버튼, 입력창, 화면 전환이 모두 이 영역입니다.
+      </div>
+      <div class="arch-chips">
+        <span class="arch-chip">HTML — 메뉴판 구조</span>
+        <span class="arch-chip">CSS — 인테리어·디자인</span>
+        <span class="arch-chip">JavaScript — 직원의 행동</span>
+        <span class="arch-chip">React / Vue — 효율적인 주문 시스템</span>
+        <span class="arch-chip">Figma (디자인 도구)</span>
+      </div>
+    </div>
+
+    <div class="arch-arrow">⇅ API 통신 (주문서 전달 / 음식 수령)</div>
+
+    <div class="arch-layer back">
+      <div class="arch-header">
+        <span class="arch-icon">⚙️</span>
+        <div>
+          <div style="font-size:11px;font-family:var(--mono);color:rgba(0,194,168,0.7);letter-spacing:1px;margin-bottom:2px;">LAYER 02 — 백엔드 (Back-End)</div>
+          <div class="arch-title" style="color:var(--accent)">주방 — 실제 요리가 일어나는 공간</div>
+        </div>
+      </div>
+      <div class="arch-desc">
+        사용자 눈에는 보이지 않지만 핵심 비즈니스 로직이 여기서 처리됩니다.
+        로그인 확인, 결제 처리, 데이터 계산 등 중요한 작업이 모두 서버에서 이루어집니다.
+      </div>
+      <div class="arch-chips">
+        <span class="arch-chip">Node.js</span>
+        <span class="arch-chip">Python (Django / Flask)</span>
+        <span class="arch-chip">Java (Spring)</span>
+        <span class="arch-chip">PHP</span>
+        <span class="arch-chip">API 설계 (REST / GraphQL)</span>
+        <span class="arch-chip">서버 보안 / 인증</span>
+      </div>
+    </div>
+
+    <div class="arch-arrow">⇅ 데이터 요청 / 저장 (재료 꺼내기 / 넣기)</div>
+
+    <div class="arch-layer db">
+      <div class="arch-header">
+        <span class="arch-icon">🗄️</span>
+        <div>
+          <div style="font-size:11px;font-family:var(--mono);color:rgba(255,170,0,0.7);letter-spacing:1px;margin-bottom:2px;">LAYER 03 — 데이터베이스 (Database)</div>
+          <div class="arch-title" style="color:#ffc94d">창고 — 모든 재료(데이터)를 보관하는 공간</div>
+        </div>
+      </div>
+      <div class="arch-desc">
+        회원 정보, 게시글, 주문 내역, 상품 정보 등 모든 데이터를 체계적으로 저장하고 필요할 때 꺼내주는 곳입니다.
+      </div>
+      <div class="arch-chips">
+        <span class="arch-chip">MySQL · PostgreSQL (정형 데이터)</span>
+        <span class="arch-chip">MongoDB (비정형 / 유연한 구조)</span>
+        <span class="arch-chip">Firebase (실시간 · 초보자 추천)</span>
+        <span class="arch-chip">Redis (빠른 임시 저장소)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="icon">💡</div>
+    <div style="font-size:13px;line-height:1.7;color:var(--text2);">
+      <strong style="color:var(--text)">정리하면:</strong>
+      손님(사용자)이 웹브라우저(홀)에서 주문(클릭)을 하면 →
+      프론트엔드가 주문서(API 요청)를 만들어 백엔드(주방)로 보내고 →
+      백엔드가 창고(데이터베이스)에서 필요한 재료(데이터)를 꺼내 요리(처리)해서 →
+      다시 프론트엔드(홀)를 통해 손님에게 결과를 보여줍니다.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: UI 필수 요소 -->
+<section id="elements">
+  <div class="section-label"><span class="num">05</span> UI Elements</div>
+  <h2>웹앱의 필수 UI 구성 요소</h2>
+  <p class="section-sub">모든 웹앱은 이 요소들의 조합으로 만들어집니다 — 어디에 어떻게 배치되는지 먼저 보세요</p>
+
+  <!-- 페이지 레이아웃 맵 -->
+  <div class="layout-map">
+    <div class="lm-row">
+      <div class="lm-block lm-header">
+        <div class="lm-dot" style="background:#60c0ff"></div>
+        <span class="lm-label">HEADER</span>
+        <span style="color:var(--text3);margin-left:4px;">— 로고 / 로그인 / 메뉴</span>
+      </div>
+    </div>
+    <div class="lm-row">
+      <div class="lm-block lm-nav">
+        <div class="lm-dot" style="background:var(--accent5)"></div>
+        <span class="lm-label">NAVIGATION</span>
+        <span style="color:var(--text3);margin-left:4px;">— 홈 / 소개 / 서비스 / 문의</span>
+      </div>
+    </div>
+    <div class="lm-row">
+      <div class="lm-block lm-hero">
+        <div class="lm-dot" style="background:#ff7849"></div>
+        <span class="lm-label">HERO / BANNER</span>
+        <span style="color:var(--text3);margin-left:4px;">— 대표 문구 + CTA 버튼</span>
+      </div>
+    </div>
+    <div class="lm-row" style="gap:4px;">
+      <div class="lm-block lm-card">
+        <div class="lm-dot" style="background:var(--accent3)"></div>
+        <span class="lm-label">CARD</span>
+      </div>
+      <div class="lm-block lm-card">
+        <div class="lm-dot" style="background:var(--accent3)"></div>
+        <span class="lm-label">CARD</span>
+      </div>
+      <div class="lm-block lm-form">
+        <div class="lm-dot" style="background:#ffd44d"></div>
+        <span class="lm-label">FORM</span>
+        <span style="color:var(--text3);margin-left:4px;">— 입력창 + 버튼</span>
+      </div>
+    </div>
+    <div class="lm-row" style="justify-content:flex-end;gap:8px;padding:4px 0;">
+      <div class="lm-block lm-btn">BUTTON</div>
+      <div class="lm-block lm-btn" style="background:rgba(255,143,168,0.06);border-color:rgba(255,143,168,0.5);color:#ff8fa8;">MODAL 팝업</div>
+    </div>
+    <div class="lm-row">
+      <div class="lm-block lm-footer">
+        <div class="lm-dot" style="background:var(--text3)"></div>
+        <span class="lm-label">FOOTER</span>
+        <span style="color:var(--text3);margin-left:4px;">— 저작권 / 사이트맵 / 연락처</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- UI 요소 카드 그리드 -->
+  <div class="elements-grid">
+    <div class="elem-card elem-header">
+      <div class="elem-num" style="background:rgba(96,192,255,0.12);color:#60c0ff;">01</div>
+      <h3>Header (헤더)</h3>
+      <div class="role" style="background:rgba(96,192,255,0.1);color:#60c0ff;">페이지 최상단 영역</div>
+      <p>사이트 로고, 로그인/로그아웃 버튼, 검색창, 장바구니 아이콘 등이 위치합니다. 어떤 페이지를 가도 고정되어 항상 보이는 경우가 많아요.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-blue">로고</span>
+        <span class="tag tag-blue">검색창</span>
+        <span class="tag tag-blue">로그인 버튼</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-nav">
+      <div class="elem-num" style="background:rgba(167,139,250,0.12);color:var(--accent5);">02</div>
+      <h3>Navigation (네비게이션)</h3>
+      <div class="role" style="background:rgba(167,139,250,0.1);color:var(--accent5);">메뉴 링크 모음</div>
+      <p>사이트 내 각 페이지로 이동하는 메뉴 링크 모음입니다. 상단 가로 메뉴(GNB), 왼쪽 세로 메뉴(사이드바), 모바일 햄버거 메뉴 형태가 있습니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-purple">GNB</span>
+        <span class="tag tag-purple">사이드바</span>
+        <span class="tag tag-purple">햄버거 메뉴</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-hero">
+      <div class="elem-num" style="background:rgba(255,120,73,0.12);color:#ff7849;">03</div>
+      <h3>Hero / Banner (히어로)</h3>
+      <div class="role" style="background:rgba(255,120,73,0.1);color:#ff7849;">메인 대표 화면</div>
+      <p>페이지에서 가장 크고 눈에 띄는 상단 영역입니다. 서비스의 핵심 메시지, 배경 이미지, 그리고 행동 유도 버튼(CTA)을 담아 첫인상을 결정합니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-pink">대표 문구</span>
+        <span class="tag tag-pink">CTA 버튼</span>
+        <span class="tag tag-pink">배경 이미지</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-button">
+      <div class="elem-num" style="background:rgba(0,194,168,0.12);color:var(--accent);">04</div>
+      <h3>Button (버튼)</h3>
+      <div class="role" style="background:rgba(0,194,168,0.1);color:var(--accent);">사용자 행동 유도</div>
+      <p>클릭하면 특정 동작이 실행되는 요소입니다. 제출(Submit), 취소(Cancel), 더보기, 구매하기 등 사용자가 원하는 행동을 유도할 때 사용합니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-green">Primary 버튼</span>
+        <span class="tag tag-green">Secondary 버튼</span>
+        <span class="tag tag-green">아이콘 버튼</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-form">
+      <div class="elem-num" style="background:rgba(255,212,77,0.12);color:#ffd44d;">05</div>
+      <h3>Form (폼 / 양식)</h3>
+      <div class="role" style="background:rgba(255,212,77,0.1);color:#ffd44d;">사용자 입력 영역</div>
+      <p>사용자가 정보를 직접 입력하는 영역입니다. 로그인, 회원가입, 검색창, 댓글 작성, 주문서 작성이 모두 폼입니다. 입력창(input), 체크박스, 라디오 버튼 등을 포함합니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-amber">로그인 폼</span>
+        <span class="tag tag-amber">검색창</span>
+        <span class="tag tag-amber">회원가입</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-card-ui">
+      <div class="elem-num" style="background:rgba(255,170,0,0.12);color:var(--accent3);">06</div>
+      <h3>Card (카드)</h3>
+      <div class="role" style="background:rgba(255,170,0,0.1);color:var(--accent3);">정보를 묶어 표현</div>
+      <p>관련 정보를 네모 박스 형태로 묶어 보여주는 컴포넌트입니다. 상품 카드, 뉴스 카드, 프로필 카드처럼 반복되는 정보를 일관되게 표시할 때 사용합니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-amber">상품 카드</span>
+        <span class="tag tag-amber">뉴스 카드</span>
+        <span class="tag tag-amber">프로필 카드</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-modal">
+      <div class="elem-num" style="background:rgba(255,143,168,0.12);color:#ff8fa8;">07</div>
+      <h3>Modal (모달 / 팝업)</h3>
+      <div class="role" style="background:rgba(255,143,168,0.1);color:#ff8fa8;">화면 위에 뜨는 창</div>
+      <p>현재 페이지 위에 겹쳐서 나타나는 창입니다. 알림, 확인 요청, 상세 정보 보기, 이미지 확대 등 흐름을 방해하지 않고 추가 정보를 전달할 때 씁니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag tag-pink">확인 팝업</span>
+        <span class="tag tag-pink">이미지 뷰어</span>
+        <span class="tag tag-pink">알림창</span>
+      </div>
+    </div>
+
+    <div class="elem-card elem-footer">
+      <div class="elem-num" style="background:rgba(78,87,104,0.2);color:var(--text2);">08</div>
+      <h3>Footer (푸터)</h3>
+      <div class="role" style="background:rgba(78,87,104,0.15);color:var(--text2);">페이지 최하단 영역</div>
+      <p>페이지 맨 아래에 위치하며 저작권 정보, 회사 정보, 이용약관·개인정보처리방침 링크, 사이트맵, SNS 링크 등 보조 정보를 담습니다.</p>
+      <div class="tag-row" style="margin-top:10px;">
+        <span class="tag" style="border-color:rgba(78,87,104,0.5);color:var(--text2);background:rgba(78,87,104,0.1);">저작권</span>
+        <span class="tag" style="border-color:rgba(78,87,104,0.5);color:var(--text2);background:rgba(78,87,104,0.1);">이용약관</span>
+        <span class="tag" style="border-color:rgba(78,87,104,0.5);color:var(--text2);background:rgba(78,87,104,0.1);">사이트맵</span>
+      </div>
+    </div>
+
+    <!-- 추가 요소 — 넓은 카드 -->
+    <div class="elem-card" style="border-top:2px solid var(--accent2);grid-column:span 1;">
+      <div class="elem-num" style="background:rgba(0,150,255,0.12);color:var(--accent2);">+</div>
+      <h3>그 외 주요 요소들</h3>
+      <div class="role" style="background:rgba(0,150,255,0.1);color:var(--accent2);">자주 쓰이는 UI 컴포넌트</div>
+      <p style="margin-bottom:10px;">실제 웹앱을 만들다 보면 이런 요소들도 자주 사용합니다.</p>
+      <div class="tag-row">
+        <span class="tag tag-blue">탭(Tab)</span>
+        <span class="tag tag-blue">드롭다운</span>
+        <span class="tag tag-blue">슬라이더</span>
+        <span class="tag tag-blue">토스트 알림</span>
+        <span class="tag tag-blue">로딩 스피너</span>
+        <span class="tag tag-blue">페이지네이션</span>
+        <span class="tag tag-blue">툴팁</span>
+        <span class="tag tag-blue">아코디언</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <div class="hi-icon">🧩</div>
+    <p>
+      <strong>핵심 개념:</strong> 웹앱은 이 UI 요소들을 레고 블록처럼 조합해서 만듭니다.<br>
+      <span style="font-size:13px;color:var(--text2);">Header + Navigation + Hero + Card + Form + Button + Modal + Footer — 이 8가지 요소의 배치와 디자인이 곧 웹앱의 사용성(UX)을 결정합니다.</span>
+    </p>
+  </div>
+</section>
+
+<!-- SECTION 6: 개발 과정 -->
+<section id="process">
+  <div class="section-label"><span class="num">06</span> Development Process</div>
+  <h2>웹앱 개발 과정</h2>
+  <p class="section-sub">아이디어에서 실제 서비스까지, 어떤 단계를 거칠까?</p>
+
+  <div class="process-grid">
+    <div class="proc-card">
+      <div class="proc-step">STEP 01</div>
+      <h3>📋 기획</h3>
+      <p>어떤 문제를 해결할 서비스인지 결정합니다. 어떤 기능이 필요한지 목록(기능 명세서)을 작성하고, 누가 사용할지(타깃 사용자)를 정합니다.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-step">STEP 02</div>
+      <h3>🎨 UI/UX 디자인</h3>
+      <p>화면 구성을 설계합니다. 스케치(와이어프레임) → 상세 디자인(목업) → 클릭 가능한 시제품(프로토타입) 순서로 진행합니다.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-step">STEP 03</div>
+      <h3>🖥️ 프론트엔드 개발</h3>
+      <p>HTML, CSS, JavaScript로 사용자 화면을 구현합니다. 디자인 시안을 보며 코드로 화면을 만들고, API 연결을 준비합니다.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-step">STEP 04</div>
+      <h3>⚙️ 백엔드 개발</h3>
+      <p>서버와 API를 구성합니다. 로그인, 회원가입, 데이터 저장 등 비즈니스 로직과 보안 처리를 담당합니다.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-step">STEP 05</div>
+      <h3>🗄️ 데이터베이스 설계</h3>
+      <p>어떤 데이터를 어떤 형태로 저장할지 구조를 설계합니다. 회원 테이블, 게시글 테이블 등 관계를 정리하고 구축합니다.</p>
+    </div>
+    <div class="proc-card">
+      <div class="proc-step">STEP 06</div>
+      <h3>🚀 테스트 & 배포</h3>
+      <p>오류를 찾아 수정(QA)한 후, 실제 서버에 올려(배포) 모든 사람이 접속할 수 있게 합니다. 운영 후에도 지속적으로 개선합니다.</p>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:36px;">
+    <div class="hi-icon">🌟</div>
+    <div>
+      <p style="margin-bottom:6px;"><strong>오늘 강의 핵심 정리</strong></p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">
+        ① 웹(브라우저 접속)과 앱(설치 실행)은 다르지만, 웹앱은 두 장점을 결합한 서비스입니다.<br>
+        ② 웹의 종류는 정적→동적→웹앱(SPA)→PWA 순서로 발전했습니다.<br>
+        ③ 웹앱의 구조는 <strong style="color:#60c0ff">프론트엔드</strong>(화면) + <strong style="color:var(--accent)">백엔드</strong>(처리) + <strong style="color:#ffc94d">데이터베이스</strong>(저장) 3층으로 이루어집니다.<br>
+        ④ 6가지 필수 요소(HTML·CSS·JS·서버·DB·API)가 함께 작동해야 완전한 웹앱이 됩니다.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>웹앱 구조와 필수요소 — 강의자료</p>
+  <div class="mono">HTML · CSS · JS · SERVER · DB · API</div>
+</footer>
+
+<script>
+  // 스크롤 시 nav 링크 active 처리
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => {
+          a.style.color = a.getAttribute('href') === '#' + e.target.id
+            ? 'var(--accent)' : '';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
