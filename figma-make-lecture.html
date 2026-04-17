@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figma Make × Claude MCP 완전 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #1a1a24;
+  --surface: #1e1e2e;
+  --surface2: #252535;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #e8e8f0;
+  --text2: #9090a8;
+  --text3: #6060780;
+  --accent: #7c6aff;
+  --accent2: #a78bfa;
+  --green: #22d3a0;
+  --green2: #134e3a;
+  --yellow: #fbbf24;
+  --yellow2: #3d2e09;
+  --red: #f87171;
+  --red2: #3d1010;
+  --blue: #60a5fa;
+  --blue2: #1e3a5f;
+  --pink: #f472b6;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Noto Sans KR', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  font-size:15px;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(10,10,15,0.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(16px);
+  padding:0 2rem;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-size:15px;font-weight:700;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--pink) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:-0.3px;
+}
+.nav-links{display:flex;gap:4px}
+.nav-links a{
+  font-size:12px;color:var(--text2);
+  text-decoration:none;padding:6px 12px;
+  border-radius:8px;transition:.2s;font-weight:500;
+}
+.nav-links a:hover{background:var(--surface);color:var(--text)}
+.nav-tag{
+  font-size:10px;font-weight:600;padding:2px 8px;
+  border-radius:20px;background:var(--green2);color:var(--green);
+  border:1px solid rgba(34,211,160,0.2);
+}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:6rem 2rem 4rem;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(124,106,255,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(244,114,182,0.08) 0%, transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;letter-spacing:0.5px;
+  color:var(--accent2);text-transform:uppercase;
+  background:rgba(124,106,255,0.1);border:1px solid rgba(124,106,255,0.2);
+  padding:6px 16px;border-radius:20px;margin-bottom:1.5rem;
+}
+.hero h1{
+  font-size:clamp(2rem,6vw,4rem);font-weight:700;line-height:1.15;
+  letter-spacing:-1.5px;margin-bottom:1rem;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#7c6aff,#f472b6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p{font-size:1.05rem;color:var(--text2);max-width:560px;margin:0 auto 2rem;line-height:1.8}
+.hero-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:2.5rem}
+.badge{
+  font-size:11px;font-weight:600;padding:5px 12px;
+  border-radius:20px;letter-spacing:0.3px;
+  border:1px solid;
+}
+.badge-purple{background:rgba(124,106,255,0.12);color:var(--accent2);border-color:rgba(124,106,255,0.25)}
+.badge-green{background:rgba(34,211,160,0.1);color:var(--green);border-color:rgba(34,211,160,0.2)}
+.badge-yellow{background:rgba(251,191,36,0.1);color:var(--yellow);border-color:rgba(251,191,36,0.2)}
+.badge-pink{background:rgba(244,114,182,0.1);color:var(--pink);border-color:rgba(244,114,182,0.2)}
+.hero-stats{
+  display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;
+  padding:1.5rem 2rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;
+}
+.stat{text-align:center}
+.stat-val{font-size:1.5rem;font-weight:700;color:var(--accent2);display:block;font-family:var(--mono)}
+.stat-label{font-size:11px;color:var(--text2);letter-spacing:0.3px;margin-top:2px}
+
+/* ── SECTION COMMON ── */
+section{padding:5rem 2rem;max-width:900px;margin:0 auto}
+.sec-header{margin-bottom:2.5rem;text-align:center}
+.sec-tag{
+  display:inline-block;font-size:10px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
+  color:var(--accent2);background:rgba(124,106,255,0.1);
+  border:1px solid rgba(124,106,255,0.2);padding:4px 12px;border-radius:20px;
+  margin-bottom:.75rem;
+}
+.sec-header h2{font-size:1.8rem;font-weight:700;letter-spacing:-0.5px;margin-bottom:.5rem}
+.sec-header p{color:var(--text2);font-size:.95rem;max-width:500px;margin:0 auto}
+.section-divider{
+  height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);
+  margin:0;
+}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:1.5rem;
+  transition:border-color .2s, transform .2s;
+}
+.card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.card-title{font-size:.95rem;font-weight:700;margin-bottom:.5rem;color:var(--text)}
+.card p,.card li{font-size:.875rem;color:var(--text2);line-height:1.75}
+.card ul{padding-left:1.2rem}
+.card li{margin-bottom:3px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:640px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* ── CREDIT TABLE ── */
+.table-wrap{overflow-x:auto;border-radius:16px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+thead tr{background:var(--surface2)}
+th{padding:12px 16px;text-align:left;font-weight:600;color:var(--text2);font-size:.8rem;letter-spacing:0.3px;border-bottom:1px solid var(--border)}
+td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+.free-row td{color:var(--text);font-weight:600}
+.free-row td:first-child::before{content:"★ "}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.credit-tag{
+  display:inline-block;font-size:11px;font-weight:600;
+  padding:2px 8px;border-radius:8px;
+  font-family:var(--mono);
+}
+.c-green{background:var(--green2);color:var(--green)}
+.c-yellow{background:var(--yellow2);color:var(--yellow)}
+.c-red{background:var(--red2);color:var(--red)}
+.c-blue{background:var(--blue2);color:var(--blue)}
+.c-purple{background:rgba(124,106,255,0.15);color:var(--accent2)}
+
+/* ── STEPS ── */
+.steps{display:flex;flex-direction:column;gap:.75rem}
+.step{
+  display:flex;gap:1rem;align-items:flex-start;
+  padding:1rem 1.25rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+}
+.step-num{
+  width:28px;height:28px;flex-shrink:0;
+  border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:white;margin-top:1px;
+}
+.step-body{flex:1}
+.step-body strong{color:var(--text);font-weight:600}
+.step-body p{font-size:.875rem;color:var(--text2);margin-top:2px}
+
+/* ── CODE BLOCK ── */
+.code-block{
+  background:#0d0d14;border:1px solid var(--border);
+  border-radius:12px;padding:1.25rem;
+  font-family:var(--mono);font-size:.8rem;line-height:1.8;
+  color:#a9b1d6;overflow-x:auto;margin:.75rem 0;
+  position:relative;
+}
+.code-block .cb-label{
+  position:absolute;top:10px;right:12px;
+  font-size:10px;color:var(--text2);letter-spacing:0.3px;
+}
+.kw{color:#bb9af7}
+.str{color:#9ece6a}
+.comment{color:#565f89}
+.fn{color:#7aa2f7}
+.prop{color:#7dcfff}
+
+/* ── TIPS ── */
+.tip,.warn,.info{
+  border-radius:12px;padding:1rem 1.25rem;
+  margin:.75rem 0;font-size:.875rem;line-height:1.7;
+  display:flex;gap:.75rem;align-items:flex-start;
+}
+.tip{background:rgba(34,211,160,0.08);border:1px solid rgba(34,211,160,0.2);color:#86efac}
+.warn{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);color:#fcd34d}
+.info{background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);color:#93c5fd}
+.tip-icon,.warn-icon,.info-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+
+/* ── ANIM SHOWCASE ── */
+.anim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+@media(max-width:640px){.anim-grid{grid-template-columns:1fr 1fr}}
+.anim-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:1.25rem;text-align:center;
+  cursor:pointer;transition:.2s;
+}
+.anim-card:hover{border-color:var(--accent);background:rgba(124,106,255,0.08)}
+.anim-demo{
+  height:60px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:.75rem;font-size:1.5rem;
+}
+.anim-card .a-title{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.anim-card .a-desc{font-size:.73rem;color:var(--text2)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleUp{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.7}}
+@keyframes typewriter{from{width:0}to{width:100%}}
+@keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.1)}70%{transform:scale(0.9)}100%{transform:scale(1);opacity:1}}
+
+.demo-fade{animation:fadeIn 0.8s ease infinite alternate}
+.demo-slide{animation:slideLeft 0.8s ease infinite alternate}
+.demo-scale{animation:scaleUp 0.8s ease infinite alternate}
+.demo-spin{animation:spin 2s linear infinite}
+.demo-pulse{animation:pulse 1.5s ease infinite}
+.demo-bounce{animation:bounceIn 1.5s ease infinite alternate}
+
+/* ── MCP SECTION ── */
+.mcp-hero{
+  background:linear-gradient(135deg,rgba(124,106,255,0.1),rgba(244,114,182,0.08));
+  border:1px solid rgba(124,106,255,0.2);
+  border-radius:20px;padding:2rem;margin-bottom:2rem;text-align:center;
+}
+.mcp-hero h3{font-size:1.4rem;font-weight:700;margin-bottom:.5rem}
+.mcp-hero p{font-size:.9rem;color:var(--text2)}
+.flow-row{
+  display:flex;align-items:center;gap:.5rem;
+  flex-wrap:wrap;justify-content:center;margin:1.5rem 0;
+}
+.flow-box{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.6rem 1rem;font-size:.8rem;font-weight:600;
+  color:var(--text);white-space:nowrap;
+}
+.flow-arrow{color:var(--text2);font-size:1rem}
+.flow-box.accent{background:rgba(124,106,255,0.15);border-color:rgba(124,106,255,0.35);color:var(--accent2)}
+.flow-box.green{background:rgba(34,211,160,0.1);border-color:rgba(34,211,160,0.3);color:var(--green)}
+
+/* ── PROMPT EXAMPLES ── */
+.prompt-box{
+  background:#0d0d14;border:1px solid rgba(124,106,255,0.25);
+  border-left:3px solid var(--accent);
+  border-radius:0 12px 12px 0;
+  padding:1rem 1.25rem;margin:.5rem 0;
+  font-size:.85rem;font-family:var(--mono);
+  color:#c0b8ff;line-height:1.7;
+}
+.prompt-label{
+  font-size:.73rem;font-weight:700;letter-spacing:0.5px;
+  color:var(--accent2);margin-bottom:6px;
+  text-transform:uppercase;font-family:var(--sans);
+}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;margin-bottom:1.25rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:4px;overflow-x:auto;
+}
+.tab-btn{
+  font-size:.8rem;font-weight:600;padding:7px 16px;
+  border-radius:9px;border:none;background:transparent;
+  color:var(--text2);cursor:pointer;transition:.2s;
+  white-space:nowrap;font-family:var(--sans);
+}
+.tab-btn.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none;padding:0}
+.checklist li{
+  display:flex;align-items:flex-start;gap:.6rem;
+  padding:.6rem 0;border-bottom:1px solid var(--border);
+  font-size:.875rem;color:var(--text2);
+}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{
+  content:'✓';
+  color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px;
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:.6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:2rem;text-align:center;
+  font-size:.8rem;color:var(--text2);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Figma Make × Claude MCP</div>
+  <div class="nav-links">
+    <a href="#overview">개요</a>
+    <a href="#credits">크레딧</a>
+    <a href="#animation">애니메이션</a>
+    <a href="#workflow">워크플로</a>
+    <a href="#deploy">배포</a>
+    <a href="#mcp">MCP 연결</a>
+  </div>
+  <span class="nav-tag">2026.05 최신</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span>📐</span> 강의 가이드 · 학생용 완전 정복
+  </div>
+  <h1>Figma Make &<br><em>Claude MCP</em> 연결</h1>
+  <p>AI 채팅 한 줄로 웹앱을 만들고, CSS 애니메이션을 적용하고,<br>Claude와 연결해 스마트하게 작업하는 법을 배웁니다</p>
+  <div class="hero-badges">
+    <span class="badge badge-green">✓ 무료 Starter 플랜 기준</span>
+    <span class="badge badge-purple">✓ 2026년 5월 최신판</span>
+    <span class="badge badge-yellow">✓ CSS 애니메이션 실습</span>
+    <span class="badge badge-pink">✓ Claude MCP 연결 포함</span>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-val">150</span>
+      <span class="stat-label">무료 일일 크레딧</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">500</span>
+      <span class="stat-label">무료 월 크레딧</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">30+</span>
+      <span class="stat-label">기본 앱 생성 크레딧</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">*.figma.site</span>
+      <span class="stat-label">무료 배포 도메인</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- SECTION 1 : OVERVIEW -->
+<section id="overview" class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">01 · 개요</div>
+    <h2>Figma Make가 뭐예요?</h2>
+    <p>채팅으로 입력하면 실제 웹앱이 만들어지는 AI 코드 생성 + 즉시 배포 도구</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;border-color:rgba(124,106,255,0.2)">
+    <div class="flow-row">
+      <div class="flow-box">💬 프롬프트 입력</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box accent">🤖 AI 코드 생성</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">👁 실시간 미리보기</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">🚀 figma.site 배포</div>
+    </div>
+    <p style="text-align:center;font-size:.85rem;color:var(--text2)">복잡한 코딩 없이 이 흐름 하나로 실제 동작하는 웹 앱을 만들 수 있습니다</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem">
+    <div class="card">
+      <div class="card-title">✅ 무료 플랜으로 가능한 것</div>
+      <ul class="card">
+        <li>프롬프트로 HTML/CSS/JS 앱 생성</li>
+        <li>Figma 디자인 첨부 → 코드 변환</li>
+        <li>CSS 애니메이션 · 트랜지션 적용</li>
+        <li>Edit 도구로 요소 직접 수정</li>
+        <li>Make 파일 3개 생성</li>
+        <li>Figma Community 동시 게시로 배포</li>
+        <li>팀원과 실시간 공동 작업</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🔒 유료 플랜만 가능한 것</div>
+      <ul class="card">
+        <li>팀 라이브러리 스타일 불러오기</li>
+        <li>커스텀 도메인 연결</li>
+        <li>Supabase 연동 (로그인/DB)</li>
+        <li>비밀번호 보호 배포</li>
+        <li>내부 전용(조직 내) 배포</li>
+        <li>Make 파일 무제한 생성</li>
+        <li>Figma Sites 배포 (무료 불가)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info">
+    <span class="info-icon">ℹ️</span>
+    <span><strong>Figma Make vs Figma Sites:</strong> Make는 AI 채팅으로 코드 생성 + 배포 (무료도 조건부 가능). Sites는 디자인을 드래그 앤 드롭으로 웹사이트로 변환 (유료 전용 배포). 강의에서는 무료로 쓸 수 있는 <strong>Make</strong>를 중심으로 합니다.</span>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SECTION 2 : CREDITS -->
+<section id="credits" class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">02 · 크레딧</div>
+    <h2>AI 크레딧 완전 이해</h2>
+    <p>크레딧을 알아야 강의를 계획할 수 있어요. 2026년 3월 18일부터 전면 시행 중입니다</p>
+  </div>
+
+  <div class="table-wrap" style="margin-bottom:1rem">
+    <table>
+      <thead>
+        <tr><th>플랜</th><th>좌석</th><th>월 크레딧</th><th>일일 한도</th><th>특이사항</th></tr>
+      </thead>
+      <tbody>
+        <tr class="free-row">
+          <td>Starter <span class="credit-tag c-green">무료</span></td>
+          <td>View 포함</td>
+          <td><span class="credit-tag c-green">500/월</span></td>
+          <td><span class="credit-tag c-yellow">150/일</span></td>
+          <td>일일 한도 소진 시 익일 재개</td>
+        </tr>
+        <tr>
+          <td>Professional</td>
+          <td>Full 좌석</td>
+          <td><span class="credit-tag c-blue">3,000/월</span></td>
+          <td>없음</td>
+          <td>추가 크레딧 구독 구매 가능</td>
+        </tr>
+        <tr>
+          <td>Organization</td>
+          <td>Full 좌석</td>
+          <td><span class="credit-tag c-blue">3,500/월</span></td>
+          <td>없음</td>
+          <td>PAYG 과금 2026년 5월 도입</td>
+        </tr>
+        <tr>
+          <td>Enterprise</td>
+          <td>Full 좌석</td>
+          <td><span class="credit-tag c-purple">4,250/월</span></td>
+          <td>없음</td>
+          <td>사용자별 독립 크레딧 (공유 아님)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-header" style="margin-top:2rem;margin-bottom:1rem">
+    <h2 style="font-size:1.2rem">기능별 크레딧 소모량</h2>
+  </div>
+
+  <div class="table-wrap" style="margin-bottom:1rem">
+    <table>
+      <thead>
+        <tr><th>작업</th><th>크레딧</th><th>예시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>기본 앱/페이지 생성</td>
+          <td><span class="credit-tag c-green">약 30+</span></td>
+          <td>레이아웃 · 테마 · 콘텐츠 구성</td>
+        </tr>
+        <tr>
+          <td>디자인에 인터랙션 추가</td>
+          <td><span class="credit-tag c-yellow">약 75+</span></td>
+          <td>화면 전환 · 컴포넌트 애니메이션</td>
+        </tr>
+        <tr>
+          <td>복잡한 앱 (백엔드 포함)</td>
+          <td><span class="credit-tag c-red">100+</span></td>
+          <td>KV 스토리지 · API 연동</td>
+        </tr>
+        <tr>
+          <td>AI 이미지 편집</td>
+          <td><span class="credit-tag c-green">5~20</span></td>
+          <td>배경 제거 · 확장 · 격리</td>
+        </tr>
+        <tr>
+          <td>Claude Opus 4.6 모델 사용 시</td>
+          <td><span class="credit-tag c-red">대폭 증가</span></td>
+          <td>기본 모델 대비 크레딧 훨씬 많이 소모</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="warn">
+      <span class="warn-icon">⚠️</span>
+      <span><strong>Undo 해도 환불 없음!</strong> 실행 취소를 해도 이미 처리된 AI 작업의 크레딧은 돌아오지 않아요. 시스템 오류로 결과가 안 나왔을 때만 차감 안 됩니다.</span>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span><strong>크레딧 확인:</strong> 상단 Figma 메뉴 → <code style="background:var(--surface2);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.8rem">AI balance</code> 클릭 → 남은 크레딧 + 리셋 날짜 확인</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;background:rgba(34,211,160,0.05);border-color:rgba(34,211,160,0.2)">
+    <div class="card-title">📊 무료 150크레딧/일로 할 수 있는 것 (강의 계획용)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.75rem">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;text-align:center;flex:1;min-width:120px">
+        <div style="font-size:1.4rem;font-weight:700;color:var(--green);font-family:var(--mono)">5회</div>
+        <div style="font-size:.73rem;color:var(--text2);margin-top:2px">기본 앱 생성</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;text-align:center;flex:1;min-width:120px">
+        <div style="font-size:1.4rem;font-weight:700;color:var(--yellow);font-family:var(--mono)">2회</div>
+        <div style="font-size:.73rem;color:var(--text2);margin-top:2px">인터랙티브 작업</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;text-align:center;flex:1;min-width:120px">
+        <div style="font-size:1.4rem;font-weight:700;color:var(--blue);font-family:var(--mono)">익일</div>
+        <div style="font-size:.73rem;color:var(--text2);margin-top:2px">한도 초과 시 재개</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;text-align:center;flex:1;min-width:120px">
+        <div style="font-size:1.4rem;font-weight:700;color:var(--red);font-family:var(--mono)">0원</div>
+        <div style="font-size:.73rem;color:var(--text2);margin-top:2px">추가 비용 없음</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SECTION 3 : ANIMATION -->
+<section id="animation" class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">03 · CSS 애니메이션</div>
+    <h2>Make에서 애니메이션 적용하기</h2>
+    <p>AI에게 말로 설명하면 CSS 코드를 직접 작성해 줍니다</p>
+  </div>
+
+  <!-- Animation showcase -->
+  <div class="anim-grid" style="margin-bottom:1.5rem">
+    <div class="anim-card">
+      <div class="anim-demo"><div class="demo-fade" style="width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--pink));border-radius:10px"></div></div>
+      <div class="a-title">Fade In</div>
+      <div class="a-desc">서서히 나타나기</div>
+    </div>
+    <div class="anim-card">
+      <div class="anim-demo"><div class="demo-slide" style="width:40px;height:40px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:10px"></div></div>
+      <div class="a-title">Slide In</div>
+      <div class="a-desc">방향에서 등장</div>
+    </div>
+    <div class="anim-card">
+      <div class="anim-demo"><div class="demo-scale" style="width:40px;height:40px;background:linear-gradient(135deg,var(--yellow),var(--red));border-radius:10px"></div></div>
+      <div class="a-title">Scale Up</div>
+      <div class="a-desc">크기가 커지며 등장</div>
+    </div>
+    <div class="anim-card">
+      <div class="anim-demo"><div class="demo-spin" style="width:36px;height:36px;border:3px solid var(--accent);border-top-color:transparent;border-radius:50%"></div></div>
+      <div class="a-title">Spinner</div>
+      <div class="a-desc">로딩 회전 효과</div>
+    </div>
+    <div class="anim-card">
+      <div class="anim-demo"><div class="demo-pulse" style="width:40px;height:40px;background:var(--pink);border-radius:50%"></div></div>
+      <div class="a-title">Pulse</div>
+      <div class="a-desc">강조 박동 효과</div>
+    </div>
+    <div class="anim-card">
+      <div class="anim-demo"><div class="demo-bounce" style="width:40px;height:40px;background:linear-gradient(135deg,var(--blue),var(--accent));border-radius:10px"></div></div>
+      <div class="a-title">Bounce In</div>
+      <div class="a-desc">튀어 나오는 효과</div>
+    </div>
+  </div>
+
+  <!-- 3 methods tabs -->
+  <div class="tabs" id="anim-tabs">
+    <button class="tab-btn active" onclick="switchTab('anim-tabs','anim-method1',this)">방법 1 · 프롬프트</button>
+    <button class="tab-btn" onclick="switchTab('anim-tabs','anim-method2',this)">방법 2 · Edit 도구</button>
+    <button class="tab-btn" onclick="switchTab('anim-tabs','anim-method3',this)">방법 3 · 코드 직접</button>
+  </div>
+
+  <div id="anim-method1" class="tab-content active">
+    <div class="card">
+      <div class="card-title">💬 AI 채팅창에 직접 요청 — 가장 쉬운 방법</div>
+      <p style="margin-bottom:1rem">애니메이션 동작을 말로 설명하면 Make가 CSS @keyframes 코드를 자동 작성합니다.</p>
+
+      <div class="prompt-label">실습용 프롬프트 예시</div>
+      <div class="prompt-box">헤더 텍스트가 위에서 아래로 0.6초 ease-out으로 페이드인 되게 해줘</div>
+      <div class="prompt-box">버튼에 hover 시 scale(1.05)로 커지고 배경색이 바뀌는 효과 추가</div>
+      <div class="prompt-box">카드 컴포넌트 3개가 0.2초 간격으로 순서대로 아래서 위로 나타나게 stagger animation 적용</div>
+      <div class="prompt-box">로딩 화면에 spinning circle loader 만들어줘 (CSS animation만 사용)</div>
+      <div class="prompt-box">스크롤 시 섹션이 왼쪽/오른쪽에서 교차로 슬라이드인 되는 효과 넣어줘</div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span><strong>더 정확한 결과를 원한다면:</strong> "0.5초 ease-in-out으로 opacity 0에서 1로 fadeIn" 처럼 <strong>시간 + easing + 속성 + 방향</strong>을 구체적으로 명시하세요!</span>
+    </div>
+  </div>
+
+  <div id="anim-method2" class="tab-content">
+    <div class="card">
+      <div class="card-title">🎯 Edit 도구로 특정 요소만 수정 — 정밀 수정에 좋아요</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Edit 도구 선택</strong>
+            <p>Make 미리보기 상단 툴바에서 연필(✏️) 아이콘 클릭</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>요소 직접 클릭</strong>
+            <p>미리보기에서 애니메이션을 추가할 버튼, 카드, 텍스트 등을 직접 선택</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>해당 요소에만 적용될 내용 입력</strong>
+            <p>예: "이 버튼에만 클릭 시 0.3초 spin animation 추가해줘"</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Make가 선택 요소의 CSS만 타겟하여 수정</strong>
+            <p>다른 요소에는 영향 없이 클릭한 요소에만 애니메이션이 적용됩니다</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info">
+      <span class="info-icon">ℹ️</span>
+      <span>Edit 도구에서는 <strong>폰트 스타일, 텍스트 패딩</strong>도 코드 없이 직접 조작 가능합니다</span>
+    </div>
+  </div>
+
+  <div id="anim-method3" class="tab-content">
+    <div class="card">
+      <div class="card-title">⌨️ CSS 코드를 직접 붙여넣어 적용 — 개발자 방식</div>
+      <p style="margin-bottom:.75rem">원하는 CSS 코드를 작성한 후 Make 채팅창에 붙여넣으면 정확하게 적용됩니다.</p>
+      <div class="code-block">
+        <span class="cb-label">CSS</span>
+<span class="comment">/* 아래 CSS를 hero 타이틀에 적용해줘 */</span>
+
+<span class="kw">@keyframes</span> <span class="fn">fadeInDown</span> {
+  <span class="kw">from</span> {
+    <span class="prop">opacity</span>: 0;
+    <span class="prop">transform</span>: translateY(-<span class="str">20px</span>);
+  }
+  <span class="kw">to</span> {
+    <span class="prop">opacity</span>: 1;
+    <span class="prop">transform</span>: translateY(<span class="str">0</span>);
+  }
+}
+
+<span class="fn">.hero-title</span> {
+  <span class="prop">animation</span>: fadeInDown <span class="str">0.6s</span> ease-out forwards;
+}</div>
+      <div class="code-block">
+        <span class="cb-label">CSS · Hover 효과</span>
+<span class="comment">/* 버튼 hover 시 위로 살짝 올라오는 효과 */</span>
+<span class="fn">.cta-button</span> {
+  <span class="prop">transition</span>: transform <span class="str">0.2s</span> ease, box-shadow <span class="str">0.2s</span> ease;
+}
+<span class="fn">.cta-button:hover</span> {
+  <span class="prop">transform</span>: translateY(-<span class="str">3px</span>);
+  <span class="prop">box-shadow</span>: <span class="str">0 8px 24px rgba(124,106,255,0.3)</span>;
+}</div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span>코드를 복사할 때 <strong>"이 코드를 .hero-title 클래스에 적용해줘"</strong>처럼 어디에 적용할지 함께 알려주면 더 정확하게 처리됩니다</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SECTION 4 : WORKFLOW -->
+<section id="workflow" class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">04 · 작업 흐름</div>
+    <h2>디자인 연결 · 수정 방법</h2>
+    <p>기존 Figma 디자인을 Make에 가져오고 AI로 수정하는 방법</p>
+  </div>
+
+  <div class="warn">
+    <span class="warn-icon">⚠️</span>
+    <span><strong>URL 붙여넣기는 작동 안 해요!</strong> Figma Design 파일의 URL을 Make 채팅창에 넣으면 제대로 인식하지 못합니다. 아래 방법을 사용하세요.</span>
+  </div>
+
+  <div style="margin-top:1.5rem;margin-bottom:1rem">
+    <div class="card-title" style="margin-bottom:.75rem">📥 방법 A — 프레임 복사 · 붙여넣기</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Figma Design 파일</strong>에서 원하는 <strong>프레임(Frame) 또는 컴포넌트</strong> 선택 (전체 페이지보다 섹션별 분리 권장)</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Ctrl+C</strong>로 복사 후 Make AI <strong>채팅 입력창에 Ctrl+V</strong>로 붙여넣기</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">"이 디자인을 기반으로 인터랙티브 웹페이지로 만들어줘" 같이 지시 입력</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:1.5rem">
+    <div class="card-title" style="margin-bottom:.75rem">📎 방법 B — 첨부(Attach) 기능 사용</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Make 채팅창 하단 <strong>첨부 아이콘(📎 클립)</strong> 클릭</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">Figma 파일에서 <strong>원하는 프레임 선택 후 첨부</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">프롬프트와 함께 전송 → AI가 디자인을 분석해 코드 생성</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-header" style="margin-top:2rem;margin-bottom:1rem">
+    <h2 style="font-size:1.3rem">✏️ 생성된 결과물 수정하기</h2>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem">
+    <div class="card">
+      <div class="card-title">💬 채팅으로 수정 요청</div>
+      <p>미리보기를 보면서 자연어로 지시. 가장 빠른 방법입니다.</p>
+      <div class="prompt-box" style="margin-top:.75rem">버튼 배경색을 #6C63FF 보라색으로 변경</div>
+      <div class="prompt-box">본문 폰트를 Noto Sans KR, 줄간격 1.6으로</div>
+      <div class="prompt-box">모바일에서 3컬럼 → 1컬럼 반응형 처리</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎯 Edit 도구로 직접 조작</div>
+      <p>미리보기에서 요소를 클릭하면 폰트, 패딩을 코드 없이 직접 조작 가능합니다.</p>
+      <ul class="card" style="margin-top:.75rem">
+        <li>폰트 스타일 · 크기 직접 변경</li>
+        <li>텍스트 패딩 드래그 조절</li>
+        <li>특정 요소만 타겟 수정 가능</li>
+        <li>배경색 · 보더 등 시각적 속성</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⌨️ 코드 탭에서 직접 확인 · 수정</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Make 인터페이스 우측 상단 <strong>[Code] 탭</strong> 클릭 → 생성된 HTML/CSS/JS 코드 확인</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">코드를 복사 → <strong>VS Code</strong> 등 에디터에서 직접 수정 후 다시 붙여넣기</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">수정된 코드를 채팅창에 붙여넣으며 "이 코드로 업데이트해줘" 요청</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SECTION 5 : DEPLOY -->
+<section id="deploy" class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">05 · 배포</div>
+    <h2>결과물을 웹에 배포하기</h2>
+    <p>만든 앱을 세상에 공개하고 URL로 공유하는 방법</p>
+  </div>
+
+  <div class="card" style="border-color:rgba(34,211,160,0.3);margin-bottom:1.5rem">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+      <span style="background:rgba(34,211,160,0.15);color:var(--green);font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(34,211,160,0.2)">★ 무료 Starter 플랜 배포 방법</span>
+    </div>
+    <div class="warn" style="margin-bottom:1rem">
+      <span class="warn-icon">⚠️</span>
+      <span>무료 플랜은 <strong>Figma Community에 동시 게시</strong>하는 조건으로만 공개 URL 배포가 가능합니다</span>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Make settings 열기</strong><p>Make 파일 우측 상단 [Make settings] 클릭</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>메타데이터 입력</strong><p>Title(브라우저 탭 제목), Description(설명) 입력. SEO와 접근성에 영향을 줍니다</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>[Publish] 클릭 → "Figma Community에도 게시" 체크 필수</strong><p>무료 플랜은 이 체크박스를 반드시 선택해야 배포됩니다</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>배포 완료 — *.figma.site URL 발급</strong><p>공개 URL을 복사해 공유 · SNS 게시 · QR코드 생성에 활용</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔄 배포 후 업데이트</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">Make 파일에서 수정 진행</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">우측 상단 <strong>[Publish update]</strong> 클릭</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">동일 URL에 변경사항 반영 (URL 불변)</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏗️ 호스팅 인프라</div>
+      <ul class="card">
+        <li>파일 서버: <strong>Amazon Web Services</strong></li>
+        <li>도메인/라우팅: <strong>Cloudflare</strong></li>
+        <li>기본 도메인: <code style="background:var(--surface2);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:.78rem">*.figma.site</code></li>
+        <li>검색엔진 미노출 (기본값, 변경 가능)</li>
+        <li>파일 삭제 → 배포 자동 취소</li>
+        <li>유료 → 무료 다운그레이드 시 기존 배포 유지</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top:1rem">
+    <span class="tip-icon">💡</span>
+    <span><strong>교육 플랜 참고:</strong> 대학/부트캠프 교육 플랜은 Make 파일 1개 배포 포함. K-12 초중고 학생은 Figma Make 사용 불가 (대학생/성인 교육만 가능)</span>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SECTION 6 : MCP -->
+<section id="mcp" class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">06 · Claude MCP 연결</div>
+    <h2>Claude와 Figma Make 연결하기</h2>
+    <p>MCP(Model Context Protocol)로 Claude가 Figma를 직접 읽고 제안하게 만드는 방법</p>
+  </div>
+
+  <div class="mcp-hero">
+    <h3>🔗 MCP란?</h3>
+    <p>MCP(Model Context Protocol)는 AI 모델이 외부 도구·파일·서비스에<br>직접 접근할 수 있게 해주는 연결 프로토콜입니다</p>
+    <div class="flow-row">
+      <div class="flow-box">Claude AI</div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-box accent">MCP 서버</div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-box">Figma API</div>
+      <div class="flow-arrow">↔</div>
+      <div class="flow-box green">내 Figma 파일</div>
+    </div>
+    <p style="font-size:.85rem;color:var(--text2)">Claude가 내 Figma 파일의 레이어 구조, 색상, 컴포넌트를 직접 읽고 분석할 수 있습니다</p>
+  </div>
+
+  <div class="tabs" id="mcp-tabs">
+    <button class="tab-btn active" onclick="switchTab('mcp-tabs','mcp-step1',this)">① 개념 이해</button>
+    <button class="tab-btn" onclick="switchTab('mcp-tabs','mcp-step2',this)">② 준비 사항</button>
+    <button class="tab-btn" onclick="switchTab('mcp-tabs','mcp-step3',this)">③ 설치 및 설정</button>
+    <button class="tab-btn" onclick="switchTab('mcp-tabs','mcp-step4',this)">④ 활용 방법</button>
+  </div>
+
+  <div id="mcp-step1" class="tab-content active">
+    <div class="card">
+      <div class="card-title">MCP 연결 시 무엇이 가능한가요?</div>
+      <div class="grid-2" style="margin-top:.75rem">
+        <div style="background:var(--surface2);border-radius:10px;padding:1rem">
+          <div style="color:var(--green);font-size:.85rem;font-weight:700;margin-bottom:.5rem">✅ 연결 후 가능한 것</div>
+          <ul style="list-style:none;padding:0">
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">Claude가 Figma 파일 구조 직접 분석</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">레이어명 · 색상 · 폰트 자동 추출</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">디자인 → 코드 변환 정확도 향상</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">"이 컴포넌트 어떻게 구현할까?" 질문 가능</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0">컴포넌트 개선 제안 받기</li>
+          </ul>
+        </div>
+        <div style="background:var(--surface2);border-radius:10px;padding:1rem">
+          <div style="color:var(--blue);font-size:.85rem;font-weight:700;margin-bottom:.5rem">🔧 MCP가 사용하는 Figma API</div>
+          <ul style="list-style:none;padding:0">
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">파일 읽기 (레이어 트리)</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">컴포넌트 · 스타일 조회</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">이미지 · 에셋 추출</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)">코멘트 읽기 · 작성</li>
+            <li style="font-size:.83rem;color:var(--text2);padding:4px 0">파일 메타데이터 조회</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mcp-step2" class="tab-content">
+    <div class="card">
+      <div class="card-title">🛒 준비해야 할 것들</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Claude Desktop 앱 설치</strong>
+            <p>claude.ai/desktop 에서 Mac 또는 Windows 버전 다운로드 · 설치<br>
+            ※ 웹 버전이 아닌 <strong>데스크탑 앱</strong>에서만 MCP 설정 가능</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Figma Personal Access Token 발급</strong>
+            <p>Figma → 우측 상단 프로필 아이콘 → Settings → Security → <strong>Personal access tokens</strong> → [Generate new token] → 이름 입력 후 생성 → 토큰 복사 (한 번만 보임!)</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Node.js 설치 확인</strong>
+            <p>터미널에서 <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:.8rem">node -v</code> 입력 → 버전 나오면 OK. 없으면 nodejs.org에서 설치</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="warn">
+      <span class="warn-icon">⚠️</span>
+      <span>Personal Access Token은 <strong>한 번만 표시</strong>됩니다! 반드시 메모장 등에 저장해 두세요. 잃어버리면 새로 발급해야 합니다.</span>
+    </div>
+  </div>
+
+  <div id="mcp-step3" class="tab-content">
+    <div class="card">
+      <div class="card-title">⚙️ Claude Desktop MCP 설정 방법</div>
+
+      <div style="margin-bottom:1rem">
+        <div class="prompt-label">Step 1 · 설정 파일 열기</div>
+        <div class="code-block">
+          <span class="cb-label">Terminal</span>
+<span class="comment"># Mac의 경우</span>
+open ~/Library/Application\ Support/Claude/
+
+<span class="comment"># Windows의 경우</span>
+%APPDATA%\Claude\</div>
+        <p style="font-size:.83rem;color:var(--text2)">해당 폴더에서 <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:.78rem">claude_desktop_config.json</code> 파일을 텍스트 에디터로 열기</p>
+      </div>
+
+      <div style="margin-bottom:1rem">
+        <div class="prompt-label">Step 2 · Figma MCP 설정 추가</div>
+        <div class="code-block">
+          <span class="cb-label">claude_desktop_config.json</span>
+{
+  <span class="prop">"mcpServers"</span>: {
+    <span class="prop">"figma"</span>: {
+      <span class="prop">"command"</span>: <span class="str">"npx"</span>,
+      <span class="prop">"args"</span>: [
+        <span class="str">"-y"</span>,
+        <span class="str">"@modelcontextprotocol/server-figma"</span>
+      ],
+      <span class="prop">"env"</span>: {
+        <span class="prop">"FIGMA_API_TOKEN"</span>: <span class="str">"figd_여기에_발급받은_토큰_붙여넣기"</span>
+      }
+    }
+  }
+}</div>
+        <div class="warn" style="margin-top:.5rem">
+          <span class="warn-icon">⚠️</span>
+          <span><code>figd_여기에_발급받은_토큰_붙여넣기</code> 부분을 실제 발급받은 토큰으로 교체하세요</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="prompt-label">Step 3 · Claude Desktop 재시작</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">Claude Desktop 앱을 완전히 종료 후 재시작</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">새 대화 시작 → 입력창 하단에 <strong>🔧 도구 아이콘</strong> 또는 MCP 연결 표시 확인</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">"figma 연결됐어?" 라고 물어보거나 Figma 파일 URL을 붙여넣어 테스트</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span>설정이 잘 안 된다면 JSON 문법 오류가 많습니다. <a href="https://jsonlint.com" target="_blank" style="color:var(--accent2)">jsonlint.com</a>에서 문법 검사 후 다시 시도해보세요</span>
+    </div>
+  </div>
+
+  <div id="mcp-step4" class="tab-content">
+    <div class="card">
+      <div class="card-title">🚀 연결 후 Claude에게 이렇게 물어보세요!</div>
+
+      <div class="prompt-label" style="margin-top:.75rem">Figma 파일 분석 요청</div>
+      <div class="prompt-box">이 Figma 파일 분석해줘: https://www.figma.com/file/ABC123/내파일이름</div>
+      <div class="prompt-box">이 파일의 색상 팔레트와 주요 폰트를 CSS 변수로 정리해줘</div>
+      <div class="prompt-box">버튼 컴포넌트의 hover 상태가 어떻게 설정되어 있어?</div>
+
+      <div class="prompt-label" style="margin-top:1rem">Make 작업과 연계</div>
+      <div class="prompt-box">이 Figma 디자인의 레이어 구조를 보고, Figma Make에서 쓸 수 있는 프롬프트를 작성해줘</div>
+      <div class="prompt-box">카드 컴포넌트의 스타일(색상, 패딩, 보더) 값을 읽어서 CSS 코드로 변환해줘</div>
+      <div class="prompt-box">이 랜딩페이지 디자인을 HTML로 구현하려면 어떤 CSS 애니메이션이 어울릴까?</div>
+
+      <div class="prompt-label" style="margin-top:1rem">디자인 개선 제안</div>
+      <div class="prompt-box">현재 디자인의 접근성(contrast ratio) 문제가 있는 부분 찾아줘</div>
+      <div class="prompt-box">모바일 반응형으로 개선할 때 주의해야 할 레이아웃 포인트는 뭐야?</div>
+    </div>
+
+    <div class="grid-2" style="margin-top:1rem">
+      <div class="card">
+        <div class="card-title">✅ MCP 연결 확인 체크리스트</div>
+        <ul class="checklist">
+          <li>Claude Desktop 앱 설치 완료</li>
+          <li>Figma Personal Token 발급 완료</li>
+          <li>config.json 파일 수정 완료</li>
+          <li>JSON 문법 오류 없음</li>
+          <li>앱 재시작 후 도구 아이콘 확인</li>
+          <li>Figma 파일 URL로 테스트 성공</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">🔧 자주 발생하는 오류</div>
+        <ul class="card">
+          <li><strong>JSON 파싱 오류</strong>: 쉼표 · 따옴표 누락 확인</li>
+          <li><strong>토큰 인증 실패</strong>: 토큰 재발급 후 재시도</li>
+          <li><strong>도구 아이콘 없음</strong>: 앱 완전 재시작 필요</li>
+          <li><strong>파일 접근 불가</strong>: Figma 파일 공유 권한 확인</li>
+          <li><strong>Node.js 오류</strong>: node -v 로 설치 여부 확인</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SUMMARY -->
+<section class="reveal">
+  <div class="sec-header">
+    <div class="sec-tag">07 · 수업 계획</div>
+    <h2>4시간 강의 흐름 (무료 플랜)</h2>
+    <p>크레딧을 최적으로 사용하는 강의 시나리오</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>시간</th><th>단계</th><th>활동</th><th>크레딧</th><th>포인트</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:var(--text);font-weight:600">0~30분</td><td>워밍업</td><td>Make 파일 생성 + 간단한 랜딩페이지 프롬프트</td><td><span class="credit-tag c-green">~30</span></td><td>Make UI 익히기</td></tr>
+        <tr><td style="color:var(--text);font-weight:600">30~70분</td><td>디자인 연결</td><td>Figma 프레임 복사 → Make 코드 변환</td><td><span class="credit-tag c-yellow">~40</span></td><td>붙여넣기 실습</td></tr>
+        <tr><td style="color:var(--text);font-weight:600">70~110분</td><td>CSS 애니메이션</td><td>프롬프트로 fadeIn · hover · stagger 적용</td><td><span class="credit-tag c-yellow">~30</span></td><td>효과별 차이 비교</td></tr>
+        <tr><td style="color:var(--text);font-weight:600">110~140분</td><td>반응형 수정</td><td>Edit 도구 + 채팅으로 모바일 최적화</td><td><span class="credit-tag c-green">~20</span></td><td>직접 조작 체험</td></tr>
+        <tr><td style="color:var(--text);font-weight:600">140~160분</td><td>배포 · 공유</td><td>Make settings → Community 게시 → URL 공유</td><td><span class="credit-tag c-green">0</span></td><td>포트폴리오 완성</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:1rem;background:rgba(34,211,160,0.04);border-color:rgba(34,211,160,0.2)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <div>
+        <div class="card-title">총 예상 크레딧 소모</div>
+        <p>하루 150 크레딧 한도 내에서 강의 전체 진행 가능</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:2rem;font-weight:700;color:var(--green);font-family:var(--mono)">~120</div>
+        <div style="font-size:.75rem;color:var(--text2)">크레딧 / 수업당</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:.5rem">
+    <span class="badge badge-purple" style="margin-right:6px">Figma Make</span>
+    <span class="badge badge-green">2026년 5월 기준</span>
+  </div>
+  <p>이 강의 자료는 Figma 공식 Help Center 및 포럼을 기반으로 제작되었습니다</p>
+  <p style="margin-top:.25rem;color:rgba(144,144,168,0.5)">Korea Art Tech Studio · AI Vibe Coding 강의 자료</p>
+</footer>
+
+<script>
+function switchTab(tabGroupId, targetId, btn) {
+  const group = document.getElementById(tabGroupId);
+  group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const parent = btn.closest('section') || document;
+  parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(targetId).classList.add('active');
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
