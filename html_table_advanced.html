@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 테이블 심화 실습 문제지</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&family=Source+Code+Pro:wght@400;600&display=swap');
+
+    :root {
+        --bg: #f2f0eb;
+        --bg2: #ffffff;
+        --bg3: #eceae4;
+        --border: #d8d4c8;
+        --text: #1a1a1a;
+        --muted: #888880;
+        --accent: #8b1a1a;
+        --radius: 10px;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Noto Sans KR', sans-serif;
+        line-height: 1.85;
+        padding-bottom: 80px;
+    }
+
+    /* 헤더 */
+    .header { background: #111; color: #fff; }
+    .header-top { display:flex; align-items:stretch; border-bottom:4px solid var(--accent); }
+    .header-left {
+        background: var(--accent); padding: 24px 28px;
+        display:flex; align-items:center; justify-content:center;
+        writing-mode: vertical-rl; font-size:0.7rem; letter-spacing:3px;
+        font-family:'Source Code Pro',monospace; color:rgba(255,255,255,0.9); flex-shrink:0;
+    }
+    .header-main { padding:28px 36px; flex:1; }
+    .header-badge { font-family:'Source Code Pro',monospace; font-size:0.7rem; letter-spacing:3px; color:rgba(255,255,255,0.4); margin-bottom:10px; }
+    .header-title { font-size:2rem; font-weight:900; line-height:1.2; }
+    .header-title em { color:#e05050; font-style:normal; }
+    .header-sub { font-size:0.88rem; color:rgba(255,255,255,0.5); margin-top:8px; }
+    .header-info { display:flex; border-top:1px solid rgba(255,255,255,0.1); }
+    .info-cell { flex:1; padding:14px 30px; border-right:1px solid rgba(255,255,255,0.1); font-size:0.82rem; }
+    .info-cell:last-child { border-right:none; }
+    .info-label { font-size:0.68rem; color:rgba(255,255,255,0.35); letter-spacing:1px; margin-bottom:4px; }
+    .info-val { color:rgba(255,255,255,0.85); font-weight:700; }
+    .info-line { border-bottom:1px solid rgba(255,255,255,0.3); min-width:160px; display:inline-block; }
+
+    /* 공지 */
+    .notice {
+        background:#fff5f5; border:1px solid #f0b0b0;
+        border-left:4px solid var(--accent); border-radius:var(--radius);
+        padding:16px 20px; margin:28px auto; max-width:860px;
+        font-size:0.88rem; color:#6a1a1a; line-height:1.9;
+    }
+    .notice strong { color:var(--accent); }
+
+    /* 태그 범위 */
+    .tag-scope {
+        background:#f0f6ff; border:1px solid #aaccf0;
+        border-left:4px solid #1a4a8a; border-radius:var(--radius);
+        padding:16px 20px; margin-bottom:28px;
+        font-size:0.87rem; color:#1a3a6a; line-height:1.95;
+        max-width:860px; margin-left:auto; margin-right:auto;
+    }
+    .tag-scope strong { color:#1a4a8a; }
+    .tag-scope code {
+        font-family:'Source Code Pro',monospace; font-size:0.8rem;
+        background:rgba(26,74,138,0.1); padding:1px 7px; border-radius:4px;
+    }
+
+    /* 래퍼 */
+    .wrap { max-width:860px; margin:0 auto; padding:0 20px; }
+
+    /* 문제 카드 */
+    .problem {
+        background:var(--bg2); border:1px solid var(--border);
+        border-radius:var(--radius); overflow:hidden;
+        margin-bottom:36px; box-shadow:0 2px 10px rgba(0,0,0,0.07);
+    }
+    .prob-head { display:flex; align-items:stretch; border-bottom:1px solid var(--border); }
+    .prob-num {
+        width:64px; display:flex; flex-direction:column;
+        align-items:center; justify-content:center;
+        padding:18px 0; flex-shrink:0;
+        font-family:'Source Code Pro',monospace; color:#fff;
+    }
+    .prob-num .nl { font-size:0.58rem; letter-spacing:1px; color:rgba(255,255,255,0.45); }
+    .prob-num .nv { font-size:1.6rem; font-weight:900; line-height:1; }
+    .prob-title-area { padding:16px 22px; flex:1; }
+    .prob-title { font-size:1.05rem; font-weight:800; }
+    .prob-file {
+        font-family:'Source Code Pro',monospace; font-size:0.75rem;
+        margin-top:7px; display:flex; align-items:center; gap:6px;
+    }
+    .prob-file span { padding:2px 10px; border-radius:5px; font-weight:700; }
+    .prob-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:9px; }
+    .ptag { font-family:'Source Code Pro',monospace; font-size:0.67rem; padding:2px 9px; border-radius:10px; font-weight:600; }
+    .ptag.key { font-weight:900; font-size:0.7rem; }
+    .prob-score { padding:16px 22px; text-align:center; flex-shrink:0; border-left:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; min-width:80px; }
+    .sv { font-size:1.6rem; font-weight:900; color:var(--accent); font-family:'Source Code Pro',monospace; }
+    .sl { font-size:0.65rem; color:var(--muted); }
+
+    /* 색상 */
+    .p1 .prob-num { background:#1a4a8a; }
+    .p1 .prob-title { color:#1a4a8a; }
+    .p1 .prob-file span { background:rgba(26,74,138,0.12); color:#1a4a8a; }
+    .p1 .ptag { background:rgba(26,74,138,0.09); color:#1a4a8a; }
+    .p1 .cond-num { background:#1a4a8a; }
+
+    .p2 .prob-num { background:#1a6a3a; }
+    .p2 .prob-title { color:#1a6a3a; }
+    .p2 .prob-file span { background:rgba(26,106,58,0.12); color:#1a6a3a; }
+    .p2 .ptag { background:rgba(26,106,58,0.09); color:#1a6a3a; }
+    .p2 .cond-num { background:#1a6a3a; }
+
+    .p3 .prob-num { background:#7a3a0a; }
+    .p3 .prob-title { color:#7a3a0a; }
+    .p3 .prob-file span { background:rgba(122,58,10,0.12); color:#7a3a0a; }
+    .p3 .ptag { background:rgba(122,58,10,0.09); color:#7a3a0a; }
+    .p3 .cond-num { background:#7a3a0a; }
+
+    /* 본문 */
+    .prob-body { padding:24px 26px; }
+    .scenario {
+        background:var(--bg3); border-radius:8px;
+        padding:15px 20px; margin-bottom:20px;
+        font-size:0.88rem; color:#444; line-height:1.9;
+        border-left:3px solid var(--border);
+    }
+    .scenario strong { color:var(--text); }
+
+    /* 핵심 포인트 */
+    .key-point {
+        background:#fff0f0; border:1px solid #f0c0c0;
+        border-left:3px solid var(--accent);
+        border-radius:8px; padding:13px 18px; margin-bottom:20px;
+        font-size:0.85rem; color:#6a1a1a; line-height:1.85;
+    }
+    .key-point strong { color:var(--accent); }
+    .key-point code {
+        font-family:'Source Code Pro',monospace; font-size:0.8rem;
+        background:rgba(139,26,26,0.08); padding:1px 6px; border-radius:4px;
+    }
+
+    /* 조건 */
+    .cond-title { font-size:0.72rem; letter-spacing:2px; color:var(--muted); font-family:'Source Code Pro',monospace; margin-bottom:10px; }
+    .cond-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+    .cond-list li {
+        display:flex; align-items:flex-start; gap:10px;
+        font-size:0.87rem; line-height:1.75;
+        padding:10px 14px; background:var(--bg);
+        border-radius:7px; border:1px solid var(--border);
+    }
+    .cond-list li.hard { border-color:#f0c0c0; background:#fff8f8; }
+    .cond-num {
+        font-family:'Source Code Pro',monospace; font-size:0.72rem; font-weight:700;
+        min-width:22px; height:22px; border-radius:50%;
+        display:flex; align-items:center; justify-content:center;
+        flex-shrink:0; margin-top:1px; color:#fff;
+    }
+    .hard-mark { font-size:0.62rem; font-weight:800; color:var(--accent); flex-shrink:0; margin-top:3px; }
+    .cond-list code {
+        font-family:'Source Code Pro',monospace; font-size:0.8rem;
+        background:rgba(0,0,0,0.06); padding:1px 7px; border-radius:4px; white-space:nowrap;
+    }
+
+    /* 미리보기 */
+    .preview-wrap { border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .preview-bar {
+        background:var(--bg3); border-bottom:1px solid var(--border);
+        padding:7px 14px; font-size:0.72rem; color:var(--muted);
+        font-family:'Source Code Pro',monospace; display:flex; align-items:center; gap:7px;
+    }
+    .dot { width:9px; height:9px; border-radius:50%; }
+    .dr{background:#ff5f57;} .dy{background:#febc2e;} .dg{background:#28c840;}
+    .preview-content {
+        padding:20px 22px; background:#fff;
+        font-size:0.87rem; line-height:1.9;
+    }
+    .preview-content h1 { font-size:1.35rem; font-weight:900; margin-bottom:8px; }
+    .preview-content h2 { font-size:1.05rem; font-weight:700; margin:14px 0 7px; }
+    .preview-content h3 { font-size:0.95rem; font-weight:700; margin:10px 0 5px; }
+    .preview-content p  { margin-bottom:6px; font-size:0.86rem; }
+    .preview-content ul,.preview-content ol { padding-left:22px; margin-bottom:8px; font-size:0.85rem; }
+    .preview-content li { margin-bottom:3px; }
+    .preview-content table { border-collapse:collapse; width:100%; margin-bottom:10px; font-size:0.83rem; }
+    .preview-content caption { font-weight:700; font-size:0.9rem; margin-bottom:6px; text-align:left; }
+    .preview-content th { background:#f0f0f0; padding:7px 10px; border:1px solid #ccc; text-align:center; font-weight:700; font-size:0.82rem; }
+    .preview-content td { padding:7px 10px; border:1px solid #ccc; text-align:center; font-size:0.82rem; }
+    .preview-content td.left { text-align:left; }
+    .preview-content tfoot td { background:#f8f8f8; font-weight:700; }
+    .preview-content a  { color:#1a4a8a; text-decoration:underline; }
+    .preview-content hr { border:none; border-top:1px solid #ddd; margin:12px 0; }
+    .preview-content strong { font-weight:800; }
+    .preview-content em { font-style:italic; }
+    .preview-content mark { background:#ffe066; padding:1px 3px; border-radius:3px; }
+    .preview-content del { color:#aaa; }
+    .preview-content small { font-size:0.72rem; color:#aaa; }
+    .preview-content img { border-radius:4px; }
+
+    /* 힌트 */
+    .hint-box {
+        background:#f0f6ff; border:1px solid #b8d0f0;
+        border-radius:8px; padding:13px 18px; margin-top:14px;
+        font-size:0.83rem; color:#1a3a6a; line-height:1.85;
+    }
+    .hint-box strong { color:#1a4a8a; }
+    .hint-box code {
+        font-family:'Source Code Pro',monospace; font-size:0.78rem;
+        background:rgba(26,74,138,0.1); padding:1px 6px; border-radius:4px;
+    }
+
+    /* 병합 구조 다이어그램 */
+    .merge-diagram {
+        background:#09090f; border:1px solid #2a2a3a;
+        border-radius:8px; padding:16px 20px; margin-top:14px;
+        font-family:'Source Code Pro',monospace; font-size:0.82rem;
+        line-height:2.1; color:#c0c0d8; overflow-x:auto;
+    }
+    .merge-diagram .ct { color:#7dd3fc; }
+    .merge-diagram .ca { color:#fcd34d; }
+    .merge-diagram .cv { color:#86efac; }
+    .merge-diagram .cc { color:#4a5a70; font-style:italic; }
+
+    /* 하단 */
+    .footer-note {
+        text-align:center; margin-top:40px; padding:20px;
+        font-size:0.8rem; color:var(--muted);
+        border-top:1px solid var(--border);
+    }
+
+    @media print { body{background:#fff;} .problem{box-shadow:none;page-break-inside:avoid;} }
+    @media(max-width:600px){ .header-left{display:none;} .header-title{font-size:1.5rem;} }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+    <div class="header-top">
+        <div class="header-left">HTML TABLE</div>
+        <div class="header-main">
+            <div class="header-badge">TABLE ADVANCED WORKSHEET · 테이블 심화 실습 문제지</div>
+            <div class="header-title">HTML <em>테이블 심화</em> 문제지</div>
+            <div class="header-sub">colspan · rowspan · thead · tbody · tfoot · caption 완전 정복</div>
+        </div>
+    </div>
+    <div class="header-info">
+        <div class="info-cell">
+            <div class="info-label">이름 NAME</div>
+            <div class="info-val"><span class="info-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">날짜 DATE</div>
+            <div class="info-val"><span class="info-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">총 문항</div>
+            <div class="info-val">3문제</div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">총 점수</div>
+            <div class="info-val">100점</div>
+        </div>
+    </div>
+</div>
+
+<div class="wrap">
+
+    <div class="notice">
+        📌 <strong>작성 안내</strong><br>
+        ① 모든 문제는 <strong>HTML 태그만</strong> 사용해요 — CSS 속성 사용 시 감점<br>
+        ② 🔴 <strong>심화 조건</strong> 항목은 배점이 높아요 — colspan / rowspan 을 정확하게 써야 해요<br>
+        ③ 병합한 칸만큼 반드시 <code>&lt;td&gt;</code> 또는 <code>&lt;th&gt;</code> 를 <strong>빼줘야</strong> 해요<br>
+        ④ table 구조 순서 : <code>table &gt; caption &gt; thead &gt; tbody &gt; tfoot</code>
+    </div>
+
+    <div class="tag-scope">
+        ✅ <strong>이번 문제지 사용 태그 범위</strong><br>
+        <strong>표 태그 (핵심)</strong> :
+        <code>&lt;table&gt;</code> <code>&lt;caption&gt;</code>
+        <code>&lt;thead&gt;</code> <code>&lt;tbody&gt;</code> <code>&lt;tfoot&gt;</code>
+        <code>&lt;tr&gt;</code> <code>&lt;th&gt;</code> <code>&lt;td&gt;</code>
+        <code>colspan</code> <code>rowspan</code><br>
+        <strong>텍스트/구조</strong> :
+        <code>&lt;h1&gt;~&lt;h3&gt;</code> <code>&lt;p&gt;</code> <code>&lt;strong&gt;</code> <code>&lt;em&gt;</code>
+        <code>&lt;mark&gt;</code> <code>&lt;small&gt;</code> <code>&lt;del&gt;</code> <code>&lt;span&gt;</code>
+        <code>&lt;div&gt;</code> <code>&lt;hr&gt;</code><br>
+        <strong>목록/링크/이미지</strong> :
+        <code>&lt;ul&gt;</code> <code>&lt;ol&gt;</code> <code>&lt;li&gt;</code>
+        <code>&lt;a&gt;</code> <code>&lt;img&gt;</code>
+    </div>
+
+
+    <!-- ══════════════════════════ -->
+    <!-- Q1 : 주간 시간표          -->
+    <!-- ══════════════════════════ -->
+    <div class="problem p1">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">01</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">📅 우리 반 주간 시간표</div>
+                <div class="prob-file">저장 파일명 → <span>timetable.html</span></div>
+                <div class="prob-tags">
+                    <span class="ptag key">★ rowspan</span>
+                    <span class="ptag key">★ colspan</span>
+                    <span class="ptag">thead / tbody</span>
+                    <span class="ptag">th / td</span>
+                    <span class="ptag">caption</span>
+                    <span class="ptag">strong / mark</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">30</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                월요일부터 금요일까지 1교시~5교시 주간 시간표를 HTML 표로 만들어요.
+                같은 과목이 연속으로 이어지는 경우 rowspan 으로 세로 병합하고,
+                점심시간은 colspan 으로 전체 요일을 가로 병합해서 표현하세요.
+            </div>
+
+            <div class="key-point">
+                🔴 <strong>핵심 포인트</strong><br>
+                <strong>rowspan</strong> : 같은 과목이 연달아 2교시 이상일 경우 → 세로로 합치기<br>
+                <strong>colspan</strong> : 점심시간처럼 모든 칸이 하나로 묶일 경우 → 가로로 합치기<br>
+                병합한 만큼 다른 행의 <code>&lt;td&gt;</code> 를 빼줘야 칸이 어긋나지 않아요!
+            </div>
+
+            <div class="cond-title">📌 작성 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span><code>&lt;h1&gt;</code> 로 <strong>"우리 반 주간 시간표"</strong> 제목을 작성하세요</li>
+                <li><span class="cond-num">2</span><code>&lt;caption&gt;</code> 으로 표 제목 <strong>"2025년 1학기 시간표"</strong> 를 넣으세요</li>
+                <li><span class="cond-num">3</span><code>&lt;thead&gt;</code> 에 <code>&lt;th&gt;</code> 로 <strong>교시 / 월 / 화 / 수 / 목 / 금</strong> 헤더를 작성하세요</li>
+                <li><span class="cond-num">4</span><code>&lt;tbody&gt;</code> 에 1교시~5교시 시간표를 자유롭게 작성하세요 (과목은 마음대로)</li>
+                <li class="hard"><span class="cond-num">5</span><span class="hard-mark">🔴 심화</span>
+                    월요일 또는 어느 요일이든 같은 과목이 연달아 2교시 이상인 경우를 만들어서 <code>rowspan="2"</code> 이상으로 세로 병합하세요 (최소 1곳 이상)</li>
+                <li class="hard"><span class="cond-num">6</span><span class="hard-mark">🔴 심화</span>
+                    3교시와 4교시 사이에 점심시간 행을 추가하고 <code>colspan="6"</code> 으로 교시 포함 전체 6칸을 하나로 합치세요</li>
+                <li><span class="cond-num">7</span>가장 좋아하는 과목에 <code>&lt;mark&gt;</code> 강조를, 가장 싫어하는 과목에 <code>&lt;em&gt;</code> 을 적용하세요</li>
+                <li><span class="cond-num">8</span>표 아래에 <code>&lt;small&gt;</code> 로 <strong>"※ 시간표는 변경될 수 있습니다"</strong> 주의사항을 작성하세요</li>
+            </ul>
+
+            <div class="cond-title">🖥️ 결과 화면 예시</div>
+            <div class="preview-wrap">
+                <div class="preview-bar"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>브라우저 화면 (timetable.html)</div>
+                <div class="preview-content">
+                    <h1>📅 우리 반 주간 시간표</h1>
+                    <table>
+                        <caption>2025년 1학기 시간표</caption>
+                        <thead>
+                            <tr>
+                                <th>교시</th>
+                                <th>월</th><th>화</th><th>수</th><th>목</th><th>금</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1교시</td>
+                                <td rowspan="2"><mark>체육</mark></td>
+                                <td>수학</td><td>국어</td><td>영어</td><td>사회</td>
+                            </tr>
+                            <tr>
+                                <td>2교시</td>
+                                <td>영어</td><td>수학</td><td><mark>미술</mark></td><td>국어</td>
+                            </tr>
+                            <tr>
+                                <td>3교시</td>
+                                <td>국어</td><td>사회</td><td>수학</td><td>국어</td><td>영어</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="background:#f5f5f5;text-align:center;">
+                                    🍱 점심시간 (12:00 ~ 13:00)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4교시</td>
+                                <td><em>과학</em></td><td>국어</td><td>영어</td><td>수학</td><td><em>과학</em></td>
+                            </tr>
+                            <tr>
+                                <td>5교시</td>
+                                <td>영어</td><td><mark>음악</mark></td><td>사회</td><td>사회</td><td>수학</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <small>※ 시간표는 변경될 수 있습니다</small>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>rowspan 작성 힌트!</strong><br>
+                <code>&lt;td rowspan="2"&gt;체육&lt;/td&gt;</code> 을 쓴 행에서는 다음 행에 같은 위치의 <code>&lt;td&gt;</code> 를 하나 빼야 해요.<br>
+                1행에 rowspan="2" 를 쓰면 → 2행에서 그 칸에 해당하는 td 1개 삭제!
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════ -->
+    <!-- Q2 : 박스오피스 순위표    -->
+    <!-- ══════════════════════════ -->
+    <div class="problem p2">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">02</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">🎬 이번 주 박스오피스 TOP 5</div>
+                <div class="prob-file">저장 파일명 → <span>boxoffice.html</span></div>
+                <div class="prob-tags">
+                    <span class="ptag key">★ colspan (대제목)</span>
+                    <span class="ptag key">★ tfoot (합계)</span>
+                    <span class="ptag">thead / tbody</span>
+                    <span class="ptag">caption</span>
+                    <span class="ptag">a / img</span>
+                    <span class="ptag">ol / li</span>
+                    <span class="ptag">strong / del / mark</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">35</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                이번 주 영화 박스오피스 TOP 5 순위표를 만들어요.
+                표 상단에 colspan 으로 큰 제목 행을 만들고,
+                tfoot 에 전체 누적 관객수 합계를 넣고,
+                관련 링크와 이미지도 포함하세요.
+            </div>
+
+            <div class="key-point">
+                🔴 <strong>핵심 포인트</strong><br>
+                <strong>colspan 대제목</strong> : 표 맨 위에 전체 열을 합친 제목 행을 만들어요<br>
+                <code>&lt;thead&gt;</code> 안에 첫 번째 <code>&lt;tr&gt;</code> 은 colspan 으로 합친 대제목,
+                두 번째 <code>&lt;tr&gt;</code> 은 각 열의 세부 제목이에요<br>
+                <strong>tfoot</strong> : 표 맨 아래 합계나 요약 정보를 넣는 영역이에요
+            </div>
+
+            <div class="cond-title">📌 작성 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span><code>&lt;h1&gt;</code> 로 <strong>"🎬 이번 주 박스오피스 TOP 5"</strong> 제목, <code>&lt;p&gt;</code> 로 기준 날짜를 작성하세요</li>
+                <li><span class="cond-num">2</span><code>&lt;img&gt;</code> 로 영화 관련 이미지를 1개 이상 넣으세요 (<strong>alt 속성 필수</strong>)</li>
+                <li class="hard"><span class="cond-num">3</span><span class="hard-mark">🔴 심화</span>
+                    <code>&lt;thead&gt;</code> 첫 번째 행에 <code>colspan</code> 으로 전체 열을 합친 <strong>"2025년 1월 4주차 박스오피스"</strong> 대제목 행을 만드세요</li>
+                <li><span class="cond-num">4</span><code>&lt;thead&gt;</code> 두 번째 행에 <code>&lt;th&gt;</code> 로 <strong>순위 / 영화제목 / 장르 / 누적관객 / 전주대비 / 링크</strong> 세부 헤더를 작성하세요</li>
+                <li><span class="cond-num">5</span><code>&lt;tbody&gt;</code> 에 영화 5편의 정보를 행으로 작성하세요 (영화는 실제 또는 가상으로 자유롭게)</li>
+                <li><span class="cond-num">6</span>1위 영화 제목에 <code>&lt;mark&gt;</code> + <code>&lt;strong&gt;</code>, 지난주보다 순위가 내려간 영화에 <code>&lt;del&gt;</code> 을 사용하세요</li>
+                <li><span class="cond-num">7</span>각 영화 링크 칸에 <code>&lt;a&gt;</code> 로 예매 링크를 새 탭으로 연결하세요</li>
+                <li class="hard"><span class="cond-num">8</span><span class="hard-mark">🔴 심화</span>
+                    <code>&lt;tfoot&gt;</code> 에 <strong>"TOP 5 합계"</strong> 행을 추가하고, 영화제목~전주대비 칸은 <code>colspan="4"</code> 로 합쳐서 총 누적관객 합계를 표시하세요</li>
+                <li><span class="cond-num">9</span>표 아래에 <code>&lt;small&gt;</code> 로 출처를 표시하고, <code>&lt;ol&gt;</code> 로 개인 추천 TOP 3 목록을 작성하세요</li>
+            </ul>
+
+            <div class="cond-title">🖥️ 결과 화면 예시</div>
+            <div class="preview-wrap">
+                <div class="preview-bar"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>브라우저 화면 (boxoffice.html)</div>
+                <div class="preview-content">
+                    <h1>🎬 이번 주 박스오피스 TOP 5</h1>
+                    <p>기준일 : <strong>2025년 1월 26일 (일)</strong></p>
+                    <img src="movie.jpg" alt="영화 이미지" style="width:200px;height:110px;background:#dde;display:block;margin:10px 0;border-radius:4px;">
+                    <table>
+                        <caption>주간 박스오피스 순위표</caption>
+                        <thead>
+                            <tr>
+                                <th colspan="6">2025년 1월 4주차 박스오피스</th>
+                            </tr>
+                            <tr>
+                                <th>순위</th>
+                                <th>영화제목</th>
+                                <th>장르</th>
+                                <th>누적관객</th>
+                                <th>전주대비</th>
+                                <th>링크</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1위 🥇</td>
+                                <td class="left"><mark><strong>하얼빈</strong></mark></td>
+                                <td>액션/역사</td>
+                                <td>4,200,000명</td>
+                                <td>▲ 2</td>
+                                <td><a href="#">예매</a></td>
+                            </tr>
+                            <tr>
+                                <td>2위 🥈</td>
+                                <td class="left">소방관</td>
+                                <td>드라마</td>
+                                <td>3,100,000명</td>
+                                <td>▼ 1</td>
+                                <td><a href="#">예매</a></td>
+                            </tr>
+                            <tr>
+                                <td>3위 🥉</td>
+                                <td class="left"><del>위키드</del></td>
+                                <td>뮤지컬</td>
+                                <td>2,800,000명</td>
+                                <td>▼ 2</td>
+                                <td><a href="#">예매</a></td>
+                            </tr>
+                            <tr>
+                                <td>4위</td>
+                                <td class="left">모아나 2</td>
+                                <td>애니메이션</td>
+                                <td>1,500,000명</td>
+                                <td>▲ 1</td>
+                                <td><a href="#">예매</a></td>
+                            </tr>
+                            <tr>
+                                <td>5위</td>
+                                <td class="left">글래디에이터 2</td>
+                                <td>액션</td>
+                                <td>900,000명</td>
+                                <td>→ 0</td>
+                                <td><a href="#">예매</a></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>합계</strong></td>
+                                <td colspan="4">TOP 5 누적 합계</td>
+                                <td><strong>12,500,000명</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <small>출처 : 영화진흥위원회 통합전산망 (kobis.or.kr)</small>
+                    <hr>
+                    <h2>나의 개인 추천 TOP 3 🎖️</h2>
+                    <ol>
+                        <li><strong>하얼빈</strong> — 역사적 감동이 있어요</li>
+                        <li>소방관 — 눈물 많이 흘렸어요</li>
+                        <li>모아나 2 — 가족과 함께 보기 좋아요</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>tfoot colspan 힌트!</strong><br>
+                tfoot 행에서 <strong>"합계"</strong> 칸 1개 + <strong>중간 내용</strong> colspan 합친 칸 + <strong>숫자</strong> 칸 = 총 6칸이 돼야 해요.<br>
+                1 + 4 + 1 = 6 → <code>&lt;td&gt;</code> 1개 + <code>&lt;td colspan="4"&gt;</code> + <code>&lt;td&gt;</code> 1개
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════ -->
+    <!-- Q3 : 종합 포트폴리오      -->
+    <!-- ══════════════════════════ -->
+    <div class="problem p3">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">03</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">🌟 나의 HTML 작품 포트폴리오 페이지</div>
+                <div class="prob-file">저장 파일명 → <span>index.html</span></div>
+                <div class="prob-tags">
+                    <span class="ptag key">★ colspan + rowspan 혼합</span>
+                    <span class="ptag">thead / tbody / tfoot</span>
+                    <span class="ptag">caption</span>
+                    <span class="ptag">h1~h3 / p / ul / ol</span>
+                    <span class="ptag">a / img / div / span</span>
+                    <span class="ptag">strong / em / mark / del</span>
+                    <span class="ptag">hr / small</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">35</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                지금까지 만든 모든 HTML 파일을 연결하는 포트폴리오 메인 페이지를 완성해요.
+                작품 목록을 colspan + rowspan 을 모두 사용한 복잡한 표로 정리하고
+                자기소개, 작품 목록, 배운 태그 정리까지 한 페이지에 모두 담으세요.
+            </div>
+
+            <div class="key-point">
+                🔴 <strong>핵심 포인트 — colspan + rowspan 동시 사용!</strong><br>
+                이번 문제는 colspan 과 rowspan 을 <strong>같은 표 안에서 둘 다</strong> 써야 해요.<br>
+                작품 목록 표에서 카테고리(기초/심화)를 rowspan 으로 묶고,
+                표 맨 위 대제목은 colspan 으로 전체를 합쳐요.
+            </div>
+
+            <div class="cond-title">📌 작성 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span><code>&lt;h1&gt;</code> 로 <strong>"나의 이름 + HTML 포트폴리오"</strong>, <code>&lt;img&gt;</code> 로 프로필 이미지, <code>&lt;p&gt;</code> 로 자기소개 한 줄을 작성하세요. <code>&lt;strong&gt;</code> 과 <code>&lt;em&gt;</code> 을 각각 1번 이상 사용하세요</li>
+                <li><span class="cond-num">2</span><code>&lt;h2&gt;</code> 로 <strong>"📂 작품 목록"</strong>, <strong>"🛠️ 배운 태그"</strong>, <strong>"🔗 유용한 링크"</strong> 소제목 3개를 작성하세요</li>
+                <li class="hard"><span class="cond-num">3</span><span class="hard-mark">🔴 심화</span>
+                    작품 목록 <code>&lt;table&gt;</code> 에서 <code>&lt;thead&gt;</code> 첫 번째 행을 <code>colspan</code> 으로 전체 합친 대제목 행으로 만드세요</li>
+                <li class="hard"><span class="cond-num">4</span><span class="hard-mark">🔴 심화</span>
+                    <code>&lt;tbody&gt;</code> 에서 <strong>"기초 과정"</strong> 과 <strong>"심화 과정"</strong> 카테고리 칸을 각각 <code>rowspan</code> 으로 세로 병합하세요<br>
+                    기초 4개 작품 → <code>rowspan="4"</code> / 심화 2개 작품 → <code>rowspan="2"</code></li>
+                <li><span class="cond-num">5</span>각 작품 행에 작품명, 설명, 링크 (<code>&lt;a href="파일명"&gt;</code>) 를 넣고 아래 6개 파일을 모두 연결하세요<br>
+                    <code>animal.html</code> / <code>book.html</code> / <code>movie.html</code> / <code>recipe.html</code> / <code>timetable.html</code> / <code>boxoffice.html</code></li>
+                <li class="hard"><span class="cond-num">6</span><span class="hard-mark">🔴 심화</span>
+                    <code>&lt;tfoot&gt;</code> 에 <strong>"총 작품 수"</strong> 행을 추가하고 <code>colspan</code> 으로 적절히 병합해서 총 6개 작품이라고 표시하세요</li>
+                <li><span class="cond-num">7</span><code>&lt;h2&gt;</code> 배운 태그 섹션에 <code>&lt;ul&gt;</code> 로 카테고리별 태그 목록을 작성하고 <code>&lt;mark&gt;</code> 로 가장 어려웠던 태그를 강조하세요</li>
+                <li><span class="cond-num">8</span><code>&lt;h2&gt;</code> 유용한 링크 섹션에 <code>&lt;ol&gt;</code> 로 추천 사이트 목록을 만들고 <code>&lt;a&gt;</code> 로 모두 새 탭 연결하세요</li>
+                <li><span class="cond-num">9</span>페이지 맨 아래 <code>&lt;hr&gt;</code> 을 넣고 <code>&lt;p&gt;</code> 에 이름, 수업명, 날짜를 쓴 뒤 <code>&lt;small&gt;</code> 로 저작권 표시를 하세요</li>
+            </ul>
+
+            <div class="cond-title">🖥️ 결과 화면 예시</div>
+            <div class="preview-wrap">
+                <div class="preview-bar"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>브라우저 화면 (index.html)</div>
+                <div class="preview-content">
+                    <h1>🏠 홍길동의 HTML 포트폴리오</h1>
+                    <img src="profile.jpg" alt="프로필 사진" style="width:70px;height:70px;background:#ddd;border-radius:50%;display:block;margin:8px 0;">
+                    <p>안녕하세요! 저는 <strong>홍길동</strong>이에요. <em>HTML 을 배우고 있는 예비 개발자입니다 😊</em></p>
+                    <hr>
+
+                    <h2>📂 작품 목록</h2>
+                    <table>
+                        <caption>HTML 실습 작품 모음</caption>
+                        <thead>
+                            <tr>
+                                <th colspan="4">나의 HTML 작품 포트폴리오</th>
+                            </tr>
+                            <tr>
+                                <th>과정</th><th>작품명</th><th>설명</th><th>링크</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="4">기초<br>과정</td>
+                                <td class="left">🐾 동물 소개</td>
+                                <td class="left">좋아하는 동물 소개 페이지</td>
+                                <td><a href="animal.html">보기</a></td>
+                            </tr>
+                            <tr>
+                                <td class="left">📚 독서 목록</td>
+                                <td class="left">나의 책 목록 페이지</td>
+                                <td><a href="book.html">보기</a></td>
+                            </tr>
+                            <tr>
+                                <td class="left">🎬 영화 리뷰</td>
+                                <td class="left">영화 감상 리뷰 페이지</td>
+                                <td><a href="movie.html">보기</a></td>
+                            </tr>
+                            <tr>
+                                <td class="left">🍽️ 레시피</td>
+                                <td class="left">나만의 레시피 페이지</td>
+                                <td><a href="recipe.html">보기</a></td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2">심화<br>과정</td>
+                                <td class="left"><mark>📅 시간표</mark></td>
+                                <td class="left">rowspan/colspan 시간표</td>
+                                <td><a href="timetable.html">보기</a></td>
+                            </tr>
+                            <tr>
+                                <td class="left"><mark>🎬 박스오피스</mark></td>
+                                <td class="left">영화 순위표 + tfoot</td>
+                                <td><a href="boxoffice.html">보기</a></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"><strong>총 작품 수</strong></td>
+                                <td><strong>6개</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <hr>
+
+                    <h2>🛠️ 배운 태그</h2>
+                    <ul>
+                        <li>텍스트 : h1~h6, p, strong, em, mark ...</li>
+                        <li>목록 : ul, ol, li</li>
+                        <li>링크/이미지 : a, img</li>
+                        <li><mark>표 : table, thead, tbody, tfoot, tr, th, td, colspan, rowspan</mark></li>
+                        <li>구조 : div, span</li>
+                    </ul>
+                    <hr>
+
+                    <h2>🔗 유용한 링크</h2>
+                    <ol>
+                        <li><a href="#">MDN Web Docs — HTML 공식 문서</a></li>
+                        <li><a href="#">W3Schools — HTML 튜토리얼</a></li>
+                        <li><a href="#">Can I Use — 브라우저 호환성 확인</a></li>
+                    </ol>
+                    <hr>
+
+                    <p>홍길동 · 방과후 강사 양성 과정 · 2025년</p>
+                    <small>© 2025 홍길동. All rights reserved.</small>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>rowspan + colspan 동시 사용 구조 힌트!</strong><br>
+                <code>rowspan="4"</code> 을 쓴 칸은 → 다음 3개 행에서 그 위치의 <code>&lt;td&gt;</code> 를 빼야 해요.<br>
+                <code>colspan="4"</code> 를 쓴 칸은 → 같은 행에서 나머지 3개 <code>&lt;td&gt;</code> 를 빼야 해요.<br>
+                → <strong>행의 td 개수 합계가 항상 전체 열 수와 같아야 해요!</strong>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 전체 파일 구조 -->
+    <div class="tag-scope" style="margin-top:10px;">
+        📁 <strong>최종 파일 구조 — 모두 같은 폴더에 저장하세요!</strong>
+        <div style="font-family:'Source Code Pro',monospace;font-size:0.82rem;background:#e8f0ff;border:1px solid #b8d0f0;border-radius:7px;padding:12px 16px;margin-top:10px;line-height:2;color:#1a3a6a;">
+            📁 내 이름 폴더<br>
+            &nbsp;├── animal.html &nbsp;&nbsp;&nbsp;← 기초 Q1<br>
+            &nbsp;├── book.html &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← 기초 Q2<br>
+            &nbsp;├── movie.html &nbsp;&nbsp;&nbsp;&nbsp;← 기초 Q3<br>
+            &nbsp;├── recipe.html &nbsp;&nbsp;&nbsp;← 기초 Q4<br>
+            &nbsp;├── timetable.html ← 심화 Q1 (이번 문제)<br>
+            &nbsp;├── boxoffice.html ← 심화 Q2 (이번 문제)<br>
+            &nbsp;└── index.html &nbsp;&nbsp;&nbsp;&nbsp;← 심화 Q3 (이번 문제) 🌟
+        </div>
+    </div>
+
+    <div class="footer-note">
+        HTML 테이블 심화 실습 문제지 &nbsp;·&nbsp; 총 3문제 / 100점 &nbsp;·&nbsp;
+        colspan + rowspan + tfoot 완전 정복! &nbsp;·&nbsp; Korea Art Tech Studio
+    </div>
+
+</div>
+</body>
+</html>
