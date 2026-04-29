@@ -204,19 +204,42 @@
     .p5 .add-header { background:rgba(90,45,138,0.1); color:#5a2d8a; border-bottom:1px solid rgba(90,45,138,0.2); }
 
     .add-cond-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
-    .add-cond-list li {
-        display:flex; align-items:flex-start; gap:10px;
-        font-size:0.88rem; line-height:1.75;
-        padding:9px 13px;
+    .add-cond-list > li {
+        display:block;
+        font-size:0.88rem; line-height:1.85;
+        padding:12px 14px;
         border-radius:7px; border:1px dashed var(--border);
         background: #fefefe;
     }
     .add-cond-num {
-        font-family:'Source Code Pro',monospace; font-size:0.7rem; font-weight:700;
-        min-width:28px; height:22px; border-radius:4px;
-        display:flex; align-items:center; justify-content:center;
-        flex-shrink:0; margin-top:1px; color:#fff;
-        font-size:0.62rem; letter-spacing:0.5px;
+        font-family:'Source Code Pro',monospace; font-size:0.62rem; font-weight:700;
+        min-width:44px; height:22px; border-radius:4px;
+        display:inline-flex; align-items:center; justify-content:center;
+        color:#fff; letter-spacing:0.5px;
+        vertical-align:middle;
+        margin-right:8px;
+    }
+    .add-cond-list > li > div {
+        display:block;
+        margin-top:8px;
+        padding-left:6px;
+    }
+    .add-cond-list > li > div > ul {
+        margin-top:8px;
+        padding-left:20px;
+        display:flex;
+        flex-direction:column;
+        gap:5px;
+        list-style:disc;
+    }
+    .add-cond-list > li > div > ul > li {
+        display:list-item;
+        border:none !important;
+        background:none !important;
+        padding:0 !important;
+        font-size:0.85rem;
+        color:#555;
+        line-height:1.75;
     }
 
     .cond-list code, .add-cond-list code {
@@ -584,7 +607,17 @@
                         <li><span class="add-cond-num">추가1</span>영화 정보 카드 전체를 <code>&lt;article&gt;</code> 태그로 감싸세요</li>
                         <li><span class="add-cond-num">추가2</span>기본정보 / 줄거리 / 평점 각 영역을 <code>&lt;section&gt;</code> 태그로 나누세요</li>
                         <li><span class="add-cond-num">추가3</span><code>&lt;hr&gt;</code> 아래에 <strong>"✏️ 한줄 리뷰 남기기"</strong> <code>&lt;h2&gt;</code> 소제목을 추가하세요</li>
-                        <li><span class="add-cond-num">추가4</span><code>&lt;form&gt;</code> 안에 이름 입력 <code>&lt;input type="text"&gt;</code>, 별점 선택 <code>&lt;input type="radio"&gt;</code> (1점~5점), 리뷰 내용 <code>&lt;textarea&gt;</code>, 제출 <code>&lt;button&gt;</code> 을 작성하세요</li>
+                        <li>
+                            <span class="add-cond-num">추가4</span><strong><code>&lt;form&gt;</code> 안에 아래 4가지를 모두 작성하세요</strong>
+                            <div>
+                                <ul>
+                                    <li>이름 입력 → <code>&lt;input type="text"&gt;</code></li>
+                                    <li>별점 선택 → <code>&lt;input type="radio"&gt;</code> (1점 / 2점 / 3점 / 4점 / 5점)</li>
+                                    <li>리뷰 내용 → <code>&lt;textarea&gt;</code></li>
+                                    <li>제출 버튼 → <code>&lt;button type="submit"&gt;</code></li>
+                                </ul>
+                            </div>
+                        </li>
                         <li><span class="add-cond-num">추가5</span>각 입력 항목에 <code>&lt;label&gt;</code> 을 붙여서 이름을 표시하세요</li>
                     </ul>
                 </div>
@@ -795,11 +828,17 @@
                         <li><span class="add-cond-num">추가2</span><code>&lt;header&gt;</code> 에 <code>&lt;h1&gt;</code> 과 프로필 <code>&lt;img&gt;</code> 를 넣으세요</li>
                         <li><span class="add-cond-num">추가3</span><code>&lt;nav&gt;</code> 에 <code>&lt;ul&gt;</code> + <code>&lt;li&gt;</code> + <code>&lt;a&gt;</code> 로 4개 페이지 링크 메뉴를 넣으세요</li>
                         <li><span class="add-cond-num">추가4</span><code>&lt;main&gt;</code> 안을 <code>&lt;section&gt;</code> 2개로 나누세요 — 첫 번째는 자기소개, 두 번째는 작품 목록</li>
-                        <li><span class="add-cond-num">추가5</span>작품 목록 섹션 아래에 <strong>"💬 방문자 메모"</strong> <code>&lt;h2&gt;</code> 를 추가하고 <code>&lt;form&gt;</code> 을 작성하세요<br>
-                            — <code>&lt;input type="text"&gt;</code> 이름 입력<br>
-                            — <code>&lt;select&gt;</code> 로 방문 경로 선택 (직접방문/검색/추천)<br>
-                            — <code>&lt;textarea&gt;</code> 로 메모 입력<br>
-                            — <code>&lt;button type="submit"&gt;</code> 제출 버튼</li>
+                        <li>
+                            <span class="add-cond-num">추가5</span><strong>작품 목록 섹션 아래에 <code>"💬 방문자 메모"</code> <code>&lt;h2&gt;</code> 를 추가하고 <code>&lt;form&gt;</code> 을 작성하세요</strong>
+                            <div>
+                                <ul>
+                                    <li>이름 입력 → <code>&lt;input type="text"&gt;</code></li>
+                                    <li>방문 경로 선택 → <code>&lt;select&gt;</code> (직접방문 / 검색 / 추천)</li>
+                                    <li>메모 입력 → <code>&lt;textarea&gt;</code></li>
+                                    <li>제출 버튼 → <code>&lt;button type="submit"&gt;</code></li>
+                                </ul>
+                            </div>
+                        </li>
                         <li><span class="add-cond-num">추가6</span><code>&lt;footer&gt;</code> 에 이름, 수업명, 날짜를 넣으세요</li>
                     </ul>
                 </div>
