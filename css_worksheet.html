@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 기초 실습 문제지</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&family=Source+Code+Pro:wght@400;600&display=swap');
+
+    :root {
+        --bg: #f3f1f7;
+        --bg2: #ffffff;
+        --bg3: #ece9f4;
+        --border: #d8d3e8;
+        --text: #1a1a2e;
+        --muted: #8880a0;
+        --accent: #5a2d8a;
+        --radius: 10px;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Noto Sans KR', sans-serif;
+        line-height: 1.85;
+        padding-bottom: 80px;
+    }
+
+    /* 헤더 */
+    .header { background: var(--text); color: #fff; }
+    .header-top { display:flex; align-items:stretch; border-bottom:3px solid var(--accent); }
+    .header-left {
+        background: var(--accent); padding: 24px 28px;
+        display:flex; align-items:center; justify-content:center;
+        writing-mode: vertical-rl; font-size:0.7rem; letter-spacing:3px;
+        font-family:'Source Code Pro',monospace; color:rgba(255,255,255,0.85); flex-shrink:0;
+    }
+    .header-main { padding:28px 36px; flex:1; }
+    .header-badge { font-family:'Source Code Pro',monospace; font-size:0.7rem; letter-spacing:3px; color:rgba(255,255,255,0.45); margin-bottom:10px; }
+    .header-title { font-size:2rem; font-weight:900; line-height:1.2; }
+    .header-title em { color:#a97de0; font-style:normal; }
+    .header-sub { font-size:0.88rem; color:rgba(255,255,255,0.55); margin-top:8px; }
+    .header-info { display:flex; border-top:1px solid rgba(255,255,255,0.1); }
+    .info-cell { flex:1; padding:14px 30px; border-right:1px solid rgba(255,255,255,0.1); font-size:0.82rem; }
+    .info-cell:last-child { border-right:none; }
+    .info-label { font-size:0.68rem; color:rgba(255,255,255,0.38); letter-spacing:1px; margin-bottom:4px; }
+    .info-val { color:rgba(255,255,255,0.85); font-weight:700; }
+    .info-line { border-bottom:1px solid rgba(255,255,255,0.3); min-width:140px; display:inline-block; }
+
+    /* 공지 */
+    .notice {
+        background:#f3eeff; border:1px solid #c9a8f0;
+        border-left:4px solid var(--accent); border-radius:var(--radius);
+        padding:16px 20px; margin:28px auto; max-width:820px;
+        font-size:0.88rem; color:#3a1a5a; line-height:1.9;
+    }
+    .notice strong { color:var(--accent); }
+
+    /* CSS 학습범위 안내 */
+    .range-guide {
+        background:#eef6ff; border:1px solid #aaccf0;
+        border-left:4px solid #1a5fa8; border-radius:var(--radius);
+        padding:16px 20px; margin-bottom:28px;
+        font-size:0.88rem; color:#1a3a6a; line-height:1.9;
+        max-width:820px; margin-left:auto; margin-right:auto;
+    }
+    .range-guide strong { color:#1a5fa8; }
+    .range-tags {
+        display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;
+    }
+    .rtag {
+        font-family:'Source Code Pro',monospace; font-size:0.75rem;
+        padding:3px 12px; border-radius:20px; font-weight:600;
+        background:rgba(26,95,168,0.1); color:#1a5fa8;
+    }
+
+    /* 파일구조 안내 */
+    .file-guide {
+        background:#fff8e6; border:1px solid #e8c96a;
+        border-left:4px solid #d46b00; border-radius:var(--radius);
+        padding:16px 20px; margin-bottom:28px;
+        font-size:0.88rem; color:#5a4400; line-height:1.9;
+        max-width:820px; margin-left:auto; margin-right:auto;
+    }
+    .file-guide strong { color:#d46b00; }
+    .file-tree {
+        font-family:'Source Code Pro',monospace; font-size:0.82rem;
+        background:#fffbf0; border:1px solid #e8d9a0;
+        border-radius:7px; padding:12px 16px; margin-top:10px;
+        line-height:2; color:#5a4000;
+    }
+
+    /* 래퍼 */
+    .wrap { max-width:820px; margin:0 auto; padding:0 20px; }
+
+    /* 문제 카드 */
+    .problem {
+        background:var(--bg2); border:1px solid var(--border);
+        border-radius:var(--radius); overflow:hidden;
+        margin-bottom:30px; box-shadow:0 2px 8px rgba(90,45,138,0.08);
+    }
+    .prob-head { display:flex; align-items:center; border-bottom:1px solid var(--border); }
+    .prob-num {
+        width:56px; display:flex; flex-direction:column;
+        align-items:center; justify-content:center;
+        padding:14px 0; flex-shrink:0;
+        font-family:'Source Code Pro',monospace; color:#fff;
+    }
+    .prob-num .nl { font-size:0.58rem; letter-spacing:1px; color:rgba(255,255,255,0.45); }
+    .prob-num .nv { font-size:1.5rem; font-weight:900; line-height:1; }
+    .prob-title-area { padding:14px 20px; flex:1; }
+    .prob-title { font-size:1.02rem; font-weight:800; }
+    .prob-file {
+        font-family:'Source Code Pro',monospace; font-size:0.75rem;
+        margin-top:6px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    }
+    .prob-file span { padding:2px 10px; border-radius:5px; font-weight:700; }
+    .prob-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+    .ptag { font-family:'Source Code Pro',monospace; font-size:0.68rem; padding:2px 9px; border-radius:10px; font-weight:600; }
+    .ptag.new { font-weight:900; }
+    .prob-score { padding:14px 20px; text-align:right; flex-shrink:0; border-left:1px solid var(--border); }
+    .sv { font-size:1.5rem; font-weight:900; color:var(--accent); font-family:'Source Code Pro',monospace; }
+    .sl { font-size:0.68rem; color:var(--muted); }
+
+    /* 문제별 색상 */
+    .p1 .prob-num { background:#1a5fa8; }
+    .p1 .prob-title { color:#1a5fa8; }
+    .p1 .prob-file span { background:rgba(26,95,168,0.12); color:#1a5fa8; }
+    .p1 .ptag { background:rgba(26,95,168,0.1); color:#1a5fa8; }
+    .p1 .cond-num { background:#1a5fa8; }
+    .p1 .add-cond-num { background:#1a5fa8; }
+    .p1 .add-section { border-color:rgba(26,95,168,0.3); }
+    .p1 .add-header { background:rgba(26,95,168,0.1); color:#1a5fa8; border-bottom:1px solid rgba(26,95,168,0.2); }
+
+    .p2 .prob-num { background:#1a7a3a; }
+    .p2 .prob-title { color:#1a7a3a; }
+    .p2 .prob-file span { background:rgba(26,122,58,0.12); color:#1a7a3a; }
+    .p2 .ptag { background:rgba(26,122,58,0.1); color:#1a7a3a; }
+    .p2 .cond-num { background:#1a7a3a; }
+    .p2 .add-cond-num { background:#1a7a3a; }
+    .p2 .add-section { border-color:rgba(26,122,58,0.3); }
+    .p2 .add-header { background:rgba(26,122,58,0.1); color:#1a7a3a; border-bottom:1px solid rgba(26,122,58,0.2); }
+
+    .p3 .prob-num { background:#c8390a; }
+    .p3 .prob-title { color:#c8390a; }
+    .p3 .prob-file span { background:rgba(200,57,10,0.12); color:#c8390a; }
+    .p3 .ptag { background:rgba(200,57,10,0.1); color:#c8390a; }
+    .p3 .cond-num { background:#c8390a; }
+    .p3 .add-cond-num { background:#c8390a; }
+    .p3 .add-section { border-color:rgba(200,57,10,0.3); }
+    .p3 .add-header { background:rgba(200,57,10,0.1); color:#c8390a; border-bottom:1px solid rgba(200,57,10,0.2); }
+
+    .p4 .prob-num { background:#d46b00; }
+    .p4 .prob-title { color:#d46b00; }
+    .p4 .prob-file span { background:rgba(212,107,0,0.12); color:#d46b00; }
+    .p4 .ptag { background:rgba(212,107,0,0.1); color:#d46b00; }
+    .p4 .cond-num { background:#d46b00; }
+    .p4 .add-cond-num { background:#d46b00; }
+    .p4 .add-section { border-color:rgba(212,107,0,0.3); }
+    .p4 .add-header { background:rgba(212,107,0,0.1); color:#d46b00; border-bottom:1px solid rgba(212,107,0,0.2); }
+
+    .p5 .prob-num { background:#5a2d8a; }
+    .p5 .prob-title { color:#5a2d8a; }
+    .p5 .prob-file span { background:rgba(90,45,138,0.12); color:#5a2d8a; }
+    .p5 .ptag { background:rgba(90,45,138,0.1); color:#5a2d8a; }
+    .p5 .cond-num { background:#5a2d8a; }
+    .p5 .add-cond-num { background:#5a2d8a; }
+    .p5 .add-section { border-color:rgba(90,45,138,0.3); }
+    .p5 .add-header { background:rgba(90,45,138,0.1); color:#5a2d8a; border-bottom:1px solid rgba(90,45,138,0.2); }
+
+    /* 본문 */
+    .prob-body { padding:22px 24px; }
+    .scenario {
+        background:var(--bg3); border-radius:8px;
+        padding:14px 18px; margin-bottom:18px;
+        font-size:0.88rem; color:#444; line-height:1.9;
+        border-left:3px solid var(--border);
+    }
+    .scenario strong { color:var(--text); }
+
+    /* 기존 조건 */
+    .cond-title { font-size:0.72rem; letter-spacing:2px; color:var(--muted); font-family:'Source Code Pro',monospace; margin-bottom:10px; }
+    .cond-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+    .cond-list li {
+        display:block;
+        font-size:0.88rem; line-height:1.85;
+        padding:10px 14px;
+        background:var(--bg);
+        border-radius:7px; border:1px solid var(--border);
+        word-break:keep-all; overflow-wrap:break-word;
+    }
+    .cond-num {
+        font-family:'Source Code Pro',monospace; font-size:0.7rem; font-weight:700;
+        width:22px; height:22px; border-radius:50%;
+        display:inline-flex; align-items:center; justify-content:center;
+        color:#fff; vertical-align:middle;
+        margin-right:6px; flex-shrink:0;
+    }
+
+    /* 추가 조건 박스 */
+    .add-section {
+        border-radius:var(--radius); overflow:hidden;
+        margin-bottom:20px; border: 1px solid var(--border);
+    }
+    .add-header {
+        display:flex; align-items:center; gap:10px;
+        padding:12px 18px;
+        font-size:0.78rem; font-weight:800;
+        letter-spacing:1px;
+    }
+    .add-header .add-icon { font-size:1rem; }
+    .add-body { padding:14px 18px 16px; }
+
+    .add-cond-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+    .add-cond-list > li {
+        display:block;
+        font-size:0.88rem; line-height:1.85;
+        padding:12px 14px;
+        border-radius:7px; border:1px dashed var(--border);
+        background: #fefefe;
+        word-break:keep-all; overflow-wrap:break-word;
+    }
+    .add-cond-num {
+        font-family:'Source Code Pro',monospace; font-size:0.62rem; font-weight:700;
+        min-width:44px; height:22px; border-radius:4px;
+        display:inline-flex; align-items:center; justify-content:center;
+        color:#fff; letter-spacing:0.5px;
+        vertical-align:middle;
+        margin-right:8px;
+    }
+    .add-cond-list > li > div {
+        display:block; margin-top:8px; padding-left:6px;
+    }
+    .add-cond-list > li > div > ul {
+        margin-top:8px; padding-left:20px;
+        display:flex; flex-direction:column; gap:5px; list-style:disc;
+    }
+    .add-cond-list > li > div > ul > li {
+        display:list-item; border:none !important;
+        background:none !important; padding:0 !important;
+        font-size:0.85rem; color:#555; line-height:1.75;
+    }
+
+    .cond-list code, .add-cond-list code {
+        font-family:'Source Code Pro',monospace; font-size:0.78rem;
+        background:rgba(0,0,0,0.06); padding:1px 6px; border-radius:4px;
+        white-space:normal; word-break:break-all;
+        display:inline;
+    }
+
+    /* CSS 코드 블록 */
+    .css-example {
+        background:#1a1a2e; border-radius:8px;
+        padding:14px 18px; margin:12px 0;
+        font-family:'Source Code Pro',monospace; font-size:0.82rem;
+        color:#e0d8f8; line-height:1.9;
+        border-left:3px solid var(--accent);
+    }
+    .css-example .prop { color:#a97de0; }
+    .css-example .val  { color:#5dcaa5; }
+    .css-example .sel  { color:#f0c070; }
+    .css-example .cmt  { color:#6a6a8a; font-style:italic; }
+
+    /* 미리보기 */
+    .preview-wrap { border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:14px; }
+    .preview-bar {
+        background:var(--bg3); border-bottom:1px solid var(--border);
+        padding:7px 14px; font-size:0.72rem; color:var(--muted);
+        font-family:'Source Code Pro',monospace; display:flex; align-items:center; gap:7px;
+    }
+    .dot { width:9px; height:9px; border-radius:50%; }
+    .dr{background:#ff5f57;} .dy{background:#febc2e;} .dg{background:#28c840;}
+    .preview-content {
+        padding:18px 20px; background:#fff;
+        font-size:0.88rem; line-height:1.9;
+    }
+    .preview-content h1 { font-size:1.4rem; font-weight:900; margin-bottom:8px; }
+    .preview-content h2 { font-size:1.1rem; font-weight:700; margin:12px 0 6px; }
+    .preview-content h3 { font-size:0.97rem; font-weight:700; margin:10px 0 5px; }
+    .preview-content p  { margin-bottom:6px; }
+    .preview-content ul,.preview-content ol { padding-left:22px; margin-bottom:8px; }
+    .preview-content li { margin-bottom:3px; }
+    .preview-content table { border-collapse:collapse; width:100%; margin-bottom:8px; font-size:0.84rem; }
+    .preview-content th { background:#f5f5f5; padding:7px 12px; border:1px solid #ddd; text-align:left; }
+    .preview-content td { padding:7px 12px; border:1px solid #ddd; }
+    .preview-content a  { color:#1a5fa8; text-decoration:underline; }
+    .preview-content hr { border:none; border-top:1px solid #ddd; margin:10px 0; }
+    .preview-content strong { font-weight:800; }
+    .preview-content em { font-style:italic; }
+    .preview-content small { font-size:0.72rem; color:#888; }
+
+    /* 힌트 박스 */
+    .hint-box {
+        background:#f0faf5; border:1px solid #8fd4b0;
+        border-left:3px solid #1a7a3a; border-radius:7px;
+        padding:12px 16px; margin:10px 0;
+        font-size:0.83rem; color:#1a4a2a; line-height:1.85;
+    }
+    .hint-box strong { color:#1a7a3a; }
+
+    /* 체크리스트 */
+    .checklist {
+        list-style:none; display:flex; flex-direction:column; gap:5px;
+        margin:10px 0 16px; padding:0;
+    }
+    .checklist li {
+        display:flex; align-items:center; gap:8px;
+        font-size:0.84rem; color:#555; line-height:1.6;
+    }
+    .checklist li::before {
+        content:'☐'; font-size:1rem; flex-shrink:0; color:#aaa;
+    }
+
+    /* 하단 */
+    .footer-note {
+        text-align:center; margin-top:40px; padding:20px;
+        font-size:0.8rem; color:var(--muted);
+        border-top:1px solid var(--border);
+    }
+
+    @media print { body{background:#fff;} .problem{box-shadow:none;page-break-inside:avoid;} }
+    @media(max-width:600px){ .header-left{display:none;} .header-title{font-size:1.5rem;} }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+    <div class="header-top">
+        <div class="header-left">CSS BASIC</div>
+        <div class="header-main">
+            <div class="header-badge">CSS WORKSHEET · 기초 실습 문제지</div>
+            <div class="header-title">CSS <em>기초</em> 실습 문제지</div>
+            <div class="header-sub">선택자 · font/text · background · 박스모델(padding, border, margin)</div>
+        </div>
+    </div>
+    <div class="header-info">
+        <div class="info-cell">
+            <div class="info-label">이름 NAME</div>
+            <div class="info-val"><span class="info-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">날짜 DATE</div>
+            <div class="info-val"><span class="info-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">총 문항</div>
+            <div class="info-val">5문제</div>
+        </div>
+        <div class="info-cell">
+            <div class="info-label">총 점수</div>
+            <div class="info-val">100점</div>
+        </div>
+    </div>
+</div>
+
+<div class="wrap">
+
+    <div class="notice">
+        📌 <strong>실습 안내</strong><br>
+        이전 HTML 수업에서 만든 파일 5개에 CSS를 직접 연결하고 스타일을 적용하는 문제입니다.<br>
+        각 문제마다 <strong>별도의 CSS 파일</strong>을 만들어서 연결하세요.<br>
+        조건에서 정확한 속성명과 값을 사용했는지 꼭 확인하세요.
+    </div>
+
+    <div class="range-guide">
+        🎓 <strong>이번 실습 사용 가능 CSS 범위</strong>
+        <div class="range-tags">
+            <span class="rtag">선택자 (태그/class/id)</span>
+            <span class="rtag">color</span>
+            <span class="rtag">font-family</span>
+            <span class="rtag">font-size</span>
+            <span class="rtag">font-weight</span>
+            <span class="rtag">font-style</span>
+            <span class="rtag">line-height</span>
+            <span class="rtag">text-align</span>
+            <span class="rtag">text-decoration</span>
+            <span class="rtag">letter-spacing</span>
+            <span class="rtag">text-transform</span>
+            <span class="rtag">background-color</span>
+            <span class="rtag">background-image</span>
+            <span class="rtag">background-repeat</span>
+            <span class="rtag">background-size</span>
+            <span class="rtag">background-position</span>
+            <span class="rtag">width / height</span>
+            <span class="rtag">padding</span>
+            <span class="rtag">border</span>
+            <span class="rtag">margin</span>
+        </div>
+    </div>
+
+    <div class="file-guide">
+        📁 <strong>파일 구조 안내</strong> — 아래처럼 css 폴더를 만들고 각 문제의 CSS 파일을 저장하세요.
+        <div class="file-tree">
+📂 내폴더/<br>
+&nbsp;&nbsp;├── animal.html &nbsp;&nbsp;&nbsp;← 1번 문제<br>
+&nbsp;&nbsp;├── book.html &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← 2번 문제<br>
+&nbsp;&nbsp;├── movie.html &nbsp;&nbsp;&nbsp;← 3번 문제<br>
+&nbsp;&nbsp;├── recipe.html &nbsp;&nbsp;← 4번 문제<br>
+&nbsp;&nbsp;├── index.html &nbsp;&nbsp;&nbsp;← 5번 문제<br>
+&nbsp;&nbsp;└── 📂 css/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── animal.css<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── book.css<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── movie.css<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── recipe.css<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── style.css
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════ -->
+    <!-- Q1 : 선택자 + font/text           -->
+    <!-- ════════════════════════════════ -->
+    <div class="problem p1">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">01</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">🐾 동물 소개 페이지에 font · text 스타일 적용하기</div>
+                <div class="prob-file">수정 파일 → <span>animal.html</span> &nbsp; 새로 만들 파일 → <span>css/animal.css</span></div>
+                <div class="prob-tags">
+                    <span class="ptag">선택자</span>
+                    <span class="ptag">color</span>
+                    <span class="ptag">font-family</span>
+                    <span class="ptag">font-size</span>
+                    <span class="ptag">font-weight</span>
+                    <span class="ptag">line-height</span>
+                    <span class="ptag">text-align</span>
+                    <span class="ptag">text-decoration</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">20</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                HTML 수업에서 만든 <code>animal.html</code>에 CSS 파일을 연결하고, 선택자를 활용해서 글자 스타일을 꾸며보세요.<br>
+                태그 선택자, 클래스 선택자, id 선택자를 모두 한 번 이상 사용해야 합니다.
+            </div>
+
+            <div class="cond-title">📌 기본 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span>
+                    <code>animal.html</code> 의 <code>&lt;head&gt;</code> 안에 <code>&lt;link rel="stylesheet" href="css/animal.css"&gt;</code> 를 추가해서 외부 CSS 파일을 연결하세요
+                </li>
+                <li><span class="cond-num">2</span>
+                    <strong>태그 선택자</strong>로 <code>body</code> 에 <code>font-family</code>를 설정하세요 — 구글 폰트 또는 기본 sans-serif 계열 사용
+                </li>
+                <li><span class="cond-num">3</span>
+                    <strong>태그 선택자</strong>로 <code>h1</code> 의 <code>color</code>를 원하는 색으로 지정하고, <code>text-align: center</code>를 적용하세요
+                </li>
+                <li><span class="cond-num">4</span>
+                    <strong>태그 선택자</strong>로 <code>p</code> 에 <code>line-height: 1.8</code> 과 <code>font-size: 15px</code> 를 설정하세요
+                </li>
+                <li><span class="cond-num">5</span>
+                    동물 이름이 있는 태그 (예: <code>h2</code>) 에 <code>color</code>와 <code>font-weight: 700</code>을 설정하세요
+                </li>
+                <li><span class="cond-num">6</span>
+                    <code>a</code> 태그에 <code>text-decoration: none</code>을 적용해서 밑줄을 없애세요
+                </li>
+            </ul>
+
+            <div class="add-section">
+                <div class="add-header">
+                    <span class="add-icon">✨</span>
+                    추가 조건 — class · id 선택자 활용
+                </div>
+                <div class="add-body">
+                    <ul class="add-cond-list">
+                        <li><span class="add-cond-num">추가1</span>
+                            동물 이름 태그에 <code>class="animal-name"</code>을 추가하고, <strong>클래스 선택자</strong>로 <code>font-size</code>와 <code>color</code>를 스타일하세요
+                        </li>
+                        <li><span class="add-cond-num">추가2</span>
+                            페이지 제목이 있는 <code>&lt;h1&gt;</code> 을 감싼 요소에 <code>id="main-title"</code>을 추가하고, <strong>id 선택자</strong>로 <code>background-color</code>와 <code>padding</code>을 설정하세요
+                        </li>
+                        <li><span class="add-cond-num">추가3</span>
+                            동일한 스타일을 여러 태그에 동시 적용하는 <strong>다중 태그 선택자</strong>를 1개 이상 사용하세요<br>
+                            <div><ul><li>예시 : <code>h1, h2 &#123; color: #333; &#125;</code></li></ul></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>CSS 파일 연결 순서 기억하기</strong><br>
+                외부 CSS 링크는 <code>&lt;head&gt;</code> 안에서 다른 내용보다 <strong>아래쪽</strong>에 배치하세요.<br>
+                구글 폰트를 쓴다면 <code>&lt;link&gt;</code> 폰트 연결을 먼저 쓰고, 그 아래에 <code>animal.css</code> 연결을 작성합니다.
+            </div>
+
+            <div class="cond-title">🖥️ CSS 작성 예시 (참고용)</div>
+            <div class="css-example">
+<span class="cmt">/* css/animal.css */</span>
+
+<span class="sel">body</span> &#123;
+  <span class="prop">font-family</span>: <span class="val">'Noto Sans KR', sans-serif</span>;
+  <span class="prop">line-height</span>: <span class="val">1.6</span>;
+&#125;
+
+<span class="sel">h1</span> &#123;
+  <span class="prop">color</span>: <span class="val">#1a5fa8</span>;
+  <span class="prop">text-align</span>: <span class="val">center</span>;
+&#125;
+
+<span class="sel">.animal-name</span> &#123;
+  <span class="prop">font-size</span>: <span class="val">22px</span>;
+  <span class="prop">font-weight</span>: <span class="val">700</span>;
+  <span class="prop">color</span>: <span class="val">#c8390a</span>;
+&#125;
+            </div>
+
+            <ul class="checklist">
+                <li>CSS 파일을 별도로 만들고 &lt;link&gt; 로 연결했나요?</li>
+                <li>태그 선택자를 사용했나요? (body, h1, p, a 등)</li>
+                <li>클래스 선택자를 사용했나요? (.클래스이름)</li>
+                <li>id 선택자를 사용했나요? (#아이디이름)</li>
+                <li>color 값을 헥사코드 또는 rgb() 로 표기했나요?</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════ -->
+    <!-- Q2 : text 심화                    -->
+    <!-- ════════════════════════════════ -->
+    <div class="problem p2">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">02</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">📚 독서 목록 페이지에 text 스타일 심화 적용하기</div>
+                <div class="prob-file">수정 파일 → <span>book.html</span> &nbsp; 새로 만들 파일 → <span>css/book.css</span></div>
+                <div class="prob-tags">
+                    <span class="ptag">font 단축속성</span>
+                    <span class="ptag">text-indent</span>
+                    <span class="ptag">letter-spacing</span>
+                    <span class="ptag">text-transform</span>
+                    <span class="ptag">text-decoration</span>
+                    <span class="ptag">font-style</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">20</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                <code>book.html</code> 에 CSS를 연결하고, text 관련 속성들을 활용해 가독성 좋은 독서 목록 페이지로 꾸며보세요.<br>
+                <code>font</code> 단축 속성도 반드시 1회 이상 사용해야 합니다.
+            </div>
+
+            <div class="cond-title">📌 기본 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span>
+                    <code>book.html</code> 에 <code>css/book.css</code> 를 외부 연결하세요
+                </li>
+                <li><span class="cond-num">2</span>
+                    페이지 본문 <code>p</code> 태그에 <code>text-indent: 20px</code> 를 적용해 첫 줄 들여쓰기를 설정하세요
+                </li>
+                <li><span class="cond-num">3</span>
+                    책 제목이 있는 태그에 <code>letter-spacing: 1px</code> 로 자간을 설정하세요
+                </li>
+                <li><span class="cond-num">4</span>
+                    <code>font</code> 단축 속성을 사용해 <strong>굵기 + 크기/줄간격 + 서체</strong>를 한 번에 작성하세요<br>
+                    예: <code>font: bold 16px/1.8 'Noto Sans KR', sans-serif;</code>
+                </li>
+                <li><span class="cond-num">5</span>
+                    읽은 책 목록에서 완독한 책에 클래스를 추가하고 <code>text-decoration: line-through</code> 로 취소선을 표시하세요
+                </li>
+                <li><span class="cond-num">6</span>
+                    책 장르(소설/에세이 등)가 영어로 표기된 경우 <code>text-transform: uppercase</code> 로 대문자 처리하세요
+                </li>
+            </ul>
+
+            <div class="add-section">
+                <div class="add-header">
+                    <span class="add-icon">✨</span>
+                    추가 조건 — font 단축 속성 완전 정복
+                </div>
+                <div class="add-body">
+                    <ul class="add-cond-list">
+                        <li><span class="add-cond-num">추가1</span>
+                            페이지 제목 <code>h1</code>에 <code>font-style: italic</code> 을 적용하고, 책 소개 문장 <code>p</code>에는 <code>font-style: normal</code> 로 해제하세요
+                        </li>
+                        <li><span class="add-cond-num">추가2</span>
+                            <code>font</code> 단축 속성에서 <code>font-weight</code>, <code>font-style</code>, <code>font-variant</code> 중 2가지 이상을 포함해서 작성하세요
+                            <div><ul>
+                                <li>첫 번째 구간(굵기/스타일/variant)은 순서 변경 가능, 생략 가능</li>
+                                <li>두 번째 구간(크기/줄간격)에서 크기는 <strong>필수</strong></li>
+                                <li>세 번째 구간(서체)은 <strong>절대 생략 불가</strong></li>
+                            </ul></div>
+                        </li>
+                        <li><span class="add-cond-num">추가3</span>
+                            <code>body</code>에 <code>color</code>를 <code>rgba()</code> 형식으로 작성해서 텍스트 색상을 지정하세요
+                            <div><ul><li>예: <code>color: rgba(30, 30, 30, 0.85);</code></li></ul></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>font 단축 속성 순서 기억법</strong><br>
+                <strong>굵기·스타일·variant</strong> → <strong>크기/줄간격</strong> → <strong>서체</strong><br>
+                크기와 서체는 반드시 있어야 해요. 줄간격은 기본값(1.4)이면 생략 가능해요.
+            </div>
+
+            <div class="cond-title">🖥️ CSS 작성 예시 (참고용)</div>
+            <div class="css-example">
+<span class="cmt">/* css/book.css */</span>
+
+<span class="cmt">/* font 단축 속성 사용 */</span>
+<span class="sel">body</span> &#123;
+  <span class="prop">font</span>: <span class="val">400 15px/1.8 'Noto Sans KR', sans-serif</span>;
+  <span class="prop">color</span>: <span class="val">rgba(30, 30, 30, 0.85)</span>;
+&#125;
+
+<span class="sel">h1</span> &#123;
+  <span class="prop">font</span>: <span class="val">bold italic 28px 'Noto Sans KR', serif</span>;
+  <span class="prop">letter-spacing</span>: <span class="val">2px</span>;
+&#125;
+
+<span class="sel">.done</span> &#123;
+  <span class="prop">text-decoration</span>: <span class="val">line-through</span>;
+  <span class="prop">color</span>: <span class="val">#aaa</span>;
+&#125;
+
+<span class="sel">p</span> &#123;
+  <span class="prop">text-indent</span>: <span class="val">20px</span>;
+&#125;
+            </div>
+
+            <ul class="checklist">
+                <li>font 단축 속성을 올바른 순서로 작성했나요?</li>
+                <li>font 단축 속성에 서체(font-family)를 마지막에 넣었나요?</li>
+                <li>text-indent는 블록 요소에 적용했나요?</li>
+                <li>완독 책에 클래스를 추가하고 CSS로 취소선을 줬나요?</li>
+                <li>color를 rgba() 형식으로 작성했나요?</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════ -->
+    <!-- Q3 : background                  -->
+    <!-- ════════════════════════════════ -->
+    <div class="problem p3">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">03</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">🎬 영화 리뷰 페이지에 background 속성 적용하기</div>
+                <div class="prob-file">수정 파일 → <span>movie.html</span> &nbsp; 새로 만들 파일 → <span>css/movie.css</span></div>
+                <div class="prob-tags">
+                    <span class="ptag">background-color</span>
+                    <span class="ptag">background-image</span>
+                    <span class="ptag">background-repeat</span>
+                    <span class="ptag">background-size</span>
+                    <span class="ptag">background-position</span>
+                    <span class="ptag new" style="background:rgba(200,57,10,0.15);color:#c8390a;">+ 스트라이프 패턴</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">20</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                <code>movie.html</code> 에 CSS를 연결하고, background 관련 속성을 활용해 영화 리뷰 페이지의 배경을 꾸며보세요.<br>
+                <strong>background-image를 이용한 스트라이프 패턴</strong>을 반드시 한 곳 이상 적용해야 합니다.
+            </div>
+
+            <div class="cond-title">📌 기본 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span>
+                    <code>movie.html</code> 에 <code>css/movie.css</code> 를 외부 연결하세요
+                </li>
+                <li><span class="cond-num">2</span>
+                    <code>body</code> 에 <code>background-color</code> 를 설정해 페이지 전체 배경색을 지정하세요 (흰색 제외)
+                </li>
+                <li><span class="cond-num">3</span>
+                    영화 제목이 담긴 영역(div 또는 header)에 <code>background-color</code>와 <code>color</code>를 설정해 눈에 띄게 꾸미세요
+                </li>
+                <li><span class="cond-num">4</span>
+                    페이지 어느 한 영역(예: 제목 배경, 리뷰 카드)에 <strong>수평 스트라이프 패턴</strong>을 적용하세요<br>
+                    <code>background-image: linear-gradient(...)</code> + <code>background-size</code> 사용
+                </li>
+                <li><span class="cond-num">5</span>
+                    스트라이프 패턴을 적용한 영역에 <code>background-color</code> 도 함께 설정해 투명한 줄 사이에 배경색이 보이게 하세요
+                </li>
+                <li><span class="cond-num">6</span>
+                    별점이나 장르 태그 등 작은 요소에 <code>background-color</code>와 <code>color</code>를 조합해서 배지(badge) 스타일을 만드세요
+                </li>
+            </ul>
+
+            <div class="add-section">
+                <div class="add-header">
+                    <span class="add-icon">✨</span>
+                    추가 조건 — background 심화
+                </div>
+                <div class="add-body">
+                    <ul class="add-cond-list">
+                        <li><span class="add-cond-num">추가1</span>
+                            수평 스트라이프 외에 <strong>사선 스트라이프(45deg)</strong>도 한 곳에 추가로 적용하세요
+                            <div><ul>
+                                <li><code>background-image: linear-gradient(45deg, 색상 25%, transparent 25%), linear-gradient(45deg, transparent 75%, 색상 75%);</code></li>
+                                <li><code>background-size: 20px 20px;</code></li>
+                                <li><code>background-position: 0 0, 10px 10px;</code> ← size의 절반값!</li>
+                            </ul></div>
+                        </li>
+                        <li><span class="add-cond-num">추가2</span>
+                            <code>background</code> 단축 속성을 사용해서 color + image + repeat + position 을 한 줄로 작성하는 구간을 1개 이상 만드세요
+                        </li>
+                        <li><span class="add-cond-num">추가3</span>
+                            영화 포스터 이미지가 있다면 <code>background-size: cover</code> 와 <code>background-position: center</code> 를 활용해서 배경 이미지로 넣어보세요
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>스트라이프 패턴 핵심 원리</strong><br>
+                <strong>수평 줄무늬</strong> (레이어 1개): <code>linear-gradient(0deg, 색상 50%, transparent 50%)</code> + <code>background-size: 20px 20px</code><br>
+                <strong>사선 줄무늬</strong> (레이어 2개): <code>background-position</code> 의 두 번째 레이어는 항상 <code>size ÷ 2</code> 만큼 이동시켜야 이음새가 맞아요!
+            </div>
+
+            <div class="cond-title">🖥️ CSS 작성 예시 (참고용)</div>
+            <div class="css-example">
+<span class="cmt">/* css/movie.css */</span>
+
+<span class="cmt">/* body 배경색 */</span>
+<span class="sel">body</span> &#123;
+  <span class="prop">background-color</span>: <span class="val">#1a1a2e</span>;
+  <span class="prop">color</span>: <span class="val">#eee</span>;
+&#125;
+
+<span class="cmt">/* 수평 스트라이프 */</span>
+<span class="sel">.stripe-area</span> &#123;
+  <span class="prop">background-color</span>: <span class="val">#ffffff</span>;
+  <span class="prop">background-image</span>: <span class="val">linear-gradient(0deg, #afa9ec 50%, transparent 50%)</span>;
+  <span class="prop">background-size</span>: <span class="val">20px 20px</span>;
+&#125;
+
+<span class="cmt">/* 장르 배지 */</span>
+<span class="sel">.genre-badge</span> &#123;
+  <span class="prop">background-color</span>: <span class="val">#c8390a</span>;
+  <span class="prop">color</span>: <span class="val">#fff</span>;
+&#125;
+            </div>
+
+            <ul class="checklist">
+                <li>body에 background-color를 설정했나요?</li>
+                <li>linear-gradient로 스트라이프 패턴을 만들었나요?</li>
+                <li>background-size를 설정했나요?</li>
+                <li>스트라이프 영역에 background-color도 함께 설정했나요?</li>
+                <li>사선 스트라이프의 background-position 두 번째 값이 size/2인가요?</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════ -->
+    <!-- Q4 : 박스모델 (padding·border·margin) -->
+    <!-- ════════════════════════════════ -->
+    <div class="problem p4">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">04</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">🍽️ 레시피 카드 페이지에 박스 모델 적용하기</div>
+                <div class="prob-file">수정 파일 → <span>recipe.html</span> &nbsp; 새로 만들 파일 → <span>css/recipe.css</span></div>
+                <div class="prob-tags">
+                    <span class="ptag">width / height</span>
+                    <span class="ptag">padding</span>
+                    <span class="ptag">border</span>
+                    <span class="ptag">margin</span>
+                    <span class="ptag">단위(px · % · em)</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">20</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                <code>recipe.html</code> 에 CSS를 연결하고, padding · border · margin 을 활용해서 레시피 카드처럼 보이도록 꾸며보세요.<br>
+                박스 모델의 4방향 단축 속성을 올바르게 사용하는 것이 핵심입니다.
+            </div>
+
+            <div class="cond-title">📌 기본 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span>
+                    <code>recipe.html</code> 에 <code>css/recipe.css</code> 를 외부 연결하세요
+                </li>
+                <li><span class="cond-num">2</span>
+                    레시피 전체를 감싸는 <code>div</code> 에 <code>width: 600px</code> 와 <code>margin: 0 auto</code> 를 적용해서 가운데 정렬하세요
+                </li>
+                <li><span class="cond-num">3</span>
+                    레시피 제목 영역에 <code>padding</code> 을 <strong>단축 속성 2값</strong>으로 작성하세요 — 상하 / 좌우를 다르게 설정
+                </li>
+                <li><span class="cond-num">4</span>
+                    재료 목록 <code>ul</code> 에 <code>border</code> 를 설정하세요 — 선 굵기 / 선 색상 / 선 스타일(solid 또는 dashed) 모두 포함
+                </li>
+                <li><span class="cond-num">5</span>
+                    조리 순서 <code>ol</code> 각 <code>li</code> 에 <code>padding</code> 을 적용해서 항목 간 내부 여백을 만드세요
+                </li>
+                <li><span class="cond-num">6</span>
+                    <code>h2</code>, <code>h3</code> 등 소제목에 <code>margin-bottom</code> 을 설정해서 제목과 내용 사이 여백을 만드세요
+                </li>
+            </ul>
+
+            <div class="add-section">
+                <div class="add-header">
+                    <span class="add-icon">✨</span>
+                    추가 조건 — border 스타일 다양하게 + 단위 활용
+                </div>
+                <div class="add-body">
+                    <ul class="add-cond-list">
+                        <li><span class="add-cond-num">추가1</span>
+                            <code>border</code> 스타일을 최소 <strong>2가지 이상</strong> 다르게 사용하세요
+                            <div><ul>
+                                <li>solid (실선) / dashed (점선) / dotted (점점선) 중 선택</li>
+                                <li>예: 재료 목록은 <code>dashed</code>, 카드 전체는 <code>solid</code></li>
+                            </ul></div>
+                        </li>
+                        <li><span class="add-cond-num">추가2</span>
+                            <code>padding</code> 단축 속성 <strong>4가지 방법을 모두</strong> 사용해보세요 (값 1개 / 2개 / 3개 / 4개)
+                            <div><ul>
+                                <li>값 1개: <code>padding: 10px</code> — 사방 동일</li>
+                                <li>값 2개: <code>padding: 10px 20px</code> — 상하 / 좌우</li>
+                                <li>값 3개: <code>padding: 10px 20px 30px</code> — 상 / 좌우 / 하</li>
+                                <li>값 4개: <code>padding: 10px 20px 30px 40px</code> — 시계방향 상·우·하·좌</li>
+                            </ul></div>
+                        </li>
+                        <li><span class="add-cond-num">추가3</span>
+                            <code>width</code>를 <code>px</code> 이 아닌 <code>%</code> 단위로도 사용해 보세요 (예: <code>width: 80%</code>)
+                            그리고 <code>%</code>와 <code>px</code>의 차이를 브라우저 창 크기를 바꿔가며 확인해 보세요
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>padding vs margin 헷갈릴 때 기억법</strong><br>
+                <strong>padding</strong> = 박스 안쪽 여백 → <code>background-color</code>가 채워짐, 클릭 영역도 늘어남<br>
+                <strong>margin</strong> = 박스 바깥 여백 → 투명한 공간, 클릭 안 됨<br>
+                버튼을 크게 만들고 싶으면 <strong>padding</strong>을 쓰는 게 맞아요!
+            </div>
+
+            <div class="cond-title">🖥️ CSS 작성 예시 (참고용)</div>
+            <div class="css-example">
+<span class="cmt">/* css/recipe.css */</span>
+
+<span class="sel">.recipe-card</span> &#123;
+  <span class="prop">width</span>: <span class="val">600px</span>;
+  <span class="prop">margin</span>: <span class="val">0 auto</span>;  <span class="cmt">/* 상하:0 / 좌우:auto → 가운데 정렬 */</span>
+  <span class="prop">border</span>: <span class="val">2px solid #d46b00</span>;
+  <span class="prop">padding</span>: <span class="val">20px 30px</span>;  <span class="cmt">/* 상하:20px / 좌우:30px */</span>
+&#125;
+
+<span class="sel">.ingredient-list</span> &#123;
+  <span class="prop">border</span>: <span class="val">1px dashed #ccc</span>;
+  <span class="prop">padding</span>: <span class="val">10px 20px 10px 30px</span>;
+  <span class="prop">margin-bottom</span>: <span class="val">16px</span>;
+&#125;
+
+<span class="sel">h2</span> &#123;
+  <span class="prop">margin-bottom</span>: <span class="val">12px</span>;
+  <span class="prop">padding-bottom</span>: <span class="val">8px</span>;
+  <span class="prop">border-bottom</span>: <span class="val">2px solid #d46b00</span>;
+&#125;
+            </div>
+
+            <ul class="checklist">
+                <li>레시피 카드를 감싸는 div에 width와 margin: 0 auto를 설정했나요?</li>
+                <li>padding 단축 속성 2값을 사용했나요? (상하 / 좌우)</li>
+                <li>border에 굵기·색상·스타일 3가지를 모두 넣었나요?</li>
+                <li>border 스타일을 2가지 이상 사용했나요?</li>
+                <li>padding의 4가지 작성법을 모두 시도했나요?</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ════════════════════════════════ -->
+    <!-- Q5 : index.html 종합 스타일링     -->
+    <!-- ════════════════════════════════ -->
+    <div class="problem p5">
+        <div class="prob-head">
+            <div class="prob-num"><span class="nl">Q</span><span class="nv">05</span></div>
+            <div class="prob-title-area">
+                <div class="prob-title">🌟 나의 미니 홈페이지 — CSS 종합 스타일링</div>
+                <div class="prob-file">수정 파일 → <span>index.html</span> &nbsp; 새로 만들 파일 → <span>css/style.css</span></div>
+                <div class="prob-tags">
+                    <span class="ptag">1~4번 내용 종합</span>
+                    <span class="ptag new" style="background:rgba(90,45,138,0.15);color:#5a2d8a;">font · text</span>
+                    <span class="ptag new" style="background:rgba(90,45,138,0.15);color:#5a2d8a;">background</span>
+                    <span class="ptag new" style="background:rgba(90,45,138,0.15);color:#5a2d8a;">padding · border · margin</span>
+                </div>
+            </div>
+            <div class="prob-score"><div class="sv">20</div><div class="sl">점</div></div>
+        </div>
+        <div class="prob-body">
+            <div class="scenario">
+                📋 <strong>문제 상황</strong><br>
+                HTML 수업 마지막에 만든 <code>index.html</code> 랜딩 페이지에 배운 CSS를 모두 활용해서 나만의 미니 홈페이지를 완성하세요.<br>
+                1~4번에서 배운 모든 내용을 골고루 사용해야 하며, <strong>본인만의 스타일</strong>로 꾸미는 것이 목표입니다.
+            </div>
+
+            <div class="cond-title">📌 필수 조건</div>
+            <ul class="cond-list">
+                <li><span class="cond-num">1</span>
+                    <code>index.html</code> 에 <code>css/style.css</code> 를 외부 연결하세요. 구글 폰트를 사용한다면 CSS 링크보다 위에 배치하세요
+                </li>
+                <li><span class="cond-num">2</span>
+                    <code>header</code> 영역에 <code>background-color</code> 또는 스트라이프 패턴을 적용하고, <code>padding</code>으로 내부 여백을 충분히 주세요
+                </li>
+                <li><span class="cond-num">3</span>
+                    <code>nav</code> 안의 링크들에 <code>text-decoration: none</code> 과 <code>color</code>를 설정해서 메뉴처럼 보이게 하세요
+                </li>
+                <li><span class="cond-num">4</span>
+                    <code>main</code> 안의 <code>section</code> 들에 <code>padding</code>과 <code>margin-bottom</code>을 적용해서 섹션 사이 여백을 만드세요
+                </li>
+                <li><span class="cond-num">5</span>
+                    작품 목록 <code>ul li</code> 에 <code>border-bottom</code>을 설정해서 리스트 구분선을 만드세요
+                </li>
+                <li><span class="cond-num">6</span>
+                    폼 요소 (<code>input</code>, <code>select</code>, <code>textarea</code>) 에 <code>border</code>와 <code>padding</code>을 적용하세요
+                </li>
+                <li><span class="cond-num">7</span>
+                    <code>button</code> 에 <code>background-color</code>, <code>color</code>, <code>padding</code>, <code>border</code> 를 적용해서 버튼 스타일을 만드세요
+                </li>
+                <li><span class="cond-num">8</span>
+                    <code>footer</code> 에 <code>background-color</code>, <code>color</code>, <code>text-align: center</code>, <code>padding</code>을 적용하세요
+                </li>
+            </ul>
+
+            <div class="add-section">
+                <div class="add-header">
+                    <span class="add-icon">🎨</span>
+                    추가 조건 — 나만의 스타일 완성
+                </div>
+                <div class="add-body">
+                    <ul class="add-cond-list">
+                        <li><span class="add-cond-num">추가1</span>
+                            페이지 전체에서 사용하는 <strong>주요 색상 3가지</strong>를 정하고 일관성 있게 적용하세요<br>
+                            (예: 포인트색 · 배경색 · 텍스트색)
+                        </li>
+                        <li><span class="add-cond-num">추가2</span>
+                            <code>header</code> 또는 <code>nav</code> 영역에 <strong>스트라이프 패턴</strong>을 적용하세요 (수평 또는 사선 자유 선택)
+                        </li>
+                        <li><span class="add-cond-num">추가3</span>
+                            구글 폰트를 연결해서 <code>body</code> 전체에 적용하고, 제목(<code>h1</code>)에는 본문과 다른 <code>font-weight</code>를 주세요
+                        </li>
+                        <li><span class="add-cond-num">추가4</span>
+                            지금까지 배운 모든 속성을 최소 1번 이상 사용했는지 아래 체크리스트로 확인하세요
+                            <div><ul>
+                                <li>color / font-family / font-size / font-weight / line-height</li>
+                                <li>text-align / text-decoration / letter-spacing</li>
+                                <li>background-color / background-image (linear-gradient)</li>
+                                <li>background-size / background-position</li>
+                                <li>width / padding / border / margin</li>
+                            </ul></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 <strong>작업 순서 추천</strong><br>
+                ① body 기본 스타일 (font, color, background) → ② header 꾸미기 → ③ nav 링크 스타일 → ④ main 섹션 여백 → ⑤ 폼 + 버튼 → ⑥ footer<br>
+                전체 레이아웃을 잡은 뒤 세부 요소를 꾸미는 순서로 진행하면 효율적이에요.
+            </div>
+
+            <div class="cond-title">🖥️ CSS 작성 예시 (참고용)</div>
+            <div class="css-example">
+<span class="cmt">/* css/style.css — index.html 스타일 */</span>
+
+<span class="sel">body</span> &#123;
+  <span class="prop">font-family</span>: <span class="val">'Noto Sans KR', sans-serif</span>;
+  <span class="prop">background-color</span>: <span class="val">#f5f3ee</span>;
+  <span class="prop">color</span>: <span class="val">#1a1a1a</span>;
+  <span class="prop">line-height</span>: <span class="val">1.8</span>;
+&#125;
+
+<span class="sel">header</span> &#123;
+  <span class="prop">background-color</span>: <span class="val">#1a1a2e</span>;
+  <span class="prop">color</span>: <span class="val">#fff</span>;
+  <span class="prop">padding</span>: <span class="val">30px 20px</span>;
+  <span class="prop">text-align</span>: <span class="val">center</span>;
+&#125;
+
+<span class="sel">nav a</span> &#123;
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;
+  <span class="prop">color</span>: <span class="val">#1a5fa8</span>;
+  <span class="prop">font-weight</span>: <span class="val">700</span>;
+&#125;
+
+<span class="sel">button</span> &#123;
+  <span class="prop">background-color</span>: <span class="val">#5a2d8a</span>;
+  <span class="prop">color</span>: <span class="val">#fff</span>;
+  <span class="prop">border</span>: <span class="val">none</span>;
+  <span class="prop">padding</span>: <span class="val">10px 24px</span>;
+&#125;
+
+<span class="sel">footer</span> &#123;
+  <span class="prop">background-color</span>: <span class="val">#1a1a2e</span>;
+  <span class="prop">color</span>: <span class="val">rgba(255,255,255,0.6)</span>;
+  <span class="prop">text-align</span>: <span class="val">center</span>;
+  <span class="prop">padding</span>: <span class="val">20px</span>;
+&#125;
+            </div>
+
+            <ul class="checklist">
+                <li>header에 background-color와 padding을 적용했나요?</li>
+                <li>nav a 에 text-decoration: none을 설정했나요?</li>
+                <li>section 에 padding과 margin을 설정했나요?</li>
+                <li>버튼에 background-color, color, padding, border를 모두 설정했나요?</li>
+                <li>footer에 background-color, text-align: center, padding을 설정했나요?</li>
+                <li>스트라이프 패턴을 한 곳 이상 적용했나요?</li>
+                <li>배운 CSS 속성을 골고루 모두 사용했나요?</li>
+            </ul>
+
+            <div style="background:#f3eeff;border:1px solid rgba(90,45,138,0.3);border-radius:8px;padding:14px 18px;margin-top:16px;font-size:0.85rem;color:#5a2d8a;line-height:1.85;">
+                🎉 <strong>수고하셨어요!</strong><br>
+                5문제를 모두 완성하면 HTML 구조 + CSS 스타일이 합쳐진 <strong>나만의 미니 홈페이지</strong>가 완성됩니다.<br>
+                깃허브에 업로드해서 친구들과 공유해 보세요! 🚀
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        CSS 기초 실습 문제지 &nbsp;·&nbsp; 총 5문제 / 100점 &nbsp;·&nbsp;
+        선택자 · font/text · background · 박스모델 종합 &nbsp;·&nbsp; Korea Art Tech Studio
+    </div>
+
+</div>
+</body>
+</html>
