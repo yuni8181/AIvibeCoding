@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FLEX 실습 - 네이버 레이아웃</title>
+  <style>
+
+    /* ==============================================
+       오늘 사용한 속성 목록
+       ✅ display: flex
+       ✅ flex-direction
+       ✅ flex-wrap
+       ✅ justify-content
+       ✅ align-items
+       ✅ align-content
+       ✅ align-self
+       ✅ order
+       ✅ ::after
+    ============================================== */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+      font-size: 13px;
+      background: #f5f6f7;
+      color: #333;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 30px auto;
+    }
+
+    /* ── 힌트 박스 ── */
+    .hint {
+      background: #fff8e1;
+      border: 1px dashed #f9a825;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      line-height: 2;
+      color: #555;
+    }
+    .hint h3 { font-size: 14px; color: #e65100; margin-bottom: 6px; }
+    .hint code {
+      background: #fff3cd;
+      color: #d84315;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+
+    /* ── 공통 카드 ── */
+    .card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    /* ==============================================
+       📌 탭바
+       사용: display:flex / align-items:center
+    ============================================== */
+    .tab-bar {
+      display: flex;           /* ← display:flex */
+      align-items: center;     /* ← align-items */
+      padding: 0 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .tab-bar a {
+      display: flex;
+      align-items: center;
+      padding: 12px 10px;
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-bar a.active {
+      color: #03c75a;
+      font-weight: bold;
+      border-bottom: 2px solid #03c75a;
+    }
+    .live-badge {
+      background: #ff4545;
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 10px;
+      margin-left: 4px;
+    }
+
+    /* ==============================================
+       📌 필터바
+       사용: display:flex / justify-content:space-between / align-items:center
+    ============================================== */
+    .filter-bar {
+      display: flex;                       /* ← display:flex */
+      justify-content: space-between;      /* ← justify-content */
+      align-items: center;                 /* ← align-items */
+      padding: 10px 16px;
+      background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .filter-left {
+      display: flex;
+      align-items: center;
+    }
+    .filter-select {
+      border: 1px solid #ddd;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 10px;
+    }
+    .filter-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .filter-right a {
+      font-size: 12px;
+      color: #888;
+      text-decoration: none;
+    }
+
+    /* ==============================================
+       📌 언론사 그리드
+       사용: display:flex / flex-wrap:wrap
+       → 6열 구성 (calc 없이 width % 사용)
+    ============================================== */
+    .media-grid {
+      display: flex;           /* ← display:flex */
+      flex-wrap: wrap;         /* ← flex-wrap:wrap */
+    }
+    .media-item {
+      width: calc(100% / 6);   /* 6열 */
+      height: 52px;
+      display: flex;
+      align-items: center;     /* ← align-items */
+      justify-content: center; /* ← justify-content */
+      border: 1px solid #eee;
+      margin: -0.5px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .media-item:hover { background: #f0faf4; color: #03c75a; }
+
+    .c-red    { color: #c00; }
+    .c-orange { color: #f60; }
+    .c-blue   { color: #1a5fa8; }
+    .c-dblue  { color: #2c5282; }
+    .c-green  { color: #1e7e34; }
+    .c-purple { color: #5b5bff; }
+    .c-sky    { color: #00a0e9; }
+    .c-teal   { color: #009b77; }
+
+    /* ==============================================
+       📌 푸터 (페이지네이션 + 아이콘)
+       사용: display:flex / justify-content:space-between / align-items:center
+    ============================================== */
+    .media-footer {
+      display: flex;
+      justify-content: space-between;   /* ← justify-content */
+      align-items: center;              /* ← align-items */
+      padding: 8px 16px;
+      border-top: 1px solid #eee;
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #555;
+    }
+    .btn {
+      width: 22px; height: 22px;
+      border: 1px solid #ddd;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .view-btns { display: flex; gap: 6px; }
+    .view-btns button {
+      border: 1px solid #ddd;
+      background: #f5f5f5;
+      padding: 3px 7px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* ==============================================
+       📌 쇼핑 탭바
+       사용: display:flex / justify-content:space-between / align-items:center
+    ============================================== */
+    .shop-tabbar {
+      display: flex;
+      justify-content: space-between;   /* ← justify-content */
+      align-items: center;              /* ← align-items */
+      padding: 0 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .shop-tabs {
+      display: flex;
+      align-items: center;
+    }
+    .shop-tabs a {
+      padding: 11px 10px;
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+    .shop-tabs a.active {
+      color: #222;
+      font-weight: bold;
+      border-bottom: 2px solid #222;
+    }
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    /* ==============================================
+       📌 쇼핑 본문
+       사용: display:flex → 사이드바(왼쪽) + 상품(오른쪽) 나란히
+    ============================================== */
+    .shop-body {
+      display: flex;           /* ← display:flex */
+      padding: 14px 12px;
+      gap: 12px;
+    }
+
+    /* 사이드바 */
+    .sidebar {
+      width: 100px;
+      flex-shrink: 0;
+    }
+    .sidebar-links {
+      display: flex;
+      flex-direction: column;  /* ← flex-direction:column */
+      gap: 3px;
+      margin-bottom: 10px;
+    }
+    .sidebar-links a {
+      font-size: 12px;
+      color: #555;
+      text-decoration: none;
+    }
+    .sidebar-links a:hover { color: #03c75a; }
+    .quick {
+      display: flex;
+      gap: 5px;
+    }
+    .quick a {
+      font-size: 11px;
+      color: #555;
+      text-decoration: none;
+      background: #f5f5f5;
+      padding: 3px 7px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* ==============================================
+       📌 상품 그리드
+       사용: display:flex / flex-wrap:wrap / align-content
+    ============================================== */
+    .products {
+      display: flex;           /* ← display:flex */
+      flex-wrap: wrap;         /* ← flex-wrap:wrap */
+      align-content: flex-start; /* ← align-content */
+      gap: 10px;
+      flex: 1;
+    }
+
+    /* 일반 상품 카드 */
+    .prod {
+      width: calc(20% - 8px);
+    }
+    .prod-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+    .prod p {
+      font-size: 11px;
+      color: #333;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    /* 동영상 카드 */
+    .prod-video {
+      width: calc(20% - 8px);
+      position: relative;
+    }
+    .prod-video .prod-img {
+      aspect-ratio: 3 / 4;
+    }
+    /* ✅ ::after → 재생 버튼 오버레이 */
+    .prod-video::after {
+      content: "▶";
+      position: absolute;
+      bottom: 28px;
+      left: 8px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .prod-video p {
+      font-size: 11px;
+      color: #333;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    /* ==============================================
+       📌 상품 컬러 박스 색상
+    ============================================== */
+    .b1  { background: #b2dfdb; }
+    .b2  { background: #bbdefb; }
+    .b3  { background: #f8bbd0; }
+    .b4  { background: #fff9c4; }
+    .b5  { background: #d1c4e9; }
+    .b6  { background: #ffe0b2; }
+    .b7  { background: #c8e6c9; }
+    .b8  { background: #fce4ec; }
+    .b9  { background: #e3f2fd; }
+    .b10 { background: #f3e5f5; }
+    .b11 { background: #e8f5e9; }
+
+    /* ==============================================
+       📌 혜택 배너
+       사용: display:flex / align-items:center
+       ✅ ::after → AD 표시
+    ============================================== */
+    .banner {
+      display: flex;
+      align-items: center;     /* ← align-items */
+      gap: 8px;
+      padding: 8px 16px;
+      background: #fffbf0;
+      border-top: 1px solid #eee;
+      font-size: 12px;
+      color: #555;
+      position: relative;
+    }
+    /* ✅ ::after → AD 라벨 */
+    .banner::after {
+      content: "AD";
+      position: absolute;
+      right: 12px;
+      font-size: 10px;
+      color: #aaa;
+      border: 1px solid #ddd;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    .today-label {
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .brand { color: #1abc4e; font-weight: bold; }
+
+    /* 쇼핑 푸터 */
+    .shop-footer {
+      display: flex;
+      justify-content: center;   /* ← justify-content */
+      align-items: center;       /* ← align-items */
+      gap: 10px;
+      padding: 8px;
+      border-top: 1px solid #eee;
+      font-size: 12px;
+      color: #03c75a;
+    }
+
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 힌트 -->
+  <div class="hint">
+    <h3>🎯 오늘 사용한 속성 — 노트 내용 + ::after</h3>
+    <code>display:flex</code> &nbsp;
+    <code>flex-direction</code> &nbsp;
+    <code>flex-wrap:wrap</code> &nbsp;
+    <code>justify-content</code> &nbsp;
+    <code>align-items</code> &nbsp;
+    <code>align-content</code> &nbsp;
+    <code>align-self</code> &nbsp;
+    <code>order</code> &nbsp;
+    <code>::after { content:"..." }</code>
+  </div>
+
+  <!-- ===================== 뉴스스탠드 ===================== -->
+  <div class="card">
+
+    <!-- 탭바: display:flex / align-items:center -->
+    <div class="tab-bar">
+      <a href="#">뉴스스탠드</a>
+      <a href="#">언론사편집</a>
+      <a href="#">엔터</a>
+      <a href="#" class="active">스포츠 <span class="live-badge">LIVE</span></a>
+      <a href="#">게임</a>
+      <a href="#">경제</a>
+      <a href="#">쇼핑투데이</a>
+    </div>
+
+    <!-- 필터바: display:flex / justify-content:space-between -->
+    <div class="filter-bar">
+      <div class="filter-left">
+        <select class="filter-select"><option>전체언론사 ▾</option></select>
+        <span>연합뉴스 · 삼성전자 DX부문 노조, 공동대응 철회…"협력 요청에 무응…</span>
+      </div>
+      <div class="filter-right">
+        <a href="#">뉴스스탠드</a>
+        <a href="#">뉴스홈</a>
+      </div>
+    </div>
+
+    <!-- 언론사 그리드: display:flex / flex-wrap:wrap (6열) -->
+    <div class="media-grid">
+      <div class="media-item c-red">OSEN</div>
+      <div class="media-item c-orange">노컷뉴스</div>
+      <div class="media-item c-blue">KBS WORLD</div>
+      <div class="media-item c-red">ZDNET Korea</div>
+      <div class="media-item">JTBC</div>
+      <div class="media-item c-dblue">매일신문</div>
+
+      <div class="media-item c-red">아시아경제</div>
+      <div class="media-item c-green">서울경제</div>
+      <div class="media-item c-red">한겨레</div>
+      <div class="media-item">Korea JoongAng Daily</div>
+      <div class="media-item c-purple">BLOTER</div>
+      <div class="media-item c-blue">SBS NEWS</div>
+
+      <div class="media-item c-sky">MBC</div>
+      <div class="media-item c-red">문화일보</div>
+      <div class="media-item c-sky">아이뉴스24</div>
+      <div class="media-item c-teal">충청투데이</div>
+      <div class="media-item c-blue">대전일보</div>
+      <div class="media-item">중부매일</div>
+
+      <div class="media-item">CEO스코어데일리</div>
+      <div class="media-item">서울파이낸스</div>
+      <div class="media-item">山 (산)</div>
+      <div class="media-item">뉴스핌</div>
+      <div class="media-item">초이스경제</div>
+      <div class="media-item">여성경제신문</div>
+    </div>
+
+    <!-- 푸터: display:flex / justify-content:space-between -->
+    <div class="media-footer">
+      <div class="pagination">
+        <button class="btn">〈</button>
+        언론사 더보기 1/4
+        <button class="btn">〉</button>
+      </div>
+      <div class="view-btns">
+        <button>☰</button>
+        <button>⊞</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== 쇼핑 ===================== -->
+  <div class="card">
+
+    <!-- 쇼핑 탭바: display:flex / justify-content:space-between -->
+    <div class="shop-tabbar">
+      <div class="shop-tabs">
+        <a href="#" class="active">쇼핑</a>
+        <a href="#">맨즈</a>
+        <a href="#">브랜드샵</a>
+        <a href="#">추천핫딜</a>
+        <a href="#">MY추천</a>
+        <a href="#">쇼핑라이브</a>
+      </div>
+      <div class="page-nav">
+        1/12
+        <button class="btn">〈</button>
+        <button class="btn">〉</button>
+      </div>
+    </div>
+
+    <!-- 본문: display:flex → 사이드바 + 상품 나란히 -->
+    <div class="shop-body">
+
+      <!-- 사이드바: flex-direction:column -->
+      <div class="sidebar">
+        <div class="sidebar-links">
+          <a href="#">투팡</a>
+          <a href="#">G마켓</a>
+          <a href="#">옥션</a>
+          <a href="#">11번가</a>
+          <a href="#">올리브영</a>
+          <a href="#">SSG닷컴</a>
+          <a href="#">하프클럽</a>
+          <a href="#">이마트몰</a>
+          <a href="#">GS SHOP</a>
+          <a href="#">패션플러스</a>
+        </div>
+        <div class="quick">
+          <a href="#">주문배송</a>
+          <a href="#">장바구니</a>
+        </div>
+      </div>
+
+      <!-- 상품 그리드: display:flex / flex-wrap:wrap / align-content:flex-start -->
+      <div class="products">
+
+        <!-- 동영상 카드: ::after → ▶ 재생버튼 -->
+        <div class="prod-video">
+          <div class="prod-img b1"></div>
+          <p>인기 급상승<br>미소패 슬리퍼</p>
+        </div>
+
+        <div class="prod">
+          <div class="prod-img b2"></div>
+          <p>우리집 쭈방도?<br>구축? 필터 필수</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b3"></div>
+          <p>부모님이 좋아해<br>가정의달 선물!</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b4"></div>
+          <p>터졌다! 신상NEW<br>2만원대Get~세일</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b5"></div>
+          <p>얼굴 근육이 쭉~<br>경락리프팅 62%</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b6"></div>
+          <p>물세탁도 OK!<br>바자로이불50%↓</p>
+        </div>
+
+        <!-- 2행 -->
+        <div class="prod-video">
+          <div class="prod-img b7"></div>
+          <p>볼라브레라 [광고]</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b8"></div>
+          <p>Best트위드자켓<br>가볍게~톰이배색</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b9"></div>
+          <p>초여름~린넨우드<br>국내제작~퀄리티</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b10"></div>
+          <p>세트가 이 가격?<br>지금만 2만원대!</p>
+        </div>
+        <div class="prod">
+          <div class="prod-img b11"></div>
+          <p>시즌 핫이슈템!<br>최대40%+10%쿠폰</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 혜택 배너: display:flex / align-items + ::after → AD -->
+    <div class="banner">
+      <span class="today-label">오늘의 혜택</span>
+      <span class="brand">Gmarket</span>
+      <span>G마켓 꿀장세일!</span>
+      <span style="color:#888">24시간 카테고리 특가! 달의 쿠폰 꼭 놓치지마</span>
+    </div>
+
+    <!-- 쇼핑 푸터: display:flex / justify-content:center -->
+    <div class="shop-footer">
+      <button class="btn">〈</button>
+      쇼핑아이템 더보기 1/12
+      <button class="btn">〉</button>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
