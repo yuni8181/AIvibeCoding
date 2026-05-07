@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS 인터랙션 용어 사전 Vol.2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #06060c;
+  --surface: #0e0e18;
+  --card: #13131e;
+  --border: rgba(255,255,255,0.07);
+  --accent: #5ef0c0;
+  --accent2: #ff7eb3;
+  --accent3: #7b8cff;
+  --accent4: #ffd166;
+  --text: #dde0f0;
+  --muted: #5a5a78;
+  --code-bg: #09090f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  line-height: 1.7;
+  cursor: none;
+}
+
+/* ── 커스텀 커서 ── */
+#cur-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed; top:0; left:0;
+  pointer-events: none; z-index: 9999;
+}
+#cur-ring {
+  width: 28px; height: 28px;
+  border: 1.5px solid rgba(94,240,192,0.45);
+  border-radius: 50%;
+  position: fixed; top:0; left:0;
+  pointer-events: none; z-index: 9998;
+  transition: width .2s, height .2s, border-color .2s;
+}
+
+/* ── 진행률 바 ── */
+#prog {
+  position: fixed; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  transform-origin: left; transform: scaleX(0);
+  z-index: 200;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(6,6,12,0.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  height: 52px;
+  display: flex; align-items: center; padding: 0 1.5rem; gap: 0;
+}
+.nav-logo {
+  font-family: 'Gowun Dodum', sans-serif;
+  font-size: 1rem; color: var(--accent);
+  margin-right: 1.5rem; white-space: nowrap;
+}
+.nav-vol {
+  font-size: 0.7rem; background: rgba(94,240,192,0.12);
+  border: 1px solid rgba(94,240,192,0.25); color: var(--accent);
+  border-radius: 4px; padding: 1px 7px; margin-left: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.nav-links { display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; }
+.nav-links::-webkit-scrollbar { display:none; }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 0.76rem;
+  padding: 5px 10px; border-radius: 6px; cursor:none; white-space:nowrap;
+  transition: color .2s, background .2s;
+}
+.nav-links a:hover { color: var(--text); background: var(--border); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 6rem 2rem 4rem;
+  position: relative; overflow: hidden;
+}
+.hero-noise {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+.hero-glow {
+  position: absolute; inset:0;
+  background:
+    radial-gradient(ellipse 55% 55% at 15% 40%, rgba(94,240,192,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 25%, rgba(123,140,255,0.09) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 90%, rgba(255,126,179,0.07) 0%, transparent 70%);
+}
+.hero-vol {
+  display:inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 100px; padding: 5px 16px;
+  margin-bottom: 1.2rem; position:relative; z-index:1;
+}
+.hero-title {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
+  font-size: clamp(2rem, 7vw, 4.2rem);
+  line-height: 1.25; letter-spacing: -0.02em;
+  position: relative; z-index:1;
+}
+.hero-title em { font-style:normal; color: var(--accent); }
+.hero-sub { color: var(--muted); font-size:.95rem; margin-top:.8rem; position:relative; z-index:1; }
+.hero-tags {
+  display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+  margin-top: 2rem; position:relative; z-index:1;
+}
+.hero-tag {
+  font-size: 0.78rem; padding: 5px 14px; border-radius:100px;
+  border: 1px solid var(--border); color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  transition: border-color .2s, color .2s;
+}
+.hero-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── 공통 섹션 ── */
+.section { max-width: 1080px; margin:0 auto; padding: 4.5rem 1.5rem; }
+.sec-hd {
+  display:flex; align-items:center; gap:10px; margin-bottom:2.5rem;
+}
+.sec-num {
+  font-family: 'JetBrains Mono', monospace; font-size:.75rem;
+  color: var(--muted); background: var(--card);
+  border: 1px solid var(--border); border-radius:5px; padding:3px 9px;
+}
+.sec-title { font-family:'Gowun Dodum',sans-serif; font-size:1.5rem; }
+.tag { font-size:.72rem; padding:2px 9px; border-radius:100px; font-family:'JetBrains Mono',monospace; }
+.tag-e { background:rgba(94,240,192,.12); color:var(--accent); border:1px solid rgba(94,240,192,.25); }
+.tag-m { background:rgba(255,209,102,.12); color:var(--accent4); border:1px solid rgba(255,209,102,.25); }
+.tag-h { background:rgba(255,126,179,.12); color:var(--accent2); border:1px solid rgba(255,126,179,.25); }
+
+/* ── CARD ── */
+.tcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px; overflow:hidden; margin-bottom:2.5rem;
+  transition: border-color .3s;
+}
+.tcard:hover { border-color: rgba(94,240,192,.2); }
+.tcard-hd {
+  padding:1.3rem 1.8rem; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.8rem;
+}
+.tcard-title { font-family:'Gowun Dodum',sans-serif; font-size:1.3rem; }
+.tcard-title small {
+  font-family:'JetBrains Mono',monospace; font-size:.78rem;
+  color:var(--accent); margin-left:8px; font-weight:400;
+}
+.tcard-body {
+  display:grid; grid-template-columns:1fr 1fr;
+}
+@media(max-width:700px){ .tcard-body{ grid-template-columns:1fr; } }
+.tdesc {
+  padding:1.8rem; border-right:1px solid var(--border);
+}
+@media(max-width:700px){ .tdesc{ border-right:none; border-bottom:1px solid var(--border); } }
+.tdesc p { color:var(--muted); font-size:.9rem; margin-bottom:.8rem; }
+.tdemo { padding:1.8rem; display:flex; flex-direction:column; gap:1rem; }
+.demo-lbl {
+  font-size:.72rem; font-family:'JetBrains Mono',monospace;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+}
+
+/* ── 코드 블록 ── */
+.cb {
+  background:var(--code-bg); border:1px solid var(--border);
+  border-radius:9px; padding:.9rem 1.1rem;
+  font-family:'JetBrains Mono',monospace; font-size:.76rem;
+  color:#9aa8cc; overflow-x:auto; line-height:1.85;
+}
+.cb .kw { color:#7b8cff; }
+.cb .fn { color:#5ef0c0; }
+.cb .str { color:#ffd166; }
+.cb .cm { color:#33334a; font-style:italic; }
+.cb .num { color:#ff7eb3; }
+
+.divider { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
+
+/* ── 버튼 ── */
+.btn {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:9px 18px; border-radius:9px; font-size:.82rem;
+  font-family:'Noto Sans KR',sans-serif; cursor:none; border:none;
+  transition:all .2s; font-weight:500;
+}
+.btn-p { background:var(--accent); color:#06060c; }
+.btn-p:hover { filter:brightness(1.1); transform:translateY(-1px); box-shadow:0 6px 20px rgba(94,240,192,.3); }
+.btn-o { background:transparent; color:var(--text); border:1px solid var(--border); }
+.btn-o:hover { border-color:var(--accent); color:var(--accent); }
+
+/* reveal */
+.rv { opacity:0; transform:translateY(20px); transition:opacity .55s ease, transform .55s ease; }
+.rv.vis { opacity:1; transform:translateY(0); }
+
+/* ══ 01. ACCORDION ══ */
+.acc-item {
+  border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:8px;
+}
+.acc-btn {
+  width:100%; background:var(--surface); border:none; color:var(--text);
+  padding:14px 18px; text-align:left; cursor:none;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.88rem; font-family:'Noto Sans KR',sans-serif;
+  transition:background .2s;
+}
+.acc-btn:hover { background:rgba(94,240,192,.05); }
+.acc-arrow {
+  font-size:.75rem; color:var(--accent); transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:inline-block;
+}
+.acc-body {
+  max-height:0; overflow:hidden;
+  transition:max-height .35s cubic-bezier(.4,0,.2,1), padding .35s;
+  background: var(--code-bg);
+  color:var(--muted); font-size:.85rem; padding:0 18px;
+}
+.acc-body.open { max-height:200px; padding:14px 18px; }
+.acc-arrow.open { transform:rotate(180deg); }
+
+/* ══ 02. TYPEWRITER ══ */
+#tw-text {
+  font-family:'JetBrains Mono',monospace; font-size:1.4rem;
+  color:var(--accent); min-height:2em;
+  border-right:2px solid var(--accent);
+  padding-right:4px;
+  animation:blink .75s step-end infinite;
+}
+@keyframes blink { 50%{ border-color:transparent; } }
+
+/* ══ 03. NUMBER COUNTER ══ */
+.counter-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+}
+.counter-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:1.2rem; text-align:center;
+}
+.counter-num {
+  font-family:'JetBrains Mono',monospace; font-size:2rem;
+  font-weight:700; color:var(--accent); display:block;
+}
+.counter-label { font-size:.75rem; color:var(--muted); margin-top:4px; }
+
+/* ══ 04. TAB ══ */
+.tab-list {
+  display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:0;
+}
+.tab-btn {
+  padding:9px 16px; background:transparent; border:none;
+  color:var(--muted); font-size:.83rem; cursor:none;
+  font-family:'Noto Sans KR',sans-serif;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:color .2s, border-color .2s;
+}
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab-panel { display:none; padding:1.2rem; background:var(--code-bg); border-radius:0 0 10px 10px; }
+.tab-panel.active { display:block; animation:tab-fade .25s ease; }
+@keyframes tab-fade { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ══ 05. MAGNET BUTTON ══ */
+.magnet-wrap { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+.magnet-btn {
+  padding:14px 32px; border-radius:100px;
+  font-size:.9rem; font-family:'Noto Sans KR',sans-serif;
+  cursor:none; border:1.5px solid var(--border);
+  color:var(--text); background:var(--surface);
+  transition:box-shadow .2s; display:inline-block;
+  font-weight:500;
+}
+.magnet-btn.accent { background:rgba(94,240,192,.1); border-color:rgba(94,240,192,.3); color:var(--accent); }
+
+/* ══ 06. TEXT SCRAMBLE ══ */
+#scramble-text {
+  font-family:'JetBrains Mono',monospace; font-size:1.3rem;
+  color:var(--text); letter-spacing:.05em; min-height:2em;
+  display:flex; align-items:center; flex-wrap:wrap; gap:2px;
+}
+.sc-char { display:inline-block; transition:color .1s; }
+.sc-char.scrambling { color:var(--accent2); }
+
+/* ══ 07. DARK MODE TOGGLE ══ */
+.toggle-wrap {
+  display:flex; align-items:center; gap:16px;
+}
+.toggle-switch {
+  width:56px; height:30px; border-radius:100px;
+  background:var(--surface); border:1.5px solid var(--border);
+  position:relative; cursor:none; transition:background .3s;
+}
+.toggle-switch.on { background:rgba(94,240,192,.2); border-color:rgba(94,240,192,.4); }
+.toggle-knob {
+  width:22px; height:22px; border-radius:50%;
+  background:var(--muted); position:absolute; top:3px; left:3px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .3s;
+}
+.toggle-switch.on .toggle-knob { transform:translateX(26px); background:var(--accent); }
+.toggle-label { font-size:.88rem; color:var(--muted); }
+
+/* ══ 08. TOOLTIP ══ */
+.tooltip-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.has-tooltip {
+  position:relative; display:inline-block;
+}
+.tooltip-box {
+  position:absolute; bottom:calc(100% + 8px); left:50%;
+  transform:translateX(-50%) translateY(6px);
+  background:var(--text); color:var(--bg);
+  font-size:.75rem; padding:6px 12px; border-radius:7px;
+  white-space:nowrap; pointer-events:none;
+  opacity:0; transition:opacity .2s, transform .2s;
+}
+.tooltip-box::after {
+  content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:5px solid transparent; border-top-color:var(--text);
+}
+.has-tooltip:hover .tooltip-box {
+  opacity:1; transform:translateX(-50%) translateY(0);
+}
+
+/* ══ 09. MOUSE TRAIL ══ */
+.trail-area {
+  height:180px; border-radius:12px; border:1px solid var(--border);
+  background:var(--code-bg); position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  cursor:none;
+}
+.trail-hint { color:var(--muted); font-size:.85rem; pointer-events:none; }
+.trail-dot {
+  position:absolute; border-radius:50%; pointer-events:none;
+  animation:trail-fade .6s ease forwards;
+}
+@keyframes trail-fade { to { opacity:0; transform:scale(0); } }
+
+/* ══ 10. INFINITE SCROLL ══ */
+.inf-box {
+  height:200px; overflow-y:auto; border:1px solid var(--border);
+  border-radius:12px; background:var(--code-bg);
+  scrollbar-width:thin; scrollbar-color:var(--accent) transparent;
+}
+.inf-item {
+  padding:12px 16px; border-bottom:1px solid var(--border);
+  font-size:.84rem; color:var(--muted);
+  display:flex; align-items:center; gap:10px;
+  animation:inf-in .3s ease;
+}
+@keyframes inf-in { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.inf-loader {
+  padding:12px 16px; text-align:center; font-size:.78rem;
+  color:var(--accent); font-family:'JetBrains Mono',monospace;
+  display:none;
+}
+.inf-loader.show { display:block; }
+.inf-spinner {
+  display:inline-block; width:12px; height:12px;
+  border:2px solid rgba(94,240,192,.2); border-top-color:var(--accent);
+  border-radius:50%; animation:spin .7s linear infinite; margin-right:8px;
+  vertical-align:middle;
+}
+@keyframes spin { to{ transform:rotate(360deg); } }
+
+/* ── INDEX GRID ── */
+.idx-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:1.5rem;
+}
+.idx-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:11px; padding:1rem 1.3rem;
+  text-decoration:none; color:var(--text); cursor:none;
+  display:flex; align-items:center; gap:12px;
+  transition:border-color .2s, transform .2s;
+}
+.idx-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.idx-num {
+  font-family:'JetBrains Mono',monospace; font-size:.72rem;
+  color:var(--accent); background:rgba(94,240,192,.1);
+  border-radius:5px; padding:2px 7px; flex-shrink:0;
+}
+.idx-text strong { display:block; font-size:.87rem; }
+.idx-text span { font-size:.73rem; color:var(--muted); }
+
+/* 푸터 */
+footer {
+  text-align:center; padding:2.5rem 1.5rem;
+  color:var(--muted); font-size:.82rem;
+  border-top:1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="prog"></div>
+
+<nav>
+  <div class="nav-logo">🎓 JS 인터랙션<span class="nav-vol">Vol.2</span></div>
+  <div class="nav-links">
+    <a href="#accordion">아코디언</a>
+    <a href="#typewriter">타이핑</a>
+    <a href="#counter">카운터</a>
+    <a href="#tab">탭</a>
+    <a href="#magnet">마그넷</a>
+    <a href="#scramble">스크램블</a>
+    <a href="#darkmode">다크모드</a>
+    <a href="#tooltip">툴팁</a>
+    <a href="#trail">마우스트레일</a>
+    <a href="#infinite">무한스크롤</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-vol">Vol.2 — 10 More Interactions</div>
+  <h1 class="hero-title">더 재미있는<br><em>JS 인터랙션</em> 2탄</h1>
+  <p class="hero-sub">아코디언부터 마우스 트레일까지 — 살아있는 예제로 익혀봐요</p>
+  <div class="hero-tags">
+    <span class="hero-tag">Accordion</span>
+    <span class="hero-tag">Typewriter</span>
+    <span class="hero-tag">Counter</span>
+    <span class="hero-tag">Tab</span>
+    <span class="hero-tag">Magnet</span>
+    <span class="hero-tag">Scramble</span>
+    <span class="hero-tag">Dark Mode</span>
+    <span class="hero-tag">Tooltip</span>
+    <span class="hero-tag">Mouse Trail</span>
+    <span class="hero-tag">Infinite Scroll</span>
+  </div>
+</div>
+
+<!-- 목차 -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-num"># 목차</span><h2 class="sec-title">오늘 배울 용어들</h2></div>
+  <div class="idx-grid">
+    <a href="#accordion" class="idx-card"><span class="idx-num">01</span><div class="idx-text"><strong>아코디언</strong><span>Accordion</span></div></a>
+    <a href="#typewriter" class="idx-card"><span class="idx-num">02</span><div class="idx-text"><strong>타이핑 애니메이션</strong><span>Typewriter Effect</span></div></a>
+    <a href="#counter" class="idx-card"><span class="idx-num">03</span><div class="idx-text"><strong>숫자 카운터</strong><span>Number Counter</span></div></a>
+    <a href="#tab" class="idx-card"><span class="idx-num">04</span><div class="idx-text"><strong>탭 UI</strong><span>Tab Component</span></div></a>
+    <a href="#magnet" class="idx-card"><span class="idx-num">05</span><div class="idx-text"><strong>마그넷 버튼</strong><span>Magnet Button</span></div></a>
+    <a href="#scramble" class="idx-card"><span class="idx-num">06</span><div class="idx-text"><strong>텍스트 스크램블</strong><span>Text Scramble</span></div></a>
+    <a href="#darkmode" class="idx-card"><span class="idx-num">07</span><div class="idx-text"><strong>다크모드 토글</strong><span>Dark Mode Toggle</span></div></a>
+    <a href="#tooltip" class="idx-card"><span class="idx-num">08</span><div class="idx-text"><strong>툴팁</strong><span>Tooltip</span></div></a>
+    <a href="#trail" class="idx-card"><span class="idx-num">09</span><div class="idx-text"><strong>마우스 트레일</strong><span>Mouse Trail</span></div></a>
+    <a href="#infinite" class="idx-card"><span class="idx-num">10</span><div class="idx-text"><strong>무한 스크롤</strong><span>Infinite Scroll</span></div></a>
+  </div>
+</div>
+
+<!-- ══ 01. ACCORDION ══ -->
+<div class="section" id="accordion">
+  <div class="sec-hd"><span class="sec-num">01</span><h2 class="sec-title">아코디언</h2><span class="tag tag-e">초급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Accordion <small>접었다 펼치는 UI</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 클릭하면 콘텐츠가 <strong>아래로 펼쳐지고</strong> 다시 클릭하면 닫히는 UI예요. 악기 아코디언처럼 늘었다 줄었다 해서 이름이 붙었어요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> FAQ 페이지, 설정 메뉴, 모바일 네비게이션</p>
+        <p>⚙️ <strong>원리:</strong> max-height를 0 ↔ 충분히 큰 값으로 CSS transition해요. height는 auto 값에 transition이 안 되기 때문에 max-height를 씁니다!</p>
+        <hr class="divider">
+        <div class="cb"><span class="kw">const</span> btn = document.<span class="fn">querySelector</span>(<span class="str">'.acc-btn'</span>);
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+  body.classList.<span class="fn">toggle</span>(<span class="str">'open'</span>);
+  arrow.classList.<span class="fn">toggle</span>(<span class="str">'open'</span>);
+});
+
+<span class="cm">/* CSS: height 대신 max-height! */</span>
+.acc-body { max-height: <span class="num">0</span>; }
+.acc-body.open { max-height: <span class="num">300px</span>; }</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">👆 질문을 클릭해보세요</span>
+        <div>
+          <div class="acc-item">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+              <span>🤔 자바스크립트는 어렵나요?</span>
+              <span class="acc-arrow">▾</span>
+            </button>
+            <div class="acc-body">처음엔 낯설지만, 눈에 보이는 결과가 바로 나와서 오히려 재미있어요! HTML과 CSS를 먼저 익히고 나면 JS가 마법처럼 느껴질 거예요. 🌟</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+              <span>📚 인터랙션을 배우면 뭐가 달라지나요?</span>
+              <span class="acc-arrow">▾</span>
+            </button>
+            <div class="acc-body">정적인 HTML 페이지가 살아 움직이는 웹사이트로 바뀌어요. 사용자가 클릭하고, 스크롤하고, 드래그할 때 반응하는 UI를 만들 수 있어요!</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" onclick="toggleAcc(this)">
+              <span>💡 CSS만으로도 아코디언이 가능한가요?</span>
+              <span class="acc-arrow">▾</span>
+            </button>
+            <div class="acc-body">네! &lt;details&gt;/&lt;summary&gt; 태그를 쓰거나, :checked 트릭을 쓰면 JS 없이도 기본 아코디언이 가능해요. 하지만 세밀한 애니메이션은 JS가 더 유리해요.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 02. TYPEWRITER ══ -->
+<div class="section" id="typewriter">
+  <div class="sec-hd"><span class="sec-num">02</span><h2 class="sec-title">타이핑 애니메이션</h2><span class="tag tag-e">초급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Typewriter Effect <small>타자기 효과</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 텍스트가 <strong>한 글자씩 타이핑되는 것처럼</strong> 나타나는 효과예요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 히어로 섹션 타이틀, 챗봇 응답, 개발자 포트폴리오</p>
+        <p>⚙️ <strong>원리:</strong> setInterval로 일정 시간마다 글자를 하나씩 추가해요. 커서는 CSS animation으로 깜빡이도록 만들어요.</p>
+        <hr class="divider">
+        <div class="cb"><span class="kw">const</span> texts = [<span class="str">'디자이너'</span>, <span class="str">'개발자'</span>];
+<span class="kw">let</span> i = <span class="num">0</span>, j = <span class="num">0</span>;
+
+<span class="kw">function</span> <span class="fn">type</span>() {
+  el.textContent = texts[i].<span class="fn">slice</span>(<span class="num">0</span>, j++);
+  <span class="kw">if</span> (j > texts[i].length) {
+    <span class="fn">setTimeout</span>(erase, <span class="num">1500</span>); <span class="cm">// 잠깐 대기</span>
+  } <span class="kw">else</span> {
+    <span class="fn">setTimeout</span>(type, <span class="num">100</span>);
+  }
+}
+<span class="kw">function</span> <span class="fn">erase</span>() { <span class="cm">/* 역방향 지우기 */</span> }</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">⌨️ 아래에서 타이핑이 반복돼요</span>
+        <div style="background:var(--code-bg);border-radius:10px;padding:1.5rem;text-align:center">
+          <div style="font-size:.85rem;color:var(--muted);margin-bottom:.5rem">나는</div>
+          <div id="tw-text"></div>
+          <div style="font-size:.85rem;color:var(--muted);margin-top:.5rem">입니다</div>
+        </div>
+        <button class="btn btn-o" onclick="restartTypewriter()" style="align-self:flex-start">🔄 다시 시작</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 03. NUMBER COUNTER ══ -->
+<div class="section" id="counter">
+  <div class="sec-hd"><span class="sec-num">03</span><h2 class="sec-title">숫자 카운터 애니메이션</h2><span class="tag tag-e">초급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Number Counter <small>숫자 올라가기</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 0부터 목표 숫자까지 <strong>빠르게 올라가며 카운팅</strong>하는 효과예요. 숫자가 실시간으로 변해서 시선을 끌어요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 회사 소개 페이지 통계, 대시보드, 게임 점수</p>
+        <p>⚙️ <strong>원리:</strong> requestAnimationFrame으로 매 프레임마다 숫자를 업데이트해요. easeOut 수식으로 처음엔 빠르고 끝엔 느리게!</p>
+        <hr class="divider">
+        <div class="cb"><span class="kw">function</span> <span class="fn">countUp</span>(el, target) {
+  <span class="kw">let</span> start = <span class="num">0</span>;
+  <span class="kw">const</span> step = () => {
+    start += (target - start) * <span class="num">0.05</span>;
+    el.textContent = <span class="fn">Math.floor</span>(start);
+    <span class="kw">if</span> (start < target - <span class="num">1</span>) {
+      <span class="fn">requestAnimationFrame</span>(step);
+    } <span class="kw">else</span> {
+      el.textContent = target; <span class="cm">// 정확한 값</span>
+    }
+  };
+  <span class="fn">requestAnimationFrame</span>(step);
+}</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">🔢 버튼을 눌러보세요</span>
+        <div class="counter-grid">
+          <div class="counter-card">
+            <span class="counter-num" data-target="1247" id="cnt1">0</span>
+            <div class="counter-label">⭐ 수강생 수</div>
+          </div>
+          <div class="counter-card">
+            <span class="counter-num" data-target="98" id="cnt2">0</span>
+            <div class="counter-label">✅ 취업률 %</div>
+          </div>
+          <div class="counter-card">
+            <span class="counter-num" data-target="500" id="cnt3">0</span>
+            <div class="counter-label">🏆 수상 횟수</div>
+          </div>
+        </div>
+        <button class="btn btn-p" onclick="runCounters()" style="align-self:flex-start">🚀 카운트 시작!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 04. TAB ══ -->
+<div class="section" id="tab">
+  <div class="sec-hd"><span class="sec-num">04</span><h2 class="sec-title">탭 컴포넌트</h2><span class="tag tag-e">초급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Tab Component <small>탭 전환 UI</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 탭을 클릭하면 <strong>관련 콘텐츠 영역이 전환</strong>되는 UI 패턴이에요. 같은 공간에 여러 콘텐츠를 넣을 때 사용해요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 상품 상세 페이지, 설정 화면, 대시보드, 코드 에디터</p>
+        <p>⚙️ <strong>원리:</strong> 탭 버튼에 active 클래스 토글, 패널은 active일 때만 display:block. CSS animation으로 부드럽게 전환!</p>
+        <hr class="divider">
+        <div class="cb">tabs.<span class="fn">forEach</span>(tab => {
+  tab.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+    <span class="cm">// 모두 비활성화</span>
+    tabs.<span class="fn">forEach</span>(t => 
+      t.classList.<span class="fn">remove</span>(<span class="str">'active'</span>));
+    panels.<span class="fn">forEach</span>(p => 
+      p.classList.<span class="fn">remove</span>(<span class="str">'active'</span>));
+    <span class="cm">// 선택된 것만 활성화</span>
+    tab.classList.<span class="fn">add</span>(<span class="str">'active'</span>);
+    <span class="fn">getPanel</span>(tab)
+      .classList.<span class="fn">add</span>(<span class="str">'active'</span>);
+  });
+});</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">📑 탭을 클릭해보세요</span>
+        <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+          <div class="tab-list">
+            <button class="tab-btn active" onclick="switchTab(this,'tp1')">🎨 디자인</button>
+            <button class="tab-btn" onclick="switchTab(this,'tp2')">💻 개발</button>
+            <button class="tab-btn" onclick="switchTab(this,'tp3')">🚀 배포</button>
+          </div>
+          <div id="tp1" class="tab-panel active">🎨 <strong>디자인</strong> 단계에서는 Figma로 와이어프레임과 프로토타입을 만들어요. 색상, 타이포그래피, 레이아웃을 결정합니다.</div>
+          <div id="tp2" class="tab-panel">💻 <strong>개발</strong> 단계에서는 HTML/CSS/JS로 디자인을 구현해요. API 연결, 인터랙션, 반응형 처리를 합니다.</div>
+          <div id="tp3" class="tab-panel">🚀 <strong>배포</strong> 단계에서는 Vercel, Netlify, Firebase 같은 플랫폼에 올려요. 도메인을 연결하고 세상에 공개합니다!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 05. MAGNET BUTTON ══ -->
+<div class="section" id="magnet">
+  <div class="sec-hd"><span class="sec-num">05</span><h2 class="sec-title">마그넷 버튼</h2><span class="tag tag-m">중급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Magnet Button <small>자석 버튼</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 마우스가 버튼 근처에 오면 <strong>자석처럼 끌어당기는</strong> 효과예요. 명품 브랜드, 크리에이티브 에이전시 사이트에서 자주 보여요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 포트폴리오 사이트, 크리에이티브 에이전시, 명품 브랜드</p>
+        <p>⚙️ <strong>원리:</strong> mousemove에서 버튼 중심과 커서 사이의 거리를 계산해서 translate로 버튼을 살짝 이동시켜요.</p>
+        <hr class="divider">
+        <div class="cb">el.<span class="fn">addEventListener</span>(<span class="str">'mousemove'</span>, e => {
+  <span class="kw">const</span> r = el.<span class="fn">getBoundingClientRect</span>();
+  <span class="kw">const</span> cx = r.left + r.width/<span class="num">2</span>;
+  <span class="kw">const</span> cy = r.top + r.height/<span class="num">2</span>;
+  <span class="kw">const</span> dx = e.clientX - cx;
+  <span class="kw">const</span> dy = e.clientY - cy;
+
+  el.style.transform = 
+    <span class="str">`translate(${dx * 0.35}px,
+              ${dy * 0.35}px)`</span>;
+});
+el.<span class="fn">addEventListener</span>(<span class="str">'mouseleave'</span>, 
+  () => el.style.transform = <span class="str">''</span>);</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">🧲 버튼 주변에 마우스를 올려보세요</span>
+        <div class="magnet-wrap" id="magnet-area">
+          <button class="magnet-btn" data-magnet>✨ Click me</button>
+          <button class="magnet-btn accent" data-magnet>🚀 Explore</button>
+          <button class="magnet-btn" data-magnet>💡 Learn</button>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted)">💡 버튼이 마우스를 향해 살짝 기울어져요!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 06. TEXT SCRAMBLE ══ -->
+<div class="section" id="scramble">
+  <div class="sec-hd"><span class="sec-num">06</span><h2 class="sec-title">텍스트 스크램블</h2><span class="tag tag-m">중급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Text Scramble <small>글자 섞임 효과</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 텍스트가 처음엔 <strong>랜덤한 문자들로 깜빡이다가</strong> 점차 올바른 글자로 바뀌는 효과예요. 해킹/디지털 느낌을 줘요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 사이버펑크 스타일 포트폴리오, 게임 UI, 크리에이티브 에이전시</p>
+        <p>⚙️ <strong>원리:</strong> 각 글자를 랜덤 문자로 교체하면서 일정 확률로 원래 글자로 '확정'시켜 나가요.</p>
+        <hr class="divider">
+        <div class="cb"><span class="kw">const</span> chars = <span class="str">'!@#$%^&*アイウエオ'</span>;
+<span class="kw">function</span> <span class="fn">scramble</span>(target) {
+  <span class="kw">let</span> revealed = <span class="kw">new</span> <span class="fn">Array</span>(target.length)
+    .fill(<span class="kw">false</span>);
+  <span class="kw">const</span> interval = <span class="fn">setInterval</span>(() => {
+    el.textContent = target
+      .<span class="fn">split</span>(<span class="str">''</span>)
+      .<span class="fn">map</span>((c, i) => revealed[i] 
+        ? c 
+        : <span class="fn">randomChar</span>())
+      .<span class="fn">join</span>(<span class="str">''</span>);
+    <span class="cm">// 랜덤하게 하나씩 확정</span>
+    <span class="kw">if</span> (<span class="fn">Math.random</span>() > <span class="num">0.7</span>) { ... }
+  }, <span class="num">50</span>);
+}</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">🔐 버튼을 누르면 글자가 해독돼요</span>
+        <div style="background:var(--code-bg);border-radius:10px;padding:1.5rem">
+          <div id="scramble-text"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-p" onclick="doScramble('JavaScript는 재미있다!')">🔐 스크램블 1</button>
+          <button class="btn btn-o" onclick="doScramble('코딩은 창작이다')">🔐 스크램블 2</button>
+          <button class="btn btn-o" onclick="doScramble('Hello World 2025')">🔐 스크램블 3</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 07. DARK MODE TOGGLE ══ -->
+<div class="section" id="darkmode">
+  <div class="sec-hd"><span class="sec-num">07</span><h2 class="sec-title">다크모드 토글</h2><span class="tag tag-e">초급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Dark Mode Toggle <small>테마 전환</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 버튼 하나로 <strong>밝은 테마 ↔ 어두운 테마</strong>를 전환하는 기능이에요. 현대 웹의 거의 필수 기능이 되었어요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 모든 현대 웹사이트 — 구글, 유튜브, 깃허브, 노션 등</p>
+        <p>⚙️ <strong>원리:</strong> CSS 변수(:root)로 색상을 관리하고, body에 클래스를 토글해서 변수값을 한번에 바꿔요. localStorage로 설정을 저장!</p>
+        <hr class="divider">
+        <div class="cb"><span class="cm">/* CSS */</span>
+:root { --bg: #fff; --text: #000; }
+body.dark { --bg: #0a0a0f; --text: #eee; }
+
+<span class="cm">/* JS */</span>
+toggle.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+  document.body.classList
+    .<span class="fn">toggle</span>(<span class="str">'dark'</span>);
+  <span class="cm">// 설정 저장</span>
+  localStorage.<span class="fn">setItem</span>(<span class="str">'theme'</span>,
+    isDark ? <span class="str">'dark'</span> : <span class="str">'light'</span>);
+});</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">🌓 토글을 클릭해보세요</span>
+        <div id="dm-preview" style="border-radius:12px;padding:1.5rem;border:1px solid var(--border);background:#f5f5f5;transition:all .4s;color:#1a1a2e">
+          <div style="font-weight:700;margin-bottom:.5rem;font-size:.95rem">📄 미리보기 영역</div>
+          <div style="font-size:.83rem;opacity:.7">이 영역의 배경과 글자 색이 바뀌어요.<br>CSS 변수 하나로 모든 색상이 변경됩니다!</div>
+        </div>
+        <div class="toggle-wrap">
+          <div class="toggle-switch" id="dm-switch" onclick="toggleDarkMode()">
+            <div class="toggle-knob"></div>
+          </div>
+          <span class="toggle-label" id="dm-label">☀️ 라이트 모드</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 08. TOOLTIP ══ -->
+<div class="section" id="tooltip">
+  <div class="sec-hd"><span class="sec-num">08</span><h2 class="sec-title">툴팁</h2><span class="tag tag-e">초급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Tooltip <small>도움말 말풍선</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 요소 위에 마우스를 올리면 <strong>짧은 설명이 말풍선처럼</strong> 나타나는 UI예요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 아이콘 버튼 설명, 약어 설명, 폼 도움말, 메뉴 단축키</p>
+        <p>⚙️ <strong>원리:</strong> position:absolute로 말풍선 위치 잡기 + :hover 때 opacity 1. ::after 가상요소로 삼각형 꼬리를 만들어요.</p>
+        <hr class="divider">
+        <div class="cb"><span class="cm">/* CSS만으로 구현 가능! */</span>
+.has-tooltip { position: <span class="kw">relative</span>; }
+
+.tooltip {
+  position: <span class="kw">absolute</span>;
+  bottom: <span class="fn">calc</span>(100% + <span class="num">8px</span>);
+  opacity: <span class="num">0</span>;
+  transition: opacity <span class="num">.2s</span>;
+}
+.has-tooltip<span class="fn">:hover</span> .tooltip {
+  opacity: <span class="num">1</span>;
+}
+<span class="cm">/* 삼각형 꼬리 */</span>
+.tooltip::after {
+  border-top-color: white;
+}</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">🖱️ 아이콘에 마우스를 올려보세요</span>
+        <div class="tooltip-row">
+          <div class="has-tooltip">
+            <button class="btn btn-o" style="padding:10px">🏠</button>
+            <div class="tooltip-box">홈으로 이동</div>
+          </div>
+          <div class="has-tooltip">
+            <button class="btn btn-o" style="padding:10px">❤️</button>
+            <div class="tooltip-box">좋아요 추가</div>
+          </div>
+          <div class="has-tooltip">
+            <button class="btn btn-o" style="padding:10px">🔗</button>
+            <div class="tooltip-box">링크 복사 (Ctrl+C)</div>
+          </div>
+          <div class="has-tooltip">
+            <button class="btn btn-o" style="padding:10px">⚙️</button>
+            <div class="tooltip-box">설정 열기</div>
+          </div>
+          <div class="has-tooltip">
+            <button class="btn btn-o" style="padding:10px">🗑️</button>
+            <div class="tooltip-box" style="background:#ff7eb3;color:#06060c;">삭제 (복구 불가!)</div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted)">💡 마지막 🗑️ 위험 버튼은 색이 다르게 표시돼요!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 09. MOUSE TRAIL ══ -->
+<div class="section" id="trail">
+  <div class="sec-hd"><span class="sec-num">09</span><h2 class="sec-title">마우스 트레일</h2><span class="tag tag-m">중급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Mouse Trail <small>마우스 잔상 효과</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 마우스가 움직일 때 <strong>뒤에 잔상이나 파티클이 남는</strong> 효과예요. 마법 같은 인상을 줄 수 있어요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 크리에이티브 포트폴리오, 인터랙티브 아트, 게임 UI</p>
+        <p>⚙️ <strong>원리:</strong> mousemove마다 작은 원 요소를 생성하고, CSS animation으로 사라지게 해요. 시간이 지나면 DOM에서 제거!</p>
+        <hr class="divider">
+        <div class="cb">area.<span class="fn">addEventListener</span>(<span class="str">'mousemove'</span>, e => {
+  <span class="kw">const</span> dot = document
+    .<span class="fn">createElement</span>(<span class="str">'div'</span>);
+  dot.className = <span class="str">'trail-dot'</span>;
+
+  <span class="kw">const</span> size = <span class="fn">Math.random</span>()*<span class="num">10</span>+<span class="num">4</span>;
+  dot.style.cssText = <span class="str">`
+    width:${size}px; height:${size}px;
+    left:${e.offsetX}px;
+    top:${e.offsetY}px;
+    background: hsl(${hue++},80%,60%);
+  `</span>;
+  area.<span class="fn">appendChild</span>(dot);
+  <span class="fn">setTimeout</span>(() => dot.<span class="fn">remove</span>(), <span class="num">600</span>);
+});</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">✨ 아래 영역에서 마우스를 움직여보세요</span>
+        <div class="trail-area" id="trail-area">
+          <span class="trail-hint">🖱️ 여기서 마우스를 움직여보세요</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-o" onclick="setTrailMode('circle')">⚪ 원형</button>
+          <button class="btn btn-o" onclick="setTrailMode('star')">⭐ 별</button>
+          <button class="btn btn-o" onclick="setTrailMode('rainbow')">🌈 레인보우</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 10. INFINITE SCROLL ══ -->
+<div class="section" id="infinite">
+  <div class="sec-hd"><span class="sec-num">10</span><h2 class="sec-title">무한 스크롤</h2><span class="tag tag-m">중급</span></div>
+  <div class="tcard rv">
+    <div class="tcard-hd"><div class="tcard-title">Infinite Scroll <small>끝없이 로딩</small></div></div>
+    <div class="tcard-body">
+      <div class="tdesc">
+        <p>📌 <strong>개념:</strong> 스크롤이 <strong>바닥에 닿으면 자동으로 새 콘텐츠를 불러오는</strong> 기법이에요. 페이지 번호 없이 계속 이어져요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 인스타그램, 트위터/X, 네이버 뉴스, 유튜브 피드</p>
+        <p>⚙️ <strong>원리:</strong> Intersection Observer로 마지막 아이템이 보이는지 감지 → API 호출 → 새 아이템 DOM에 추가</p>
+        <hr class="divider">
+        <div class="cb"><span class="cm">// 마지막 아이템 감지</span>
+<span class="kw">const</span> observer = 
+  <span class="kw">new</span> <span class="fn">IntersectionObserver</span>(entries => {
+    <span class="kw">if</span> (entries[<span class="num">0</span>].isIntersecting 
+        && !isLoading) {
+      <span class="fn">loadMore</span>(); <span class="cm">// 데이터 추가 로드</span>
+    }
+  });
+<span class="cm">// 리스트 맨 끝 감시</span>
+observer.<span class="fn">observe</span>(lastItem);
+
+<span class="kw">async function</span> <span class="fn">loadMore</span>() {
+  isLoading = <span class="kw">true</span>;
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchAPI</span>(page++);
+  <span class="fn">renderItems</span>(data);
+  isLoading = <span class="kw">false</span>;
+}</div>
+      </div>
+      <div class="tdemo">
+        <span class="demo-lbl">📜 아래로 스크롤하면 자동으로 더 불러와요</span>
+        <div class="inf-box" id="inf-box">
+          <!-- JS로 채워짐 -->
+        </div>
+        <div class="inf-loader" id="inf-loader">
+          <span class="inf-spinner"></span>불러오는 중...
+        </div>
+        <button class="btn btn-o" onclick="resetInfinite()" style="align-self:flex-start">🔄 처음부터</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Gowun Dodum',sans-serif;font-size:1.1rem;color:var(--accent);margin-bottom:.4rem">🎓 JS 인터랙션 용어 사전 Vol.2</div>
+  <p>아코디언 · 타이핑애니메이션 · 숫자카운터 · 탭UI · 마그넷버튼 · 텍스트스크램블 · 다크모드토글 · 툴팁 · 마우스트레일 · 무한스크롤</p>
+  <p style="margin-top:.4rem;color:#1e1e30">한국아트테크스튜디오 교육자료 · Made with ❤️</p>
+</footer>
+
+<script>
+// ── 커서 ──
+const curDot = document.getElementById('cur-dot');
+const curRing = document.getElementById('cur-ring');
+document.addEventListener('mousemove', e => {
+  curDot.style.transform = `translate(${e.clientX-3}px,${e.clientY-3}px)`;
+  curRing.style.transform = `translate(${e.clientX-14}px,${e.clientY-14}px)`;
+});
+
+// ── 진행률 ──
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.getElementById('prog').style.transform = `scaleX(${pct})`;
+});
+
+// ── Reveal ──
+const ro = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); }), {threshold:.1});
+document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+
+// ══ 01 ACCORDION ══
+function toggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.acc-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+// ══ 02 TYPEWRITER ══
+const twEl = document.getElementById('tw-text');
+const twWords = ['디자이너 🎨', '개발자 💻', 'AI 아티스트 🤖', '크리에이터 ✨', '교육자 🎓'];
+let twIdx = 0, twChar = 0, twDeleting = false, twTimer;
+
+function typeLoop() {
+  const word = twWords[twIdx];
+  if (!twDeleting) {
+    twEl.textContent = word.slice(0, ++twChar);
+    if (twChar === word.length) { twDeleting = true; twTimer = setTimeout(typeLoop, 1500); return; }
+  } else {
+    twEl.textContent = word.slice(0, --twChar);
+    if (twChar === 0) { twDeleting = false; twIdx = (twIdx + 1) % twWords.length; }
+  }
+  twTimer = setTimeout(typeLoop, twDeleting ? 60 : 100);
+}
+typeLoop();
+function restartTypewriter() { clearTimeout(twTimer); twChar=0; twDeleting=false; twIdx=0; twEl.textContent=''; typeLoop(); }
+
+// ══ 03 COUNTER ══
+function countUp(el, target, duration=1600) {
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.floor(ease * target).toLocaleString();
+    if (t < 1) requestAnimationFrame(step);
+    else el.textContent = target.toLocaleString();
+  }
+  requestAnimationFrame(step);
+}
+function runCounters() {
+  document.querySelectorAll('.counter-num').forEach(el => {
+    countUp(el, +el.dataset.target);
+  });
+}
+
+// ══ 04 TAB ══
+function switchTab(btn, panelId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ══ 05 MAGNET ══
+document.querySelectorAll('[data-magnet]').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width/2);
+    const dy = e.clientY - (r.top + r.height/2);
+    btn.style.transform = `translate(${dx*.35}px,${dy*.35}px)`;
+    btn.style.transition = 'transform 0.1s ease';
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+    btn.style.transition = 'transform 0.5s cubic-bezier(.34,1.56,.64,1)';
+  });
+});
+
+// ══ 06 SCRAMBLE ══
+const chars = '!@#$%^&*アイウエオabcdefghijklmnopqrstuvwxyz0123456789';
+let scrambleInterval;
+function doScramble(target) {
+  clearInterval(scrambleInterval);
+  const el = document.getElementById('scramble-text');
+  el.innerHTML = target.split('').map(c => `<span class="sc-char scrambling">${c}</span>`).join('');
+  const spans = el.querySelectorAll('.sc-char');
+  const revealed = new Array(target.length).fill(false);
+  let iter = 0;
+  scrambleInterval = setInterval(() => {
+    spans.forEach((span, i) => {
+      if (!revealed[i]) {
+        span.textContent = chars[Math.floor(Math.random()*chars.length)];
+        if (iter > i * 3 && Math.random() > 0.6) {
+          span.textContent = target[i];
+          span.classList.remove('scrambling');
+          revealed[i] = true;
+        }
+      }
+    });
+    iter++;
+    if (revealed.every(Boolean)) clearInterval(scrambleInterval);
+  }, 45);
+}
+doScramble('버튼을 클릭해보세요!');
+
+// ══ 07 DARK MODE ══
+function toggleDarkMode() {
+  const sw = document.getElementById('dm-switch');
+  const label = document.getElementById('dm-label');
+  const preview = document.getElementById('dm-preview');
+  const on = sw.classList.toggle('on');
+  if (on) {
+    label.textContent = '🌙 다크 모드';
+    preview.style.background = '#0d0d18';
+    preview.style.color = '#dde0f0';
+    preview.style.borderColor = 'rgba(94,240,192,.15)';
+  } else {
+    label.textContent = '☀️ 라이트 모드';
+    preview.style.background = '#f5f5f5';
+    preview.style.color = '#1a1a2e';
+    preview.style.borderColor = 'rgba(0,0,0,.1)';
+  }
+}
+
+// ══ 09 MOUSE TRAIL ══
+const trailArea = document.getElementById('trail-area');
+let trailMode = 'circle', trailHue = 0;
+trailArea.addEventListener('mousemove', e => {
+  const dot = document.createElement('div');
+  dot.className = 'trail-dot';
+  const size = Math.random() * 12 + 5;
+  let bg;
+  if (trailMode === 'rainbow') bg = `hsl(${trailHue++},90%,65%)`;
+  else if (trailMode === 'star') bg = '#ffd166';
+  else bg = 'rgba(94,240,192,0.7)';
+  dot.style.cssText = `width:${size}px;height:${size}px;left:${e.offsetX-size/2}px;top:${e.offsetY-size/2}px;background:${bg};`;
+  if (trailMode === 'star') dot.style.clipPath = 'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)';
+  trailArea.appendChild(dot);
+  setTimeout(() => dot.remove(), 700);
+});
+function setTrailMode(m) { trailMode = m; }
+
+// ══ 10 INFINITE SCROLL ══
+const emojis = ['🌸','🎨','🚀','💡','🌊','⭐','🎯','🔮','🌙','🎪','🦋','🎸','🌿','🔥','💎'];
+const topics = ['인터랙션 디자인','JavaScript ES2024','React 컴포넌트','CSS 그리드','Figma 플러그인','AI 도구 활용','TypeScript 기초','Web Animation API','SVG 애니메이션','Canvas API'];
+let infPage = 0, infLoading = false;
+const infBox = document.getElementById('inf-box');
+const infLoader = document.getElementById('inf-loader');
+
+function addInfItems() {
+  if (infLoading) return;
+  infLoading = true;
+  infLoader.classList.add('show');
+  setTimeout(() => {
+    for (let i = 0; i < 5; i++) {
+      const item = document.createElement('div');
+      item.className = 'inf-item';
+      const idx = (infPage * 5 + i) % emojis.length;
+      item.innerHTML = `<span>${emojis[idx]}</span><span style="flex:1">${topics[idx % topics.length]} — 항목 #${infPage*5+i+1}</span><span style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted)">${new Date().toLocaleTimeString()}</span>`;
+      infBox.appendChild(item);
+    }
+    infPage++;
+    infLoading = false;
+    infLoader.classList.remove('show');
+    if (infPage < 6) observeLastItem();
+  }, 700);
+}
+
+function observeLastItem() {
+  const sentinel = document.createElement('div');
+  sentinel.style.height = '1px';
+  infBox.appendChild(sentinel);
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { obs.disconnect(); sentinel.remove(); addInfItems(); }
+  }, { root: infBox, threshold: 1 });
+  obs.observe(sentinel);
+}
+
+function resetInfinite() { infPage = 0; infBox.innerHTML = ''; addInfItems(); }
+addInfItems();
+</script>
+</body>
+</html>
