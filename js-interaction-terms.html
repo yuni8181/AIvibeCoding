@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS 인터랙션 용어 사전 — 살아있는 예제로 배우기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: rgba(255,255,255,0.08);
+    --accent: #7c6fff;
+    --accent2: #ff6b9d;
+    --accent3: #00d4aa;
+    --accent4: #ffb347;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --code-bg: #0d0d15;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.7;
+    cursor: none;
+  }
+
+  /* ── 커스텀 커서 ── */
+  #cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: transform 0.1s ease;
+  }
+  #cursor-ring {
+    width: 32px; height: 32px;
+    border: 2px solid rgba(124,111,255,0.5);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: transform 0.12s ease, width 0.2s, height 0.2s, border-color 0.2s;
+  }
+  body:has(a:hover) #cursor-ring,
+  body:has(button:hover) #cursor-ring {
+    width: 48px; height: 48px;
+    border-color: var(--accent2);
+  }
+
+  /* ── 네비게이션 ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 0;
+    height: 56px;
+    transition: background 0.3s;
+  }
+  .nav-logo {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-right: 2rem;
+    white-space: nowrap;
+  }
+  .nav-links {
+    display: flex; gap: 4px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: none;
+    white-space: nowrap;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--border); }
+
+  /* ── 히어로 ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 20% 50%, rgba(124,111,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 80% 30%, rgba(255,107,157,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 60% 80%, rgba(0,212,170,0.08) 0%, transparent 70%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-title span { color: var(--accent); }
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-top: 1rem;
+    position: relative; z-index: 1;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(124,111,255,0.15);
+    border: 1px solid rgba(124,111,255,0.3);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+  }
+  .hero-count {
+    display: flex; gap: 2rem; margin-top: 2.5rem;
+    position: relative; z-index: 1;
+  }
+  .hero-count-item { text-align: center; }
+  .hero-count-num {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 2rem;
+    color: var(--accent);
+    display: block;
+  }
+  .hero-count-label { font-size: 0.8rem; color: var(--muted); }
+
+  /* ── 섹션 공통 ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 3rem;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+  .section-title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 1.6rem;
+  }
+  .tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag-easy { background: rgba(0,212,170,0.15); color: var(--accent3); border: 1px solid rgba(0,212,170,0.3); }
+  .tag-mid  { background: rgba(255,179,71,0.15); color: var(--accent4); border: 1px solid rgba(255,179,71,0.3); }
+  .tag-hard { background: rgba(255,107,157,0.15); color: var(--accent2); border: 1px solid rgba(255,107,157,0.3); }
+
+  /* ── 카드 레이아웃 ── */
+  .term-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    transition: border-color 0.3s;
+  }
+  .term-card:hover { border-color: rgba(124,111,255,0.3); }
+
+  .term-card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  .term-card-title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 1.4rem;
+  }
+  .term-card-title small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-left: 10px;
+    font-weight: 400;
+  }
+
+  .term-card-body {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 720px) {
+    .term-card-body { grid-template-columns: 1fr; }
+  }
+
+  .term-desc {
+    padding: 2rem;
+    border-right: 1px solid var(--border);
+  }
+  @media (max-width: 720px) { .term-desc { border-right: none; border-bottom: 1px solid var(--border); } }
+
+  .term-desc p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
+  .term-desc .how { font-size: 0.88rem; color: var(--text); opacity: 0.8; }
+
+  .term-demo {
+    padding: 2rem;
+    display: flex; flex-direction: column;
+    gap: 1rem;
+  }
+  .demo-label {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── 코드 스니펫 ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #a8b4d8;
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+  .code-block .kw { color: #7c6fff; }
+  .code-block .fn { color: #00d4aa; }
+  .code-block .str { color: #ffb347; }
+  .code-block .cm { color: #444466; font-style: italic; }
+  .code-block .num { color: #ff6b9d; }
+
+  /* ══════════════════════════════════════
+     01. 패럴렉스 스크롤링 데모
+  ══════════════════════════════════════ */
+  #parallax-demo {
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0d0d20 0%, #1a0d2e 100%);
+  }
+  .plx-layer {
+    position: absolute; width: 100%;
+    display: flex; justify-content: center;
+    transition: transform 0.1s linear;
+  }
+  .plx-bg { bottom: 0; }
+  .plx-mid { bottom: 20px; }
+  .plx-fg { bottom: 0; }
+  .mountain { display: flex; align-items: flex-end; gap: 0; }
+  .mt {
+    width: 0; height: 0;
+    border-left: solid transparent;
+    border-right: solid transparent;
+    border-bottom: solid;
+  }
+  .mt-bg { border-left-width: 60px; border-right-width: 60px; border-bottom-width: 100px; border-bottom-color: #1d1040; }
+  .mt-mid { border-left-width: 50px; border-right-width: 50px; border-bottom-width: 130px; border-bottom-color: #2d1a55; }
+  .mt-fg { border-left-width: 70px; border-right-width: 70px; border-bottom-width: 110px; border-bottom-color: #3d2266; }
+  .plx-stars {
+    position: absolute; top: 0; left: 0; right: 0; height: 60%;
+  }
+  .star {
+    position: absolute; background: white; border-radius: 50%;
+    animation: twinkle 2s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { from { opacity: 0.3; } to { opacity: 1; } }
+  .plx-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-family: 'Black Han Sans', sans-serif; font-size: 1.5rem;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 0 30px rgba(124,111,255,0.8);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .plx-control {
+    display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted);
+  }
+  .plx-control input[type=range] {
+    flex: 1; accent-color: var(--accent);
+    cursor: none;
+  }
+
+  /* ══════════════════════════════════════
+     02. 인터섹션 옵저버
+  ══════════════════════════════════════ */
+  .io-scroll-box {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--code-bg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+  }
+  .io-item {
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    opacity: 0.3;
+    transform: translateX(-20px);
+    transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.3s, background 0.3s;
+  }
+  .io-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+    border-color: rgba(0,212,170,0.4);
+    background: rgba(0,212,170,0.05);
+  }
+  .io-status {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .io-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; background: var(--muted); margin-right: 6px;
+    transition: background 0.3s;
+  }
+  .io-dot.on { background: var(--accent3); }
+
+  /* ══════════════════════════════════════
+     03. 스크롤 진행률
+  ══════════════════════════════════════ */
+  #scroll-progress-bar {
+    position: fixed; top: 56px; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 99;
+    transition: transform 0.05s linear;
+  }
+
+  /* ══════════════════════════════════════
+     04. 호버 이펙트
+  ══════════════════════════════════════ */
+  .hover-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  }
+  .hv-card {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; font-size: 0.75rem; color: var(--muted);
+    position: relative; overflow: hidden;
+    cursor: none;
+    transition: color 0.3s;
+  }
+  .hv-card .icon { font-size: 1.8rem; }
+  .hv-card .hv-name { font-weight: 700; font-size: 0.72rem; text-align: center; }
+
+  /* Lift */
+  .hv-lift { background: var(--surface); transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s; }
+  .hv-lift:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.5); color: var(--text); }
+
+  /* Glow */
+  .hv-glow { background: var(--surface); transition: box-shadow 0.3s; }
+  .hv-glow:hover { box-shadow: 0 0 0 1px var(--accent), 0 0 30px rgba(124,111,255,0.4); color: var(--accent); }
+
+  /* Flip */
+  .hv-flip-wrap { perspective: 600px; }
+  .hv-flip { background: transparent; border: none; }
+  .hv-flip-inner {
+    width: 100%; height: 100%;
+    position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  .hv-flip-wrap:hover .hv-flip-inner { transform: rotateY(180deg); }
+  .hv-flip-front, .hv-flip-back {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; font-size: 0.75rem;
+  }
+  .hv-flip-front { background: var(--surface); color: var(--muted); }
+  .hv-flip-back { background: rgba(124,111,255,0.15); color: var(--accent); transform: rotateY(180deg); font-weight: 700; }
+
+  /* Ripple */
+  .hv-ripple { background: var(--surface); overflow: hidden; }
+  .ripple-effect {
+    position: absolute; border-radius: 50%;
+    background: rgba(124,111,255,0.3);
+    transform: scale(0); animation: ripple-anim 0.6s linear;
+    pointer-events: none;
+  }
+  @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+  /* Shine */
+  .hv-shine { background: var(--surface); }
+  .hv-shine::before {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    transition: left 0.5s ease;
+  }
+  .hv-shine:hover::before { left: 140%; }
+  .hv-shine:hover { color: var(--text); }
+
+  /* Tilt (via JS) */
+  .hv-tilt { background: var(--surface); transition: transform 0.1s ease, box-shadow 0.1s; }
+
+  /* ══════════════════════════════════════
+     05. 드래그 앤 드롭
+  ══════════════════════════════════════ */
+  .drag-area {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .drag-col {
+    border: 1px dashed var(--border);
+    border-radius: 12px; padding: 16px;
+    min-height: 150px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .drag-col.drag-over { border-color: var(--accent); background: rgba(124,111,255,0.05); }
+  .drag-col-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+  .drag-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    margin-bottom: 8px; font-size: 0.85rem;
+    cursor: grab;
+    user-select: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .drag-item:hover { border-color: var(--accent); transform: translateX(2px); }
+  .drag-item.dragging { opacity: 0.4; cursor: grabbing; }
+
+  /* ══════════════════════════════════════
+     06. 모달
+  ══════════════════════════════════════ */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 460px; width: 90%;
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+  }
+  .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+  .modal-title { font-family: 'Black Han Sans', sans-serif; font-size: 1.3rem; margin-bottom: 1rem; }
+  .modal-body { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); width: 32px; height: 32px;
+    border-radius: 8px; cursor: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,107,157,0.2); }
+
+  /* ══════════════════════════════════════
+     07. 토스트/스낵바
+  ══════════════════════════════════════ */
+  #toast-container {
+    position: fixed; bottom: 2rem; right: 2rem;
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 300; pointer-events: none;
+  }
+  .toast {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 20px;
+    font-size: 0.85rem;
+    display: flex; align-items: center; gap: 10px;
+    animation: toast-in 0.4s cubic-bezier(.34,1.56,.64,1) forwards,
+               toast-out 0.3s 2.5s ease forwards;
+    min-width: 200px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  @keyframes toast-in { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes toast-out { to { opacity:0; transform: translateX(40px); } }
+
+  /* ══════════════════════════════════════
+     08. 스티키 헤더
+  ══════════════════════════════════════ */
+  .sticky-demo-wrap {
+    height: 200px; overflow-y: auto;
+    border: 1px solid var(--border); border-radius: 12px;
+    background: var(--code-bg);
+    scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+  }
+  .sticky-demo-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(124,111,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 10px 16px;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--accent);
+    border-bottom: 1px solid rgba(124,111,255,0.2);
+  }
+  .sticky-demo-content { padding: 12px 16px; }
+  .sticky-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--muted); }
+
+  /* ══════════════════════════════════════
+     09. 레이지 로딩
+  ══════════════════════════════════════ */
+  .lazy-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+  }
+  .lazy-img {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden; position: relative;
+  }
+  .lazy-img .skeleton {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--surface) 25%, var(--card) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-wave 1.5s infinite;
+  }
+  @keyframes skeleton-wave { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .lazy-img .loaded-content {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    opacity: 0; transition: opacity 0.5s;
+  }
+  .lazy-img.loaded .skeleton { display: none; }
+  .lazy-img.loaded .loaded-content { opacity: 1; }
+
+  /* ══════════════════════════════════════
+     10. 스크롤 스냅
+  ══════════════════════════════════════ */
+  .snap-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 12px;
+    padding: 4px;
+    scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+    border-radius: 12px;
+  }
+  .snap-item {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    min-height: 160px;
+    position: relative; overflow: hidden;
+  }
+  .snap-item h3 { font-family: 'Black Han Sans', sans-serif; font-size: 1.2rem; position: relative; z-index: 1; }
+  .snap-item p { font-size: 0.8rem; opacity: 0.7; position: relative; z-index: 1; }
+  .snap-item::before { content: attr(data-num); position: absolute; top: -10px; right: 10px; font-family: 'Black Han Sans', sans-serif; font-size: 6rem; opacity: 0.08; line-height: 1; }
+
+  /* ══════════════════════════════════════
+     공통 버튼
+  ══════════════════════════════════════ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 10px;
+    font-size: 0.85rem; font-family: 'Noto Sans KR', sans-serif;
+    cursor: none; border: none; transition: all 0.2s;
+    font-weight: 500;
+  }
+  .btn-primary {
+    background: var(--accent); color: white;
+  }
+  .btn-primary:hover { background: #6a5fef; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,111,255,0.4); }
+  .btn-outline {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── 인덱스 카드 ── */
+  .index-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap: 12px; margin-top: 2rem;
+  }
+  .index-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem 1.5rem;
+    text-decoration: none; color: var(--text);
+    cursor: none;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .index-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .index-card .ic-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: var(--accent);
+    background: rgba(124,111,255,0.1);
+    border-radius: 6px; padding: 2px 8px;
+    flex-shrink: 0;
+  }
+  .index-card .ic-text strong { display: block; font-size: 0.9rem; }
+  .index-card .ic-text span { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── 분리선 ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  /* ── 푸터 ── */
+  footer {
+    text-align: center; padding: 3rem 2rem;
+    color: var(--muted); font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── 반응형 ── */
+  .hover-grid { grid-template-columns: repeat(3,1fr); }
+  @media (max-width: 600px) {
+    .hover-grid { grid-template-columns: repeat(2,1fr); }
+    .drag-area { grid-template-columns: 1fr; }
+    .lazy-grid { grid-template-columns: repeat(2,1fr); }
+    .hero-count { flex-wrap: wrap; justify-content: center; }
+  }
+
+  /* scroll-reveal */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- 커스텀 커서 -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- 스크롤 진행률 바 -->
+<div id="scroll-progress-bar"></div>
+
+<!-- 모달 -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">🎉 모달(Modal)이에요!</div>
+    <div class="modal-body">
+      모달은 현재 페이지 위에 레이어로 뜨는 대화 상자예요.<br><br>
+      배경이 흐려지고 (backdrop), 클릭하거나 ✕ 버튼을 눌러 닫을 수 있어요.<br><br>
+      로그인 폼, 경고창, 이미지 뷰어 등에 자주 사용돼요.
+    </div>
+    <button class="btn btn-primary" onclick="closeModal()">알겠어요!</button>
+  </div>
+</div>
+
+<!-- 토스트 컨테이너 -->
+<div id="toast-container"></div>
+
+<!-- 네비게이션 -->
+<nav>
+  <div class="nav-logo">🎓 JS 인터랙션</div>
+  <div class="nav-links">
+    <a href="#parallax">패럴렉스</a>
+    <a href="#intersection">인터섹션</a>
+    <a href="#hover">호버</a>
+    <a href="#drag">드래그</a>
+    <a href="#modal">모달</a>
+    <a href="#toast">토스트</a>
+    <a href="#sticky">스티키</a>
+    <a href="#lazy">레이지로딩</a>
+    <a href="#snap">스크롤스냅</a>
+    <a href="#cursor">커스텀커서</a>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge">✨ JavaScript Interaction Dictionary</div>
+  <h1 class="hero-title">JS <span>인터랙션</span> 용어 사전</h1>
+  <p class="hero-sub">코드로 배우는 살아있는 웹 인터랙션 — 눈으로 보고, 손으로 느껴보세요</p>
+  <div class="hero-count">
+    <div class="hero-count-item">
+      <span class="hero-count-num">10</span>
+      <span class="hero-count-label">인터랙션 용어</span>
+    </div>
+    <div class="hero-count-item">
+      <span class="hero-count-num">10</span>
+      <span class="hero-count-label">라이브 데모</span>
+    </div>
+    <div class="hero-count-item">
+      <span class="hero-count-num">∞</span>
+      <span class="hero-count-label">응용 가능성</span>
+    </div>
+  </div>
+</div>
+
+<!-- 목차 -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num"># 목차</span>
+    <h2 class="section-title">오늘 배울 용어들</h2>
+  </div>
+  <div class="index-grid">
+    <a href="#parallax" class="index-card"><span class="ic-num">01</span><div class="ic-text"><strong>패럴렉스 스크롤링</strong><span>Parallax Scrolling</span></div></a>
+    <a href="#intersection" class="index-card"><span class="ic-num">02</span><div class="ic-text"><strong>인터섹션 옵저버</strong><span>Intersection Observer</span></div></a>
+    <a href="#scroll-progress" class="index-card"><span class="ic-num">03</span><div class="ic-text"><strong>스크롤 진행률</strong><span>Scroll Progress Bar</span></div></a>
+    <a href="#hover" class="index-card"><span class="ic-num">04</span><div class="ic-text"><strong>호버 이펙트</strong><span>Hover Effects</span></div></a>
+    <a href="#drag" class="index-card"><span class="ic-num">05</span><div class="ic-text"><strong>드래그 앤 드롭</strong><span>Drag & Drop</span></div></a>
+    <a href="#modal" class="index-card"><span class="ic-num">06</span><div class="ic-text"><strong>모달</strong><span>Modal / Dialog</span></div></a>
+    <a href="#toast" class="index-card"><span class="ic-num">07</span><div class="ic-text"><strong>토스트 알림</strong><span>Toast Notification</span></div></a>
+    <a href="#sticky" class="index-card"><span class="ic-num">08</span><div class="ic-text"><strong>스티키 요소</strong><span>Sticky Element</span></div></a>
+    <a href="#lazy" class="index-card"><span class="ic-num">09</span><div class="ic-text"><strong>레이지 로딩</strong><span>Lazy Loading</span></div></a>
+    <a href="#snap" class="index-card"><span class="ic-num">10</span><div class="ic-text"><strong>스크롤 스냅</strong><span>Scroll Snap</span></div></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     01. 패럴렉스 스크롤링
+══════════════════════════════════════ -->
+<div class="section" id="parallax">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">패럴렉스 스크롤링</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Parallax Scrolling <small>시차 스크롤</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 스크롤할 때 배경과 전경이 <strong>서로 다른 속도</strong>로 움직여서 <strong>입체적인 깊이감</strong>을 만드는 기법이에요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> Apple 제품 소개 페이지, Nike 캠페인 사이트, 게임 소개 페이지</p>
+        <p class="how">⚙️ <strong>원리:</strong> scroll 이벤트를 감지해서 각 레이어의 translateY 값을 다르게 변경해요. 배경은 느리게, 전경은 빠르게!</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">// 스크롤할 때 실행</span>
+<span class="kw">window</span>.<span class="fn">addEventListener</span>(<span class="str">'scroll'</span>, () => {
+  <span class="kw">const</span> y = <span class="kw">window</span>.scrollY;
+  bg.style.transform = 
+    <span class="str">`translateY(<span class="num">${y * 0.3}</span>px)`</span>; <span class="cm">// 느리게</span>
+  fg.style.transform = 
+    <span class="str">`translateY(<span class="num">${y * 0.7}</span>px)`</span>; <span class="cm">// 빠르게</span>
+});</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">🎮 슬라이더로 직접 조작해보세요</span>
+        <div id="parallax-demo">
+          <div class="plx-stars" id="plx-stars"></div>
+          <div class="plx-layer plx-bg" id="plx-bg">
+            <div class="mountain">
+              <div class="mt mt-bg" style="margin-right:-30px"></div>
+              <div class="mt mt-bg" style="width:0;border-left-width:80px;border-right-width:80px;border-bottom-width:120px"></div>
+              <div class="mt mt-bg" style="margin-left:-20px"></div>
+            </div>
+          </div>
+          <div class="plx-layer plx-mid" id="plx-mid">
+            <div class="mountain">
+              <div class="mt mt-mid"></div>
+              <div class="mt mt-mid" style="border-left-width:70px;border-right-width:70px;border-bottom-width:160px;margin:0 -20px"></div>
+              <div class="mt mt-mid"></div>
+            </div>
+          </div>
+          <div class="plx-layer plx-fg" id="plx-fg">
+            <div class="mountain" style="width:100%;justify-content:space-around">
+              <div class="mt mt-fg"></div>
+              <div class="mt mt-fg" style="border-left-width:90px;border-right-width:90px;border-bottom-width:90px"></div>
+              <div class="mt mt-fg"></div>
+            </div>
+          </div>
+          <div class="plx-text">✨ 패럴렉스 월드</div>
+        </div>
+        <div class="plx-control">
+          <span>스크롤 위치</span>
+          <input type="range" min="0" max="100" value="0" id="plx-slider">
+          <span id="plx-val">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     02. 인터섹션 옵저버
+══════════════════════════════════════ -->
+<div class="section" id="intersection">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">인터섹션 옵저버</h2>
+    <span class="tag tag-mid">중급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Intersection Observer <small>교차 관찰자</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 요소가 <strong>화면(뷰포트)에 나타나거나 사라질 때</strong>를 감지하는 브라우저 API예요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 스크롤 애니메이션, 무한 스크롤, 광고 노출 감지</p>
+        <p class="how">⚙️ <strong>원리:</strong> scroll 이벤트 대신 사용해요. 성능이 훨씬 좋고, 요소의 가시성만 콜백으로 알려줘요.</p>
+        <hr class="divider">
+        <div class="code-block"><span class="kw">const</span> observer = 
+  <span class="kw">new</span> <span class="fn">IntersectionObserver</span>((entries) => {
+    entries.<span class="fn">forEach</span>(entry => {
+      <span class="kw">if</span> (entry.isIntersecting) {
+        <span class="cm">// 화면에 보임!</span>
+        entry.target.classList
+          .<span class="fn">add</span>(<span class="str">'visible'</span>);
+      }
+    });
+  }, { threshold: <span class="num">0.2</span> }); <span class="cm">// 20% 보일 때</span>
+
+<span class="fn">observer</span>.<span class="fn">observe</span>(element);</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">📦 아래로 스크롤 → 요소들이 나타나요</span>
+        <div class="io-scroll-box" id="io-box">
+          <div class="io-item" data-io><span class="io-dot"></span> 🌟 첫 번째 아이템 — 화면에 보이면 나타나요</div>
+          <div class="io-item" data-io><span class="io-dot"></span> 🎨 두 번째 아이템 — 슬라이드 인 애니메이션</div>
+          <div class="io-item" data-io><span class="io-dot"></span> 🚀 세 번째 아이템 — Intersection Observer 사용</div>
+          <div class="io-item" data-io><span class="io-dot"></span> 💡 네 번째 아이템 — scroll 이벤트보다 성능 좋음</div>
+          <div class="io-item" data-io><span class="io-dot"></span> ✨ 다섯 번째 아이템 — threshold: 0.5 설정</div>
+          <div class="io-item" data-io><span class="io-dot"></span> 🎯 여섯 번째 아이템 — 무한 스크롤에도 사용</div>
+        </div>
+        <div class="io-status" id="io-status"><span class="io-dot" id="io-dot-status"></span> 스크롤해서 관찰해보세요</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     03. 스크롤 진행률
+══════════════════════════════════════ -->
+<div class="section" id="scroll-progress">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">스크롤 진행률 바</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Scroll Progress Bar <small>읽기 진행률</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 현재 페이지에서 <strong>얼마나 스크롤했는지</strong>를 상단 바로 시각화하는 기법이에요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 뉴스 기사, 블로그 포스트, 전자책 뷰어</p>
+        <p class="how">⚙️ <strong>원리:</strong> scrollY ÷ (전체높이 - 화면높이) × 100% 로 계산해요</p>
+        <hr class="divider">
+        <div class="code-block"><span class="kw">window</span>.<span class="fn">addEventListener</span>(<span class="str">'scroll'</span>, () => {
+  <span class="kw">const</span> total = 
+    document.body.scrollHeight 
+    - <span class="kw">window</span>.innerHeight;
+  <span class="kw">const</span> progress = 
+    (<span class="kw">window</span>.scrollY / total) * <span class="num">100</span>;
+    
+  bar.style.width = progress + <span class="str">'%'</span>;
+});</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">👆 이 페이지 상단을 보세요! 보라색 바가 스크롤에 따라 늘어나요</span>
+        <div style="background:var(--code-bg);border-radius:12px;padding:1.5rem;text-align:center">
+          <div style="font-size:3rem" id="scroll-emoji">🔝</div>
+          <div style="font-size:0.9rem;color:var(--muted);margin-top:0.5rem">현재 스크롤: <span id="scroll-pct" style="color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:700">0%</span></div>
+          <div style="margin-top:1rem;height:8px;background:var(--border);border-radius:100px;overflow:hidden">
+            <div id="scroll-mini-bar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width 0.1s;border-radius:100px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     04. 호버 이펙트
+══════════════════════════════════════ -->
+<div class="section" id="hover">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">호버 이펙트</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Hover Effects <small>마우스 오버 효과</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 마우스를 요소 위에 올렸을 때(:hover) 시각적으로 반응하는 효과예요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 버튼, 카드, 메뉴, 링크 — 모든 클릭 가능한 요소</p>
+        <p class="how">⚙️ <strong>원리:</strong> CSS transition + :hover, 또는 JS mouseenter/mouseleave 이벤트</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">/* CSS 방식 */</span>
+.card {
+  <span class="kw">transition</span>: transform <span class="num">0.3s</span> ease;
+}
+.card<span class="fn">:hover</span> {
+  transform: <span class="fn">translateY</span>(-<span class="num">8px</span>);
+}
+
+<span class="cm">/* JS 방식 */</span>
+el.<span class="fn">addEventListener</span>(<span class="str">'mouseenter'</span>, 
+  () => { <span class="cm">/* 효과 적용 */</span> });</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">🖱️ 각 카드에 마우스를 올려보세요</span>
+        <div class="hover-grid">
+          <div class="hv-card hv-lift">
+            <span class="icon">⬆️</span>
+            <span class="hv-name">Lift<br>들어올리기</span>
+          </div>
+          <div class="hv-card hv-glow">
+            <span class="icon">✨</span>
+            <span class="hv-name">Glow<br>빛나기</span>
+          </div>
+          <div class="hv-flip-wrap hv-card" style="padding:0">
+            <div class="hv-flip-inner">
+              <div class="hv-flip-front"><span class="icon">🔄</span><span class="hv-name">Flip<br>뒤집기</span></div>
+              <div class="hv-flip-back"><span class="icon">🎉</span><span>뒤집혔어요!</span></div>
+            </div>
+          </div>
+          <div class="hv-card hv-ripple" id="hv-ripple-card">
+            <span class="icon">💧</span>
+            <span class="hv-name">Ripple<br>물결효과</span>
+          </div>
+          <div class="hv-card hv-shine">
+            <span class="icon">🌟</span>
+            <span class="hv-name">Shine<br>빛 흘리기</span>
+          </div>
+          <div class="hv-card hv-tilt" id="hv-tilt-card">
+            <span class="icon">🎲</span>
+            <span class="hv-name">3D Tilt<br>기울이기</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     05. 드래그 앤 드롭
+══════════════════════════════════════ -->
+<div class="section" id="drag">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">드래그 앤 드롭</h2>
+    <span class="tag tag-mid">중급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Drag & Drop <small>끌어다 놓기</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 마우스로 요소를 <strong>클릭해서 끌어다가 다른 위치에 놓는</strong> 인터랙션이에요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 트렐로(Kanban), 구글 드라이브, 파일 업로드, 슬라이드 순서 변경</p>
+        <p class="how">⚙️ <strong>원리:</strong> HTML draggable 속성 + dragstart, dragover, drop 이벤트 사용</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">// 드래그 대상</span>
+el.setAttribute(<span class="str">'draggable'</span>, <span class="str">'true'</span>);
+el.<span class="fn">addEventListener</span>(<span class="str">'dragstart'</span>, e => {
+  e.dataTransfer.<span class="fn">setData</span>(<span class="str">'id'</span>, el.id);
+});
+
+<span class="cm">// 드롭 영역</span>
+zone.<span class="fn">addEventListener</span>(<span class="str">'dragover'</span>, e => {
+  e.<span class="fn">preventDefault</span>(); <span class="cm">// 필수!</span>
+});
+zone.<span class="fn">addEventListener</span>(<span class="str">'drop'</span>, e => {
+  <span class="kw">const</span> id = e.dataTransfer
+    .<span class="fn">getData</span>(<span class="str">'id'</span>);
+  zone.<span class="fn">appendChild</span>(
+    document.<span class="fn">getElementById</span>(id));
+});</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">🤏 아이템을 끌어서 옮겨보세요</span>
+        <div class="drag-area">
+          <div class="drag-col" id="drag-col-a">
+            <div class="drag-col-label">📋 할 일 (Todo)</div>
+            <div class="drag-item" draggable="true" id="di1">🎨 UI 디자인</div>
+            <div class="drag-item" draggable="true" id="di2">📝 기획 문서 작성</div>
+            <div class="drag-item" draggable="true" id="di3">🔍 사용자 조사</div>
+          </div>
+          <div class="drag-col" id="drag-col-b">
+            <div class="drag-col-label">✅ 완료 (Done)</div>
+            <div class="drag-item" draggable="true" id="di4">💡 아이디어 구상</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     06. 모달
+══════════════════════════════════════ -->
+<div class="section" id="modal">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">모달 / 다이얼로그</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Modal / Dialog <small>팝업 레이어</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 현재 페이지 위에 <strong>레이어로 뜨는 창</strong>이에요. 배경이 어두워지고, 사용자가 행동을 취해야만 닫힌다는 특징이 있어요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 로그인 팝업, 삭제 확인, 이미지 확대, 약관 동의</p>
+        <p class="how">⚙️ <strong>원리:</strong> position:fixed 오버레이 + z-index 높게 설정. CSS transition으로 애니메이션. 배경 클릭 시 닫힘 처리.</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">// 모달 열기</span>
+<span class="kw">function</span> <span class="fn">openModal</span>() {
+  overlay.classList.<span class="fn">add</span>(<span class="str">'active'</span>);
+  document.body.style.overflow 
+    = <span class="str">'hidden'</span>; <span class="cm">// 스크롤 막기</span>
+}
+
+<span class="cm">// 배경 클릭 시 닫기</span>
+overlay.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, 
+  e => {
+    <span class="kw">if</span> (e.target === overlay) 
+      <span class="fn">closeModal</span>();
+  });</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">👆 버튼을 클릭해서 모달을 열어보세요</span>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="openModal()">🔓 모달 열기</button>
+          <button class="btn btn-outline" onclick="openModal()">🔐 로그인 팝업</button>
+        </div>
+        <div style="background:var(--code-bg);border-radius:10px;padding:1rem;font-size:0.8rem;color:var(--muted)">
+          💡 <strong>모달 vs 팝업:</strong> 팝업(popup)은 새 브라우저 창. 모달(modal)은 같은 페이지 위에 뜨는 레이어. 현대 웹은 거의 모달을 사용해요!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     07. 토스트 알림
+══════════════════════════════════════ -->
+<div class="section" id="toast">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">토스트 알림</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Toast Notification <small>스낵바 / 알림</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 화면 구석에서 잠깐 나타났다가 <strong>자동으로 사라지는 알림</strong>이에요. 토스트(빵)가 튀어오르는 모양 같다고 해서 이름이 붙었어요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> "저장되었습니다", "복사 완료", "오류 발생" 알림</p>
+        <p class="how">⚙️ <strong>원리:</strong> JS로 동적으로 DOM 요소 생성 → CSS animation → setTimeout으로 제거</p>
+        <hr class="divider">
+        <div class="code-block"><span class="kw">function</span> <span class="fn">showToast</span>(msg, icon) {
+  <span class="kw">const</span> t = document.<span class="fn">createElement</span>(<span class="str">'div'</span>);
+  t.className = <span class="str">'toast'</span>;
+  t.innerHTML = <span class="str">`${icon} ${msg}`</span>;
+  container.<span class="fn">appendChild</span>(t);
+  
+  <span class="cm">// 3초 후 자동 삭제</span>
+  <span class="fn">setTimeout</span>(() => t.<span class="fn">remove</span>(), <span class="num">3000</span>);
+}</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">🔔 버튼을 눌러 토스트를 만들어보세요</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline" onclick="showToast('저장되었습니다!','✅')">✅ 성공</button>
+          <button class="btn btn-outline" onclick="showToast('오류가 발생했어요','❌')">❌ 에러</button>
+          <button class="btn btn-outline" onclick="showToast('링크가 복사되었어요','🔗')">🔗 복사</button>
+          <button class="btn btn-outline" onclick="showToast('새로운 메시지가 왔어요!','💬')">💬 알림</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     08. 스티키 요소
+══════════════════════════════════════ -->
+<div class="section" id="sticky">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2 class="section-title">스티키 요소</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Sticky Element <small>고정 요소</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 스크롤해도 화면의 특정 위치에 <strong>달라붙어서 고정</strong>되는 요소예요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 상단 네비게이션, 테이블 헤더, 사이드 목차, 고정 버튼</p>
+        <p class="how">⚙️ <strong>원리:</strong> CSS position: sticky + top 값 설정. 부모 요소 안에서만 작동해요!</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">/* CSS만으로 구현! */</span>
+.sticky-header {
+  position: <span class="kw">sticky</span>;
+  top: <span class="num">0</span>; <span class="cm">/* 상단 0px에서 고정 */</span>
+  z-index: <span class="num">10</span>;
+  background: rgba(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.8</span>);
+  backdrop-filter: <span class="fn">blur</span>(<span class="num">10px</span>);
+}
+
+<span class="cm">/* position: fixed 와의 차이?
+   fixed = 부모 무시, 항상 뷰포트 기준
+   sticky = 부모 안에서만 고정 */</span></div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">📌 스크롤하면 헤더가 상단에 고정돼요</span>
+        <div class="sticky-demo-wrap">
+          <div class="sticky-demo-header">📌 이 헤더는 sticky예요! (스크롤해보세요)</div>
+          <div class="sticky-demo-content">
+            <div class="sticky-item">📄 첫 번째 항목 — Lorem ipsum dolor sit amet</div>
+            <div class="sticky-item">📄 두 번째 항목 — Consectetur adipiscing elit</div>
+            <div class="sticky-item">📄 세 번째 항목 — Sed do eiusmod tempor</div>
+            <div class="sticky-item">📄 네 번째 항목 — Incididunt ut labore et</div>
+            <div class="sticky-item">📄 다섯 번째 항목 — Dolore magna aliqua</div>
+            <div class="sticky-item">📄 여섯 번째 항목 — Ut enim ad minim veniam</div>
+            <div class="sticky-item">📄 일곱 번째 항목 — Quis nostrud exercitation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     09. 레이지 로딩
+══════════════════════════════════════ -->
+<div class="section" id="lazy">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2 class="section-title">레이지 로딩</h2>
+    <span class="tag tag-mid">중급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Lazy Loading <small>지연 로딩</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 처음에 모든 걸 불러오지 않고, <strong>필요할 때(화면에 보일 때) 로딩</strong>하는 기법이에요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 인스타그램 피드, 유튜브 썸네일, 네이버 블로그</p>
+        <p class="how">⚙️ <strong>원리:</strong> Intersection Observer로 요소 감지 → 뷰포트에 들어오면 src 설정해서 로드. 페이지 초기 로딩 속도가 빨라져요!</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">// img에 data-src 사용</span>
+&lt;img <span class="kw">data-src</span>=<span class="str">"real-image.jpg"</span>&gt;
+
+<span class="cm">// Intersection Observer로 감지</span>
+<span class="kw">const</span> io = <span class="kw">new</span> <span class="fn">IntersectionObserver</span>(
+  (entries) => {
+    entries.<span class="fn">forEach</span>(e => {
+      <span class="kw">if</span> (e.isIntersecting) {
+        e.target.src = 
+          e.target.dataset.src;
+        io.<span class="fn">unobserve</span>(e.target);
+      }
+    });
+  }
+);
+
+<span class="cm">// HTML img 태그 기본 지원</span>
+&lt;img <span class="kw">loading</span>=<span class="str">"lazy"</span> src=<span class="str">"..."</span>&gt;</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">⏳ 버튼을 눌러 순차 로딩을 시뮬레이션해보세요</span>
+        <div class="lazy-grid" id="lazy-grid">
+          <div class="lazy-img" data-emoji="🌸"><div class="skeleton"></div><div class="loaded-content"></div></div>
+          <div class="lazy-img" data-emoji="🌊"><div class="skeleton"></div><div class="loaded-content"></div></div>
+          <div class="lazy-img" data-emoji="🏔️"><div class="skeleton"></div><div class="loaded-content"></div></div>
+          <div class="lazy-img" data-emoji="🌅"><div class="skeleton"></div><div class="loaded-content"></div></div>
+          <div class="lazy-img" data-emoji="🌿"><div class="skeleton"></div><div class="loaded-content"></div></div>
+          <div class="lazy-img" data-emoji="⭐"><div class="skeleton"></div><div class="loaded-content"></div></div>
+        </div>
+        <button class="btn btn-primary" onclick="simulateLazyLoad()" style="align-self:flex-start">🔄 다시 로딩 시뮬레이션</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     10. 스크롤 스냅
+══════════════════════════════════════ -->
+<div class="section" id="snap">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2 class="section-title">스크롤 스냅</h2>
+    <span class="tag tag-easy">초급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Scroll Snap <small>슬라이드 스냅</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 스크롤이 <strong>특정 지점에 자동으로 딱 맞춰(snap)</strong> 멈추게 하는 기법이에요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 모바일 카드 슬라이더, 온보딩 화면, 풀페이지 스크롤</p>
+        <p class="how">⚙️ <strong>원리:</strong> 순수 CSS로 구현 가능! scroll-snap-type과 scroll-snap-align 속성만 있으면 돼요.</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">/* 컨테이너에 적용 */</span>
+.container {
+  overflow-x: <span class="kw">auto</span>;
+  scroll-snap-type: <span class="kw">x mandatory</span>;
+  <span class="cm">/* mandatory = 반드시 스냅
+     proximity = 가까우면 스냅 */</span>
+}
+
+<span class="cm">/* 각 아이템에 적용 */</span>
+.item {
+  scroll-snap-align: <span class="kw">center</span>;
+  <span class="cm">/* start / center / end */</span>
+  flex: <span class="num">0 0 80%</span>;
+}</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">👉 좌우로 스크롤해보세요 — 딱딱 맞춰져요!</span>
+        <div class="snap-container">
+          <div class="snap-item" data-num="1" style="background:linear-gradient(135deg,#1a0a2e,#2d1054)">
+            <h3>🌙 밤하늘의 별</h3>
+            <p>Parallax + Scroll Snap 조합으로 멋진 효과를 낼 수 있어요</p>
+          </div>
+          <div class="snap-item" data-num="2" style="background:linear-gradient(135deg,#0a1a2e,#0d3060)">
+            <h3>🌊 깊은 바다</h3>
+            <p>모바일 온보딩 화면에 자주 쓰이는 패턴이에요</p>
+          </div>
+          <div class="snap-item" data-num="3" style="background:linear-gradient(135deg,#0a2e0a,#1a5c1a)">
+            <h3>🌲 초록 숲</h3>
+            <p>CSS만으로 구현되는 강력한 UX 기법이에요</p>
+          </div>
+          <div class="snap-item" data-num="4" style="background:linear-gradient(135deg,#2e1a0a,#6b3a12)">
+            <h3>🔥 따뜻한 노을</h3>
+            <p>scroll-snap-type: x mandatory 설정 하나면 끝!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 커스텀 커서 설명 -->
+<div class="section" id="cursor">
+  <div class="section-header">
+    <span class="section-num">보너스</span>
+    <h2 class="section-title">커스텀 커서</h2>
+    <span class="tag tag-mid">중급</span>
+  </div>
+  <div class="term-card reveal">
+    <div class="term-card-header">
+      <div class="term-card-title">Custom Cursor <small>마우스 커서 커스텀</small></div>
+    </div>
+    <div class="term-card-body">
+      <div class="term-desc">
+        <p>📌 <strong>개념:</strong> 기본 마우스 커서 대신 <strong>직접 디자인한 커서</strong>를 사용하는 기법이에요.</p>
+        <p>🎬 <strong>어디서 봐요?</strong> 크리에이티브 에이전시, 포트폴리오, 명품 브랜드 사이트</p>
+        <p class="how">⚙️ <strong>원리:</strong> body에 cursor:none 적용해서 기본 커서 숨기기 → mousemove 이벤트로 커스텀 요소의 위치를 실시간 업데이트!</p>
+        <hr class="divider">
+        <div class="code-block"><span class="cm">// 커서 숨기기</span>
+body { cursor: <span class="kw">none</span>; }
+
+<span class="cm">// 마우스 따라다니기</span>
+<span class="kw">document</span>.<span class="fn">addEventListener</span>(
+  <span class="str">'mousemove'</span>, e => {
+    dot.style.transform = 
+      <span class="str">`translate(
+        ${e.clientX - 4}px, 
+        ${e.clientY - 4}px)`</span>;
+    ring.style.transform = 
+      <span class="str">`translate(
+        ${e.clientX - 16}px,
+        ${e.clientY - 16}px)`</span>;
+  });</div>
+      </div>
+      <div class="term-demo">
+        <span class="demo-label">🖱️ 이미 이 페이지 전체에 적용되어 있어요!</span>
+        <div style="background:var(--code-bg);border-radius:12px;padding:1.5rem;text-align:center">
+          <div style="font-size:2.5rem">🎯</div>
+          <p style="color:var(--muted);font-size:0.9rem;margin-top:0.5rem">
+            화면 어디든 마우스를 움직여보세요.<br>
+            보라색 점 + 링이 따라다니는 게 보이나요?<br>
+            버튼/링크 위에 올리면 링이 더 커져요!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 푸터 -->
+<footer>
+  <div style="font-family:'Black Han Sans',sans-serif;font-size:1.2rem;color:var(--accent);margin-bottom:0.5rem">🎓 JS 인터랙션 용어 사전</div>
+  <p>패럴렉스 · 인터섹션 옵저버 · 스크롤 진행률 · 호버이펙트 · 드래그앤드롭 · 모달 · 토스트 · 스티키 · 레이지로딩 · 스크롤스냅 · 커스텀커서</p>
+  <p style="margin-top:0.5rem;color:#333355">한국아트테크스튜디오 교육자료 · Made with ❤️</p>
+</footer>
+
+<script>
+// ── 커스텀 커서 ──
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  dot.style.transform = `translate(${e.clientX - 4}px,${e.clientY - 4}px)`;
+  ring.style.transform = `translate(${e.clientX - 16}px,${e.clientY - 16}px)`;
+});
+
+// ── 스크롤 진행률 + 스크롤 이벤트들 ──
+const progressBar = document.getElementById('scroll-progress-bar');
+const miniBar = document.getElementById('scroll-mini-bar');
+const scrollPct = document.getElementById('scroll-pct');
+const scrollEmoji = document.getElementById('scroll-emoji');
+const emojis = ['🔝','🚶','🏃','⚡','🚀','🏁'];
+
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const pct = Math.round((window.scrollY / total) * 100);
+  progressBar.style.transform = `scaleX(${pct / 100})`;
+  if (miniBar) miniBar.style.width = pct + '%';
+  if (scrollPct) scrollPct.textContent = pct + '%';
+  if (scrollEmoji) scrollEmoji.textContent = emojis[Math.min(Math.floor(pct/20), emojis.length-1)];
+});
+
+// ── 패럴렉스 슬라이더 ──
+const plxSlider = document.getElementById('plx-slider');
+const plxVal = document.getElementById('plx-val');
+const plxBg = document.getElementById('plx-bg');
+const plxMid = document.getElementById('plx-mid');
+const plxFg = document.getElementById('plx-fg');
+
+// 별 생성
+const starsEl = document.getElementById('plx-stars');
+for (let i = 0; i < 40; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 3 + 1;
+  s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1.5+Math.random()*2}s`;
+  starsEl.appendChild(s);
+}
+
+plxSlider.addEventListener('input', () => {
+  const v = +plxSlider.value;
+  plxVal.textContent = v;
+  plxBg.style.transform = `translateY(${v * 0.2}px)`;
+  plxMid.style.transform = `translateY(${v * 0.5}px)`;
+  plxFg.style.transform = `translateY(${v * 0.9}px)`;
+  starsEl.style.transform = `translateY(${v * 0.05}px)`;
+});
+
+// ── 인터섹션 옵저버 (io-box) ──
+const ioBox = document.getElementById('io-box');
+const ioItems = ioBox.querySelectorAll('.io-item');
+const ioStatusEl = document.getElementById('io-status');
+const ioDotStatus = document.getElementById('io-dot-status');
+
+const ioObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const dot = entry.target.querySelector('.io-dot');
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      if (dot) dot.classList.add('on');
+    } else {
+      entry.target.classList.remove('visible');
+      if (dot) dot.classList.remove('on');
+    }
+  });
+  const visCount = ioBox.querySelectorAll('.io-item.visible').length;
+  ioStatusEl.innerHTML = `<span class="io-dot ${visCount>0?'on':''}" id="io-dot-status"></span> 현재 보이는 아이템: ${visCount}개`;
+}, { root: ioBox, threshold: 0.5 });
+
+ioItems.forEach(el => ioObserver.observe(el));
+
+// ── 스크롤 reveal ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── 호버: 리플 ──
+document.getElementById('hv-ripple-card').addEventListener('click', function(e) {
+  const r = document.createElement('div');
+  r.className = 'ripple-effect';
+  const size = Math.max(this.offsetWidth, this.offsetHeight) * 2;
+  const rect = this.getBoundingClientRect();
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  this.appendChild(r);
+  setTimeout(() => r.remove(), 700);
+});
+
+// ── 호버: 3D 틸트 ──
+const tiltCard = document.getElementById('hv-tilt-card');
+tiltCard.addEventListener('mousemove', e => {
+  const r = tiltCard.getBoundingClientRect();
+  const x = ((e.clientX - r.left) / r.width - 0.5) * 20;
+  const y = ((e.clientY - r.top) / r.height - 0.5) * -20;
+  tiltCard.style.transform = `perspective(400px) rotateX(${y}deg) rotateY(${x}deg) scale(1.05)`;
+  tiltCard.style.boxShadow = `${-x}px ${y}px 30px rgba(124,111,255,0.3)`;
+});
+tiltCard.addEventListener('mouseleave', () => {
+  tiltCard.style.transform = '';
+  tiltCard.style.boxShadow = '';
+});
+
+// ── 드래그 앤 드롭 ──
+let dragging = null;
+document.querySelectorAll('.drag-item').forEach(item => {
+  item.addEventListener('dragstart', e => {
+    dragging = item;
+    setTimeout(() => item.classList.add('dragging'), 0);
+  });
+  item.addEventListener('dragend', () => {
+    item.classList.remove('dragging');
+    dragging = null;
+  });
+});
+document.querySelectorAll('.drag-col').forEach(col => {
+  col.addEventListener('dragover', e => {
+    e.preventDefault();
+    col.classList.add('drag-over');
+  });
+  col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+  col.addEventListener('drop', e => {
+    e.preventDefault();
+    col.classList.remove('drag-over');
+    if (dragging) col.appendChild(dragging);
+    showToast('이동 완료! 🎉', '');
+  });
+});
+
+// ── 모달 ──
+const modalOverlay = document.getElementById('modal');
+function openModal() {
+  modalOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  modalOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+modalOverlay.addEventListener('click', e => {
+  if (e.target === modalOverlay) closeModal();
+});
+window.openModal = openModal;
+window.closeModal = closeModal;
+
+// ── 토스트 ──
+const toastContainer = document.getElementById('toast-container');
+function showToast(msg, icon) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  toastContainer.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+window.showToast = showToast;
+
+// ── 레이지 로딩 시뮬레이션 ──
+function simulateLazyLoad() {
+  const imgs = document.querySelectorAll('.lazy-img');
+  imgs.forEach(img => {
+    img.classList.remove('loaded');
+    img.querySelector('.loaded-content').textContent = '';
+  });
+  imgs.forEach((img, i) => {
+    setTimeout(() => {
+      img.querySelector('.loaded-content').textContent = img.dataset.emoji;
+      img.classList.add('loaded');
+    }, 400 + i * 350);
+  });
+}
+simulateLazyLoad();
+</script>
+</body>
+</html>
