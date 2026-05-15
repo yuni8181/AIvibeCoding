@@ -113,11 +113,11 @@
 
 |  |  |
 |--|--|
-| **이름** | 여니쒸 (Korea Art Tech Studio 대표 · 크리에이티브 디렉터) |
+| **이름** | 김수연 (Korea Art Tech Studio 대표 · 크리에이티브 디렉터) |
 | **경력** | 직업훈련 IT 강사 15년 · 취업 성공 학생 500명+ |
 | **전문 분야** | 웹 퍼블리싱, UI/UX 디자인, AI 교육, 디지털 일러스트레이션 |
 | **수상** | 2025 AI 관련 공모전 다수 수상 (대전시, 국가보훈부, 안동시 등) |
-| **채널** | 🎵 YouTube [뮤직콜라(MusicCola)](https://youtube.com) — AI 음악 힐링 콘텐츠 |
+| **채널** | 🎵 YouTube [뮤직콜라(MusicCola)] — AI 음악 힐링 콘텐츠 |
 | **소속** | GIT Academy 강의 · 한국아트테크스튜디오 운영 |
 
 ---
@@ -135,7 +135,7 @@
 
 ## 📬 Contact
 
-- 📧 강의 문의: [GitHub Profile](https://github.com/yuni8181)
+- 📧 강의 문의: pinkdd8181@gmail.com 
 - 🏢 **한국아트테크스튜디오** — AI Education · Creative Design · ESG Branding
 
 ---
