@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스킬 수준 구분도</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f8f7f4;
+    color: #1a1a1a;
+    padding: 40px 32px;
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    color: #111;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px 4px 0;
+    margin-bottom: 12px;
+    border-bottom: 2px solid currentColor;
+  }
+
+  .section-label.design  { color: #2563a8; }
+  .section-label.publish { color: #16794a; }
+  .section-label.ai      { color: #7c3aed; }
+  .section-label.uiux    { color: #c2590e; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  col.name  { width: 100px; }
+  col.p20   { width: 12%; }
+  col.p40   { width: 14%; }
+  col.p60   { width: 16%; }
+  col.p80   { width: 18%; }
+  col.p90   { width: 20%; }
+
+  th {
+    padding: 10px 8px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    border-bottom: 2px solid #111;
+    border-right: 1px solid #ddd;
+  }
+  th:last-child { border-right: none; }
+
+  th.pct {
+    color: #555;
+    background: #f2f1ee;
+  }
+  th.pct-high {
+    color: #111;
+    background: #e8e6e0;
+  }
+
+  td {
+    padding: 9px 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e2e0db;
+    border-right: 1px solid #e2e0db;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #333;
+  }
+  td:last-child { border-right: none; }
+
+  td.tool-name {
+    font-weight: 700;
+    font-size: 12px;
+    text-align: center;
+    background: #f2f1ee;
+    color: #111;
+    letter-spacing: -0.2px;
+  }
+
+  .section.design  td.tool-name { border-left: 3px solid #2563a8; }
+  .section.publish td.tool-name { border-left: 3px solid #16794a; }
+  .section.uiux    td.tool-name { border-left: 3px solid #c2590e; }
+  .section.ai      td.tool-name { border-left: 3px solid #7c3aed; }
+
+  td.level-90 {
+    background: #fefce8;
+    font-weight: 500;
+    color: #78350f;
+    font-size: 11.5px;
+  }
+
+  /* Progress bar in header */
+  .bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .bar-track {
+    width: 100%;
+    height: 4px;
+    background: #ccc;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bar-fill { height: 100%; border-radius: 2px; }
+
+  .fill-20 { width: 20%; background: #94a3b8; }
+  .fill-40 { width: 40%; background: #60a5fa; }
+  .fill-60 { width: 60%; background: #34d399; }
+  .fill-80 { width: 80%; background: #f59e0b; }
+  .fill-90 { width: 95%; background: #f97316; }
+
+  .ai-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+  }
+  .badge-ai  { background: #ede9fe; color: #5b21b6; }
+  .badge-new { background: #dcfce7; color: #166534; }
+</style>
+</head>
+<body>
+
+<h1>스킬 수준 구분도</h1>
+<p class="subtitle">각 툴별 학습 단계 및 숙련도 기준 · Design · Publishing · UI/UX · AI Tools</p>
+
+<!-- 디자인 분야 -->
+<div class="section design">
+  <div class="section-label design">🎨 디자인 분야</div>
+  <table>
+    <colgroup>
+      <col class="name"><col class="p20"><col class="p40"><col class="p60"><col class="p80"><col class="p90">
+    </colgroup>
+    <thead>
+      <tr>
+        <th></th>
+        <th class="pct"><div class="bar-wrap">20%<div class="bar-track"><div class="bar-fill fill-20"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">40%<div class="bar-track"><div class="bar-fill fill-40"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">60%<div class="bar-track"><div class="bar-fill fill-60"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">80%<div class="bar-track"><div class="bar-fill fill-80"></div></div></div></th>
+        <th class="pct-high"><div class="bar-wrap">90~100%<div class="bar-track"><div class="bar-fill fill-90"></div></div></div></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tool-name">Photoshop</td>
+        <td>Toolbar 이해</td>
+        <td>Layer 활용</td>
+        <td>Filter 활용</td>
+        <td>각종 마스크 활용</td>
+        <td class="level-90">합성 및 해상도 이해, 편집웹 구분 작업 가능</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Illustrator</td>
+        <td>Toolbar 이해</td>
+        <td colspan="2" style="text-align:center">Pentool 활용</td>
+        <td>패쓰 응용가능<br>색상 활용가능</td>
+        <td class="level-90">제품디자인 · 명함디자인<br>아이콘디자인 · CMYK 이해</td>
+      </tr>
+      <tr>
+        <td class="tool-name">InDesign</td>
+        <td>Toolbar 이해</td>
+        <td colspan="2" style="text-align:center">Menu 활용</td>
+        <td>인쇄가능<br>(재단선 · 도련 이해)</td>
+        <td class="level-90">전자책 제작 가능</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Premiere</td>
+        <td>Toolbar 이해</td>
+        <td colspan="2" style="text-align:center">Menu 활용</td>
+        <td>시퀀스 이해 및 제작</td>
+        <td class="level-90">오디오 믹싱 및<br>합성 동영상 제작 가능</td>
+      </tr>
+      <tr>
+        <td class="tool-name">After Effects</td>
+        <td>Toolbar 이해</td>
+        <td>Layer 이해 및 활용</td>
+        <td>애니메이션 제작 가능</td>
+        <td>프로젝트 에셋 작성<br>초버보드 제작</td>
+        <td class="level-90">아트웍 활용한<br>애니메이션 제작</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- UI/UX & 협업 툴 -->
+<div class="section uiux">
+  <div class="section-label uiux">🖥 UI/UX · 협업 툴</div>
+  <table>
+    <colgroup>
+      <col class="name"><col class="p20"><col class="p40"><col class="p60"><col class="p80"><col class="p90">
+    </colgroup>
+    <thead>
+      <tr>
+        <th></th>
+        <th class="pct"><div class="bar-wrap">20%<div class="bar-track"><div class="bar-fill fill-20"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">40%<div class="bar-track"><div class="bar-fill fill-40"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">60%<div class="bar-track"><div class="bar-fill fill-60"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">80%<div class="bar-track"><div class="bar-fill fill-80"></div></div></div></th>
+        <th class="pct-high"><div class="bar-wrap">90~100%<div class="bar-track"><div class="bar-fill fill-90"></div></div></div></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tool-name">Figma</td>
+        <td>기본 도형 · 텍스트 작성</td>
+        <td>컴포넌트 & 스타일 활용</td>
+        <td>오토레이아웃 설계</td>
+        <td>프로토타입 및 인터랙션 제작</td>
+        <td class="level-90">디자인 시스템 구축<br>Claude MCP 연동</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Notion</td>
+        <td>기본 페이지 작성</td>
+        <td>데이터베이스 활용</td>
+        <td>템플릿 커스텀</td>
+        <td>워크스페이스 구조 설계</td>
+        <td class="level-90">팀 운영 시스템 구축<br>자동화 연동</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 퍼블리싱 분야 -->
+<div class="section publish">
+  <div class="section-label publish">💻 퍼블리싱 분야</div>
+  <table>
+    <colgroup>
+      <col class="name"><col class="p20"><col class="p40"><col class="p60"><col class="p80"><col class="p90">
+    </colgroup>
+    <thead>
+      <tr>
+        <th></th>
+        <th class="pct"><div class="bar-wrap">20%<div class="bar-track"><div class="bar-fill fill-20"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">40%<div class="bar-track"><div class="bar-fill fill-40"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">60%<div class="bar-track"><div class="bar-fill fill-60"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">80%<div class="bar-track"><div class="bar-fill fill-80"></div></div></div></th>
+        <th class="pct-high"><div class="bar-wrap">90~100%<div class="bar-track"><div class="bar-fill fill-90"></div></div></div></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tool-name">HTML</td>
+        <td>html · head · body 구분</td>
+        <td>외부 스타일시트<br>외부 스크립트 연결</td>
+        <td>박스태그 · 리스트태그 작성</td>
+        <td>인라인 · 블럭 구분<br>자손 의이해</td>
+        <td class="level-90">링크 연결 및<br>Viewport 작성 가능</td>
+      </tr>
+      <tr>
+        <td class="tool-name">CSS</td>
+        <td>선택자 구분</td>
+        <td>크기변환 및 색상변환</td>
+        <td>가로정렬구조<br>레이아웃 작성<br>transform 활용</td>
+        <td>transition 활용<br>animation 활용</td>
+        <td class="level-90">미디어쿼리 작성 가능</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Javascript</td>
+        <td>$(document).ready<br>(function)(){}</td>
+        <td>선택자 작성</td>
+        <td>이벤트 연결<br>i문 활용<br>setinterval 활용</td>
+        <td>function 제작 가능</td>
+        <td class="level-90">plugin 제작 및 배포 가능</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Firebase</td>
+        <td>프로젝트 생성<br>SDK 연결</td>
+        <td>Authentication 이해</td>
+        <td>Firestore DB 읽기/쓰기</td>
+        <td>실시간 데이터 연동<br>보안 규칙 작성</td>
+        <td class="level-90">풀스택 앱 배포<br>호스팅 운영 가능</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- AI 툴 분야 -->
+<div class="section ai">
+  <div class="section-label ai">✦ AI 툴 분야 <span class="ai-badge badge-new">NEW</span></div>
+  <table>
+    <colgroup>
+      <col class="name"><col class="p20"><col class="p40"><col class="p60"><col class="p80"><col class="p90">
+    </colgroup>
+    <thead>
+      <tr>
+        <th></th>
+        <th class="pct"><div class="bar-wrap">20%<div class="bar-track"><div class="bar-fill fill-20"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">40%<div class="bar-track"><div class="bar-fill fill-40"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">60%<div class="bar-track"><div class="bar-fill fill-60"></div></div></div></th>
+        <th class="pct"><div class="bar-wrap">80%<div class="bar-track"><div class="bar-fill fill-80"></div></div></div></th>
+        <th class="pct-high"><div class="bar-wrap">90~100%<div class="bar-track"><div class="bar-fill fill-90"></div></div></div></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="tool-name">Claude AI<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 질의응답 활용</td>
+        <td>역할 지정 프롬프트</td>
+        <td>멀티턴 대화 설계<br>문서 분석 활용</td>
+        <td>시스템 프롬프트 설계<br>Artifacts 제작</td>
+        <td class="level-90">API 연동 앱 제작<br>MCP 서버 구성</td>
+      </tr>
+      <tr>
+        <td class="tool-name">ChatGPT<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 질의응답 활용</td>
+        <td>역할 지정 프롬프트</td>
+        <td>GPT 플러그인 활용<br>파일 분석</td>
+        <td>Custom GPT 제작</td>
+        <td class="level-90">API 연동 자동화<br>업무 시스템 구축</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Midjourney<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 프롬프트 생성</td>
+        <td>스타일 · 비율 파라미터</td>
+        <td>레퍼런스 이미지 활용<br>(--sref, --cref)</td>
+        <td>캐릭터 일관성 유지<br>다양한 씨드 활용</td>
+        <td class="level-90">브랜드 비주얼 제작<br>상업용 워크플로우</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Suno AI<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 음악 생성</td>
+        <td>장르 · 분위기 지정</td>
+        <td>가사 직접 작성 생성<br>스타일 태그 활용</td>
+        <td>Extend · 커버 제작<br>트랙 편집</td>
+        <td class="level-90">채널 콘텐츠 제작<br>음원 상업적 활용</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Gamma AI<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 슬라이드 생성</td>
+        <td>템플릿 활용<br>내용 편집</td>
+        <td>커스텀 디자인 적용<br>브랜드 컬러 설정</td>
+        <td>인터랙션 · 링크 설정<br>분석 활용</td>
+        <td class="level-90">브랜드 슬라이드 제작<br>강의 자료 시스템화</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Runway<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 텍스트→영상 생성</td>
+        <td>이미지→영상 변환</td>
+        <td>모션 브러시 활용<br>카메라 제어</td>
+        <td>씬 연속성 유지<br>인페인팅 활용</td>
+        <td class="level-90">쇼트필름 · 광고영상<br>콘텐츠 파이프라인 구축</td>
+      </tr>
+      <tr>
+        <td class="tool-name">Perplexity<span class="ai-badge badge-ai">AI</span></td>
+        <td>기본 검색 질의</td>
+        <td>심층 리서치 활용</td>
+        <td>소스 기반 분석 정리</td>
+        <td>Pro Search 심화 활용<br>업무 리서치 자동화</td>
+        <td class="level-90">AI 리서치 워크플로우<br>강의·교재 콘텐츠 구성</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p style="margin-top:32px; font-size:11px; color:#aaa; text-align:right; letter-spacing:0.3px;">
+  ※ 각 수준은 해당 단계의 대표 기능 수행 가능 여부를 기준으로 합니다.
+</p>
+
+</body>
+</html>
