@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Vibe Coding 종합 평가지</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --ink: #1e2a6e;
+  --ink2: #3a3a5a;
+  --ink3: #7a7a98;
+  --border: #d4d4e8;
+  --bg: #f6f7fd;
+  --accent: #2d2dff;
+  --accent2: #ff4d6d;
+  --green: #00b894;
+  --yellow: #fdcb6e;
+  --card: #ffffff;
+  --section-bg: #eef0fa;
+}
+.uline { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; font-weight: 700; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; font-size: 14px; }
+.page-wrap { max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+/* 헤더 */
+.exam-header { border-top: 5px solid var(--ink); border-bottom: 2px solid var(--ink); padding: 1.8rem 0 1.4rem; margin-bottom: 1.8rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+.exam-title-block .label { font-size: 11px; letter-spacing: 3px; color: var(--ink3); text-transform: uppercase; margin-bottom: 6px; }
+.exam-title-block h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; }
+.exam-title-block h1 span { color: var(--accent); }
+.exam-meta { font-size: 12px; color: var(--ink3); text-align: right; line-height: 1.8; }
+
+/* 학생 정보 */
+.student-info { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 2rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.info-field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--ink3); text-transform: uppercase; margin-bottom: 6px; }
+.info-field input { width: 100%; border: none; border-bottom: 2px solid var(--border); padding: 4px 0; font-family: inherit; font-size: 14px; background: transparent; color: var(--ink); outline: none; transition: border-color .2s; }
+.info-field input:focus { border-color: var(--accent); }
+
+/* 안내 */
+.guide-box { background: linear-gradient(135deg,#0f0f14 0%,#2d2dff 100%); border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; color: #fff; display: flex; gap: 16px; align-items: flex-start; }
+.guide-box .g-icon { font-size: 26px; flex-shrink: 0; }
+.guide-box h3 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+.guide-box ul li { font-size: 13px; opacity: .88; line-height: 1.7; list-style: none; }
+.guide-box ul li::before { content: '· '; opacity: .5; }
+
+/* 섹션 */
+.section { margin-bottom: 3rem; }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; padding-bottom: 10px; border-bottom: 2px solid var(--ink); }
+.section-num { width: 38px; height: 38px; background: var(--ink); color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; flex-shrink: 0; }
+.section-title { font-size: 18px; font-weight: 700; }
+.section-subtitle { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+.score-badge { margin-left: auto; background: var(--section-bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 700; color: var(--ink2); }
+
+/* 문항 */
+.question { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+.q-label { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+.q-num { background: var(--section-bg); border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: var(--ink3); flex-shrink: 0; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.q-text { font-size: 14px; font-weight: 500; line-height: 1.7; }
+.q-text code { font-family: 'JetBrains Mono', monospace; background: var(--section-bg); padding: 1px 6px; border-radius: 4px; font-size: 13px; color: var(--accent); }
+
+/* 객관식 */
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-left: 30px; }
+.opt-btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; cursor: pointer; font-family: inherit; font-size: 13px; color: var(--ink2); text-align: left; transition: all .15s; }
+.opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: #f0f0ff; }
+.opt-btn .opt-key { width: 22px; height: 22px; border-radius: 50%; background: var(--section-bg); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.opt-btn.selected { border-color: var(--accent); background: #f0f0ff; color: var(--accent); }
+.opt-btn.selected .opt-key { background: var(--accent); color: #fff; }
+.opt-btn.correct { border-color: var(--green); background: #e8faf5; color: #006d55; }
+.opt-btn.correct .opt-key { background: var(--green); color: #fff; }
+.opt-btn.wrong { border-color: var(--accent2); background: #fff0f3; color: #c0002b; }
+.opt-btn.wrong .opt-key { background: var(--accent2); color: #fff; }
+.opt-btn:disabled { cursor: default; }
+
+/* O/X */
+.ox-wrap { margin-left: 30px; }
+.ox-btns { display: flex; gap: 10px; margin-bottom: 10px; }
+.ox-btn { width: 64px; height: 40px; border: 2px solid var(--border); border-radius: 8px; background: #fff; font-size: 18px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .15s; }
+.ox-btn:hover:not(:disabled) { border-color: var(--accent); }
+.ox-btn.selected-O { border-color: var(--green); background: #e8faf5; }
+.ox-btn.selected-X { border-color: var(--accent2); background: #fff0f3; }
+.ox-btn.correct { border-color: var(--green); background: #e8faf5; }
+.ox-btn.wrong { border-color: var(--accent2); background: #fff0f3; }
+.ox-btn:disabled { cursor: default; }
+
+/* 주관식 공통 */
+.subj-wrap { margin-left: 30px; }
+.subj-label { font-size: 12px; color: var(--ink3); font-weight: 700; margin-bottom: 5px; letter-spacing: .5px; }
+.short-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 14px; color: var(--ink); outline: none; transition: border-color .2s; background: var(--bg); }
+.short-input:focus { border-color: var(--accent); }
+.long-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 13px; color: var(--ink); resize: vertical; min-height: 62px; outline: none; transition: border-color .2s; background: var(--bg); }
+.long-input:focus { border-color: var(--accent); }
+.hint { font-size: 12px; color: var(--ink3); margin-top: 5px; }
+
+/* 체크리스트 */
+.checklist { margin-left: 30px; }
+.check-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+.check-item:hover { border-color: var(--accent); background: #f0f0ff; }
+.check-item.checked { border-color: var(--green); background: #e8faf5; }
+.check-box { width: 22px; height: 22px; border: 2px solid var(--border); border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; }
+.check-item.checked .check-box { background: var(--green); border-color: var(--green); color: #fff; }
+.check-text { font-size: 13px; color: var(--ink2); }
+.check-item.checked .check-text { color: #006d55; font-weight: 500; }
+
+/* 정답 피드백 */
+.answer-reveal { margin-top: 10px; margin-left: 30px; background: #fff8e1; border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 8px 12px; font-size: 13px; color: #5d4037; display: none; line-height: 1.7; }
+.answer-reveal.show { display: block; }
+
+/* 점수 결과 */
+.score-section { background: var(--ink); border-radius: 16px; padding: 2rem; margin-top: 2.5rem; display: none; color: #fff; }
+.score-section.show { display: block; }
+.total-score-display { text-align: center; padding: 1.5rem 0; border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); margin: 1rem 0; }
+.total-score-display .ts-label { font-size: 12px; opacity: .6; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.total-score-display .ts-num { font-size: 56px; font-weight: 900; line-height: 1; }
+.total-score-display .ts-msg { font-size: 15px; opacity: .8; margin-top: 8px; }
+.score-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin: 1.2rem 0; }
+.score-item { background: rgba(255,255,255,.07); border-radius: 10px; padding: 14px; text-align: center; }
+.score-item .si-label { font-size: 11px; opacity: .6; margin-bottom: 6px; }
+.score-item .si-score { font-size: 20px; font-weight: 900; }
+.si-score.good { color: #00b894; } .si-score.mid { color: #fdcb6e; } .si-score.low { color: #ff4d6d; }
+.score-note { font-size: 12px; opacity: .6; margin-top: 1rem; line-height: 1.8; }
+
+/* 버튼 */
+.action-bar { display: flex; gap: 12px; margin-top: 2rem; flex-wrap: wrap; }
+.btn { padding: 11px 28px; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; border: 2px solid var(--border); background: #fff; color: var(--ink2); transition: all .2s; }
+.btn-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn-primary:hover { background: #2d2dff; border-color: #2d2dff; }
+.btn-print { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-reset { color: var(--accent2); border-color: var(--accent2); }
+
+.exam-footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--ink3); flex-wrap: wrap; gap: 8px; }
+
+/* ── PRINT ── */
+@media print {
+  @page { margin: 15mm 15mm 18mm; size: A4; }
+  body { background: #fff !important; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-wrap { padding: 0; max-width: 100%; }
+  .guide-box, .action-bar { display: none !important; }
+  .student-info { border: 1.5px solid #1e2a6e !important; }
+  .exam-header { border-top: 4px solid #1e2a6e !important; border-bottom: 1.5px solid #1e2a6e !important; }
+  .section { page-break-inside: avoid; margin-bottom: 2rem; }
+  .section-header { border-bottom: 1.5px solid #1e2a6e !important; }
+  .section-num { background: #1e2a6e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .question { border: 1px solid #c0c8e8 !important; page-break-inside: avoid; }
+  .opt-btn { border: 1px solid #c0c8e8 !important; background: #fff !important; color: #1e2a6e !important; }
+  .opt-btn.selected { border: 2px solid #2d2dff !important; }
+  .opt-btn.correct { border: 2px solid #00b894 !important; background: #e8faf5 !important; }
+  .opt-btn.wrong { border: 2px solid #ff4d6d !important; background: #fff0f3 !important; }
+  .score-section { background: #1e2a6e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; page-break-before: always; }
+  .answer-reveal.show { display: block; border-left: 3px solid #c0c8e8 !important; background: #fafbff !important; }
+  .check-item.checked { border-color: #00b894 !important; background: #e8faf5 !important; }
+  .short-input, .long-input { border: 1px solid #c0c8e8 !important; background: #fff !important; }
+}
+@media(max-width:580px){
+  .student-info,.score-grid { grid-template-columns: 1fr; }
+  .options { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- 헤더 -->
+<div class="exam-header">
+  <div class="exam-title-block">
+
+    <h1>AI <span>Vibe</span> Coding<br>종합 평가지</h1>
+  </div>
+  <div class="exam-meta">담당강사: 김수연<br>총 배점: 100점</div>
+</div>
+
+<!-- 학생 정보 -->
+<div class="student-info">
+  <div class="info-field"><label>이름 Name</label><input type="text" id="stu-name" placeholder="홍길동"></div>
+  <div class="info-field"><label>수강 과정 Course</label><input type="text" id="stu-course" placeholder="AI Vibe Coding"></div>
+  <div class="info-field"><label>제출 날짜 Date</label><div style="font-size:15px;font-weight:700;color:var(--ink2);padding:4px 0;border-bottom:2px solid var(--border)">2026년 5월 19일</div></div>
+</div>
+
+<!-- 안내 -->
+<div class="guide-box">
+  <div class="g-icon">📋</div>
+  <div>
+    <h3>평가 안내</h3>
+    <ul>
+      <li>총 5개 영역으로 구성되어 있습니다. 천천히 읽고 답해 주세요.</li>
+      <li>모든 문항에 답한 뒤 <strong>채점하기</strong> 버튼을 클릭하세요.</li>
+      <li>채점 후 <strong>Ctrl+P</strong> (Mac: Cmd+P) 로 PDF 저장 후 제출해 주세요.</li>
+      <li>주관식 문항은 채점 후에도 직접 확인해 주세요.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════ SECTION 1: HTML 기초 (객관식 + 주관식) ═══════ -->
+<div class="section" id="sec1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-title">HTML 기초</div>
+      <div class="section-subtitle">객관식 3문항 + 주관식 2문항 · 총 25점</div>
+    </div>
+    <div class="score-badge" id="badge-sec1">0 / 25</div>
+  </div>
+
+  <!-- Q1 객관식 -->
+  <div class="question" id="q1">
+    <div class="q-label"><span class="q-num">Q01</span><span class="q-text">웹 페이지를 만드는 기본 언어로, 제목·문단·이미지·링크 등 화면의 <strong>구조와 내용</strong>을 작성하는 언어는?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q1','A',false)"><span class="opt-key">A</span> CSS</button>
+      <button class="opt-btn" onclick="pick('q1','B',true)"><span class="opt-key">B</span> HTML</button>
+      <button class="opt-btn" onclick="pick('q1','C',false)"><span class="opt-key">C</span> Python</button>
+      <button class="opt-btn" onclick="pick('q1','D',false)"><span class="opt-key">D</span> Firebase</button>
+    </div>
+    <div class="answer-reveal" id="rev-q1">✅ 정답: <strong>HTML</strong> — HyperText Markup Language의 약자로 웹 페이지의 뼈대를 만드는 언어예요.</div>
+  </div>
+
+  <!-- Q2 객관식 -->
+  <div class="question" id="q2">
+    <div class="q-label"><span class="q-num">Q02</span><span class="q-text">HTML에서 <strong>가장 큰 제목</strong>을 표시할 때 사용하는 태그는?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q2','A',false)"><span class="opt-key">A</span> &lt;p&gt;</button>
+      <button class="opt-btn" onclick="pick('q2','B',false)"><span class="opt-key">B</span> &lt;title&gt;</button>
+      <button class="opt-btn" onclick="pick('q2','C',true)"><span class="opt-key">C</span> &lt;h1&gt;</button>
+      <button class="opt-btn" onclick="pick('q2','D',false)"><span class="opt-key">D</span> &lt;big&gt;</button>
+    </div>
+    <div class="answer-reveal" id="rev-q2">✅ 정답: <strong>&lt;h1&gt;</strong> — h1~h6까지 있고 숫자가 작을수록 더 큰 제목이에요.</div>
+  </div>
+
+  <!-- Q3 객관식 -->
+  <div class="question" id="q3">
+    <div class="q-label"><span class="q-num">Q03</span><span class="q-text">HTML에서 다른 페이지로 이동하는 <strong>링크</strong>를 만들 때 사용하는 태그는?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q3','A',false)"><span class="opt-key">A</span> &lt;link&gt;</button>
+      <button class="opt-btn" onclick="pick('q3','B',true)"><span class="opt-key">B</span> &lt;a href=""&gt;</button>
+      <button class="opt-btn" onclick="pick('q3','C',false)"><span class="opt-key">C</span> &lt;move&gt;</button>
+      <button class="opt-btn" onclick="pick('q3','D',false)"><span class="opt-key">D</span> &lt;go&gt;</button>
+    </div>
+    <div class="answer-reveal" id="rev-q3">✅ 정답: <strong>&lt;a href=""&gt;</strong> — 앵커(Anchor) 태그로 href 속성에 이동할 주소를 적어요.</div>
+  </div>
+
+  <!-- Q4 주관식 단답 -->
+  <div class="question" id="q4">
+    <div class="q-label"><span class="q-num">Q04</span><span class="q-text">HTML 태그는 꺾쇠 괄호 안에 태그 이름을 씁니다. 아래 빈칸에 <span class="uline">이미지를 넣는 태그 이름</span>을 써보세요.<br><br><code>&lt; ___ &gt;</code></span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">답 작성</div>
+      <input class="short-input" id="sq4" placeholder="태그 이름을 입력하세요 (예: p, h1, a ...)">
+      <div class="hint">💡 힌트: image의 앞 두 글자예요.</div>
+    </div>
+    <div class="answer-reveal" id="rev-q4">✅ 정답: <strong>img</strong> — &lt;img src="이미지주소" alt="설명"&gt; 형태로 사용해요. 닫는 태그가 없는 빈 요소예요.</div>
+  </div>
+
+  <!-- Q5 주관식 단문 -->
+  <div class="question" id="q5">
+    <div class="q-label"><span class="q-num">Q05</span><span class="q-text">HTML에서 <code>&lt;head&gt;</code> 와 <code>&lt;body&gt;</code> 영역의 <span class="uline">차이</span>를 간단히 설명해 주세요.</span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">내용 작성 (1~2줄)</div>
+      <textarea class="long-input" id="sq5" placeholder="head는 ___이고, body는 ___입니다."></textarea>
+    </div>
+    <div class="answer-reveal" id="rev-q5">✅ 모범 답안: <strong>head</strong>는 브라우저에 보이지 않는 문서 정보(제목, CSS 연결 등)를 담고, <strong>body</strong>는 화면에 실제로 표시되는 내용을 담습니다.</div>
+  </div>
+
+  <!-- Q5-1 주관식 단답 -->
+  <div class="question" id="q5b">
+    <div class="q-label"><span class="q-num">Q06</span><span class="q-text">아래 빈칸에 <span class="uline">문단(단락)을 만드는 태그 이름</span>을 써보세요.<br><br><code>&lt; ___ &gt;안녕하세요&lt;/ ___ &gt;</code></span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">답 작성</div>
+      <input class="short-input" id="sq5b" placeholder="태그 이름을 입력하세요">
+      <div class="hint">💡 힌트: Paragraph의 첫 글자예요.</div>
+    </div>
+    <div class="answer-reveal" id="rev-q5b">✅ 정답: <strong>p</strong> — &lt;p&gt;내용&lt;/p&gt; 형태로 사용해요. paragraph(단락)의 약자예요.</div>
+  </div>
+
+  <!-- Q5-2 주관식 단문 -->
+  <div class="question" id="q5c">
+    <div class="q-label"><span class="q-num">Q07</span><span class="q-text">수업에서 HTML로 직접 만들어 본 페이지를 떠올려 보세요. <span class="uline">어떤 태그를 가장 많이 사용했는지</span>, 그 태그가 어떤 역할을 했는지 적어 주세요.</span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">자유롭게 작성</div>
+      <textarea class="long-input" id="sq5c" placeholder="예: div 태그를 많이 썼어요. 내용을 묶어주는 역할을 했어요."></textarea>
+    </div>
+    <div class="answer-reveal" id="rev-q5c">💬 <strong>주관식 문항</strong> — 정답이 없어요. 강사가 직접 확인합니다.</div>
+  </div>
+</div>
+
+<!-- ═══════ SECTION 2: CSS 기초 ═══════ -->
+<div class="section" id="sec2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-title">CSS 기초</div>
+      <div class="section-subtitle">객관식 2문항 + 주관식 1문항 · 총 15점</div>
+    </div>
+    <div class="score-badge" id="badge-sec2">0 / 15</div>
+  </div>
+
+  <!-- Q6 객관식 -->
+  <div class="question" id="q6">
+    <div class="q-label"><span class="q-num">Q06</span><span class="q-text">CSS는 웹 페이지에서 어떤 역할을 하나요?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q6','A',false)"><span class="opt-key">A</span> 데이터를 저장한다</button>
+      <button class="opt-btn" onclick="pick('q6','B',true)"><span class="opt-key">B</span> 색상, 크기, 배치 등 디자인(스타일)을 담당한다</button>
+      <button class="opt-btn" onclick="pick('q6','C',false)"><span class="opt-key">C</span> 서버와 통신한다</button>
+      <button class="opt-btn" onclick="pick('q6','D',false)"><span class="opt-key">D</span> 페이지 구조를 만든다</button>
+    </div>
+    <div class="answer-reveal" id="rev-q6">✅ 정답: <strong>색상, 크기, 배치 등 디자인을 담당한다</strong> — HTML이 뼈대라면 CSS는 옷(스타일)이에요.</div>
+  </div>
+
+  <!-- Q7 객관식 -->
+  <div class="question" id="q7">
+    <div class="q-label"><span class="q-num">Q07</span><span class="q-text">CSS에서 요소들을 가로로 나란히 정렬하는 레이아웃 방식은?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q7','A',true)"><span class="opt-key">A</span> Flexbox (display: flex)</button>
+      <button class="opt-btn" onclick="pick('q7','B',false)"><span class="opt-key">B</span> display: none</button>
+      <button class="opt-btn" onclick="pick('q7','C',false)"><span class="opt-key">C</span> color: blue</button>
+      <button class="opt-btn" onclick="pick('q7','D',false)"><span class="opt-key">D</span> font-size: 16px</button>
+    </div>
+    <div class="answer-reveal" id="rev-q7">✅ 정답: <strong>Flexbox (display: flex)</strong> — flex를 사용하면 자식 요소들을 가로·세로 자유롭게 배치할 수 있어요.</div>
+  </div>
+
+  <!-- Q8 주관식 단문 -->
+  <div class="question" id="q8">
+    <div class="q-label"><span class="q-num">Q08</span><span class="q-text">수업 중 네이버 메인 페이지를 따라 만들어 봤는데요, 그 과정에서 가장 어려웠거나 기억에 남는 CSS 속성이나 작업이 있다면 적어 주세요.</span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">자유롭게 작성</div>
+      <textarea class="long-input" id="sq8" placeholder="예: flex 정렬이 어려웠어요 / margin과 padding 차이를 배웠어요 ..."></textarea>
+    </div>
+    <div class="answer-reveal" id="rev-q8">💬 <strong>주관식 문항</strong> — 정답이 없어요. 강사가 직접 확인합니다.</div>
+  </div>
+</div>
+
+<!-- ═══════ SECTION 3: 웹 기초 지식 ═══════ -->
+<div class="section" id="sec3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-title">웹 기초 지식 (HTTP · JSON · DB)</div>
+      <div class="section-subtitle">객관식 4문항 + O/X 1문항 · 총 20점</div>
+    </div>
+    <div class="score-badge" id="badge-sec3">0 / 20</div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question" id="q9">
+    <div class="q-label"><span class="q-num">Q09</span><span class="q-text">브라우저가 서버에 "이 페이지 보여줘!"라고 요청할 때 사용하는 프로토콜(통신 규칙)은?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q9','A',false)"><span class="opt-key">A</span> CSS</button>
+      <button class="opt-btn" onclick="pick('q9','B',false)"><span class="opt-key">B</span> JSON</button>
+      <button class="opt-btn" onclick="pick('q9','C',true)"><span class="opt-key">C</span> HTTP</button>
+      <button class="opt-btn" onclick="pick('q9','D',false)"><span class="opt-key">D</span> HTML</button>
+    </div>
+    <div class="answer-reveal" id="rev-q9">✅ 정답: <strong>HTTP</strong> — 브라우저(클라이언트)와 서버가 대화하는 규칙이에요. 피자 주문 전화처럼요!</div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question" id="q10">
+    <div class="q-label"><span class="q-num">Q10</span><span class="q-text">서버에서 데이터를 <strong>가져올 때</strong> 사용하는 HTTP 메서드는?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q10','A',true)"><span class="opt-key">A</span> GET — 데이터 가져오기</button>
+      <button class="opt-btn" onclick="pick('q10','B',false)"><span class="opt-key">B</span> POST — 데이터 보내기</button>
+      <button class="opt-btn" onclick="pick('q10','C',false)"><span class="opt-key">C</span> DELETE — 데이터 삭제</button>
+      <button class="opt-btn" onclick="pick('q10','D',false)"><span class="opt-key">D</span> PUT — 데이터 수정</button>
+    </div>
+    <div class="answer-reveal" id="rev-q10">✅ 정답: <strong>GET</strong> — 메뉴판 보기처럼 서버에서 데이터를 읽어올 때 사용해요.</div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question" id="q11">
+    <div class="q-label"><span class="q-num">Q11</span><span class="q-text">인터넷에서 데이터를 주고받을 때 사용하는 <strong>표준 데이터 형식</strong>으로, <code>{ "key": "value" }</code> 구조를 가진 것은?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q11','A',false)"><span class="opt-key">A</span> HTML</button>
+      <button class="opt-btn" onclick="pick('q11','B',false)"><span class="opt-key">B</span> CSS</button>
+      <button class="opt-btn" onclick="pick('q11','C',true)"><span class="opt-key">C</span> JSON</button>
+      <button class="opt-btn" onclick="pick('q11','D',false)"><span class="opt-key">D</span> HTTP</button>
+    </div>
+    <div class="answer-reveal" id="rev-q11">✅ 정답: <strong>JSON</strong> — 택배 상자처럼 데이터를 표준화된 방식으로 포장해서 주고받아요.</div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question" id="q12">
+    <div class="q-label"><span class="q-num">Q12</span><span class="q-text">Firebase Firestore는 어떤 방식으로 데이터를 저장하나요?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q12','A',false)"><span class="opt-key">A</span> 엑셀처럼 행과 열로 저장</button>
+      <button class="opt-btn" onclick="pick('q12','B',true)"><span class="opt-key">B</span> JSON 형태의 문서(Document)로 저장</button>
+      <button class="opt-btn" onclick="pick('q12','C',false)"><span class="opt-key">C</span> 이미지 파일로 저장</button>
+      <button class="opt-btn" onclick="pick('q12','D',false)"><span class="opt-key">D</span> 텍스트 파일로 저장</button>
+    </div>
+    <div class="answer-reveal" id="rev-q12">✅ 정답: <strong>JSON 형태의 문서로 저장</strong> — 컬렉션 안에 문서가 있고, 문서 안에 데이터(필드)가 있는 구조예요.</div>
+  </div>
+
+  <!-- Q13 O/X -->
+  <div class="question" id="q13">
+    <div class="q-label"><span class="q-num">Q13</span><span class="q-text">O / X 문제: Firebase를 사용하면 서버를 직접 만들지 않아도 데이터를 저장하고 불러올 수 있다.</span></div>
+    <div class="ox-wrap">
+      <div class="ox-btns">
+        <button class="ox-btn" onclick="pickOX('q13','O',true)">⭕ O</button>
+        <button class="ox-btn" onclick="pickOX('q13','X',false)">❌ X</button>
+      </div>
+    </div>
+    <div class="answer-reveal" id="rev-q13">✅ 정답: <strong>O (맞음)</strong> — Firebase는 구글이 제공하는 백엔드 서비스예요. 서버 코드 없이도 데이터베이스, 로그인, 호스팅을 사용할 수 있어요.</div>
+  </div>
+</div>
+
+<!-- ═══════ SECTION 4: Figma · 기획 ═══════ -->
+<div class="section" id="sec4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-title">Figma · 앱 기획</div>
+      <div class="section-subtitle">객관식 2문항 + 주관식 2문항 · 총 20점</div>
+    </div>
+    <div class="score-badge" id="badge-sec4">0 / 20</div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question" id="q14">
+    <div class="q-label"><span class="q-num">Q14</span><span class="q-text">Figma는 주로 어떤 용도로 사용하는 도구인가요?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q14','A',false)"><span class="opt-key">A</span> 영상 편집</button>
+      <button class="opt-btn" onclick="pick('q14','B',false)"><span class="opt-key">B</span> 데이터베이스 관리</button>
+      <button class="opt-btn" onclick="pick('q14','C',true)"><span class="opt-key">C</span> UI/UX 디자인 및 화면 기획(프로토타입)</button>
+      <button class="opt-btn" onclick="pick('q14','D',false)"><span class="opt-key">D</span> 코드 자동 배포</button>
+    </div>
+    <div class="answer-reveal" id="rev-q14">✅ 정답: <strong>UI/UX 디자인 및 화면 기획</strong> — 앱이나 웹의 화면을 미리 디자인하고, 버튼 클릭 등 동작을 시뮬레이션(프로토타입)할 수 있어요.</div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question" id="q15">
+    <div class="q-label"><span class="q-num">Q15</span><span class="q-text">앱을 만들기 전에 화면 구성을 간단한 선과 도형으로 스케치하는 것을 무엇이라 하나요?</span></div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick('q15','A',false)"><span class="opt-key">A</span> 배포(Deploy)</button>
+      <button class="opt-btn" onclick="pick('q15','B',true)"><span class="opt-key">B</span> 와이어프레임(Wireframe)</button>
+      <button class="opt-btn" onclick="pick('q15','C',false)"><span class="opt-key">C</span> 컴파일(Compile)</button>
+      <button class="opt-btn" onclick="pick('q15','D',false)"><span class="opt-key">D</span> 디버깅(Debugging)</button>
+    </div>
+    <div class="answer-reveal" id="rev-q15">✅ 정답: <strong>와이어프레임</strong> — 앱의 뼈대 설계도예요. 디자인보다 레이아웃과 기능 구조에 집중해요.</div>
+  </div>
+
+  <!-- Q16 주관식 단답 -->
+  <div class="question" id="q16">
+    <div class="q-label"><span class="q-num">Q16</span><span class="q-text">수업 중 기획했던 앱의 이름 또는 주제를 적어 주세요.<br><span style="font-size:12px;color:var(--ink3)">(예: 독독약, 우산비서, 핀버디 등 — 자신이 기획한 것)</span></span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">앱 이름 / 주제</div>
+      <input class="short-input" id="sq16" placeholder="앱 이름이나 주제를 입력하세요">
+    </div>
+    <div class="answer-reveal" id="rev-q16">💬 <strong>주관식 문항</strong> — 정답이 없어요. 강사가 직접 확인합니다.</div>
+  </div>
+
+  <!-- Q17 주관식 단문 -->
+  <div class="question" id="q17">
+    <div class="q-label"><span class="q-num">Q17</span><span class="q-text">위에서 적은 앱이 어떤 문제를 해결해 주는 앱인지 한두 문장으로 설명해 주세요.</span></div>
+    <div class="subj-wrap">
+      <div class="subj-label">앱 설명 (1~2문장)</div>
+      <textarea class="long-input" id="sq17" placeholder="이 앱은 ___ 문제를 해결해 주는 앱입니다."></textarea>
+    </div>
+    <div class="answer-reveal" id="rev-q17">💬 <strong>주관식 문항</strong> — 정답이 없어요. 강사가 직접 확인합니다.</div>
+  </div>
+</div>
+
+<!-- ═══════ SECTION 5: 실습 체크리스트 ═══════ -->
+<div class="section" id="sec5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-title">실습 완료 체크리스트</div>
+      <div class="section-subtitle">체크 1개당 2.5점 · 최대 20점</div>
+    </div>
+    <div class="score-badge" id="badge-sec5">— / 20</div>
+  </div>
+
+  <div class="question">
+    <div class="q-label"><span class="q-num">Q18</span><span class="q-text">수업 중 직접 해본 항목을 모두 체크해 주세요.</span></div>
+    <div class="checklist">
+      <div class="check-item" id="ck1" onclick="toggleCheck('ck1')"><div class="check-box" id="cb1">✓</div><span class="check-text">🌐 HTML로 나만의 웹 페이지를 처음부터 직접 만들어 봤다</span></div>
+      <div class="check-item" id="ck2" onclick="toggleCheck('ck2')"><div class="check-box" id="cb2">✓</div><span class="check-text">🎨 CSS로 색상, 폰트, 배치를 바꿔가며 꾸며봤다</span></div>
+      <div class="check-item" id="ck3" onclick="toggleCheck('ck3')"><div class="check-box" id="cb3">✓</div><span class="check-text">🔥 Firebase 프로젝트를 생성하고 Firestore에 데이터를 저장해 봤다</span></div>
+      <div class="check-item" id="ck4" onclick="toggleCheck('ck4')"><div class="check-box" id="cb4">✓</div><span class="check-text">📖 Firestore에서 데이터를 불러와 화면에 출력해 봤다</span></div>
+      <div class="check-item" id="ck5" onclick="toggleCheck('ck5')"><div class="check-box" id="cb5">✓</div><span class="check-text">🎨 Figma로 앱 화면을 직접 디자인하거나 와이어프레임을 그려봤다</span></div>
+      <div class="check-item" id="ck6" onclick="toggleCheck('ck6')"><div class="check-box" id="cb6">✓</div><span class="check-text">🤖 AI 도구(ChatGPT, Claude 등)를 활용해서 코드 작성이나 오류 해결을 해봤다</span></div>
+      <div class="check-item" id="ck7" onclick="toggleCheck('ck7')"><div class="check-box" id="cb7">✓</div><span class="check-text">🌍 완성한 웹앱을 실제로 배포해서 인터넷 주소(URL)로 접속해 봤다</span></div>
+      <div class="check-item" id="ck8" onclick="toggleCheck('ck8')"><div class="check-box" id="cb8">✓</div><span class="check-text">💡 앱 아이디어를 직접 기획하고 어떤 기능이 필요한지 정리해 봤다</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 버튼 -->
+<div class="action-bar">
+  <button class="btn btn-primary" onclick="grade()">📊 채점하기</button>
+  <button class="btn btn-print" onclick="window.print()">🖨️ PDF 저장 (Ctrl+P)</button>
+  <button class="btn btn-reset" onclick="if(confirm('다시 풀까요?')) location.reload()">🔄 다시 풀기</button>
+</div>
+
+<!-- 결과 -->
+<div class="score-section" id="scoreBox">
+  <div style="font-size:12px;letter-spacing:2px;opacity:.5;text-transform:uppercase;margin-bottom:8px">Score Result</div>
+  <div class="total-score-display">
+    <div class="ts-label">객관식 자동 채점 점수</div>
+    <div class="ts-num" id="totalNum">0</div>
+    <div class="ts-msg" id="totalMsg"></div>
+  </div>
+  <div class="score-grid">
+    <div class="score-item"><div class="si-label">HTML 기초</div><div class="si-score" id="sc1">0/25</div></div>
+    <div class="score-item"><div class="si-label">CSS 기초</div><div class="si-score" id="sc2">0/15</div></div>
+    <div class="score-item"><div class="si-label">웹 기초 지식</div><div class="si-score" id="sc3">0/20</div></div>
+    <div class="score-item"><div class="si-label">Figma·기획</div><div class="si-score" id="sc4">0/20</div></div>
+  </div>
+  <div class="score-item" style="background:rgba(255,255,255,.07);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">
+    <div class="si-label" style="font-size:11px;opacity:.6;margin-bottom:6px">실습 체크리스트</div>
+    <div class="si-score" id="sc5" style="font-size:20px;font-weight:900">0/20</div>
+  </div>
+  <div class="score-note">
+    ⚠️ <strong>주관식 문항(Q05, Q08, Q16, Q17)은 위 점수에 포함되지 않습니다.</strong><br>
+    강사가 직접 확인 후 아래 최종 총점란에 기입해 주세요.<br>
+    학생 이름: <span id="sc-name">—</span>
+  </div>
+
+  <!-- 강사 최종 총점 기입란 -->
+  <div style="margin-top:1.5rem;background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.25);border-radius:12px;padding:1.4rem 1.6rem;">
+    <div style="font-size:11px;letter-spacing:2px;opacity:.5;text-transform:uppercase;margin-bottom:14px">👩‍🏫 강사 작성란 · Teacher's Section</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end;">
+      <div>
+        <div style="font-size:11px;opacity:.6;margin-bottom:6px;letter-spacing:.5px">주관식 점수 (최대 30점)</div>
+        <input id="teacher-subj" type="number" min="0" max="30"
+          style="width:100%;background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,.3);color:#fff;font-family:inherit;font-size:22px;font-weight:700;padding:4px 0;outline:none;"
+          placeholder="0">
+      </div>
+      <div>
+        <div style="font-size:11px;opacity:.6;margin-bottom:6px;letter-spacing:.5px">최종 총점 (자동+주관식)</div>
+        <div id="final-total" style="font-size:28px;font-weight:900;color:#fdcb6e;border-bottom:2px solid rgba(255,255,255,.3);padding:4px 0;">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="exam-footer">
+  <span>📖 AI Vibe Coding 종합 평가지</span>
+  <span>담당강사: 김수연</span>
+  <span id="printDate"></span>
+</div>
+</div>
+
+<script>
+const state = { mc:{}, ox:{}, ck:{}, scored:false };
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('printDate').textContent = '제출일: 2026.05.19';
+});
+
+function pick(qid, key, correct){
+  if(state.scored) return;
+  const q = document.getElementById(qid);
+  q.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
+  q.querySelectorAll('.opt-btn').forEach(b=>{ if(b.textContent.trim().startsWith(key)) b.classList.add('selected'); });
+  state.mc[qid] = correct;
+}
+
+function pickOX(qid, choice, correct){
+  if(state.scored) return;
+  const q = document.getElementById(qid);
+  q.querySelectorAll('.ox-btn').forEach(b=>{ b.classList.remove('selected-O','selected-X'); });
+  q.querySelectorAll('.ox-btn').forEach(b=>{ if(b.textContent.includes(choice)) b.classList.add('selected-'+choice); });
+  state.ox[qid] = correct;
+}
+
+function toggleCheck(id){
+  if(state.scored) return;
+  const el = document.getElementById(id);
+  el.classList.toggle('checked');
+  state.ck[id] = el.classList.contains('checked');
+}
+
+function grade(){
+  if(state.scored) return;
+  state.scored = true;
+
+  const allMC = ['q1','q2','q3','q6','q7','q9','q10','q11','q12','q14','q15'];
+  allMC.forEach(qid=>{
+    const q = document.getElementById(qid);
+    if(!q) return;
+    q.querySelectorAll('.opt-btn').forEach(b=>{
+      b.disabled=true;
+      if(b.classList.contains('selected')){
+        b.classList.add(state.mc[qid]?'correct':'wrong');
+      }
+    });
+    const rev = document.getElementById('rev-'+qid);
+    if(rev) rev.classList.add('show');
+  });
+
+  // O/X
+  ['q13'].forEach(qid=>{
+    const q = document.getElementById(qid);
+    if(!q) return;
+    q.querySelectorAll('.ox-btn').forEach(b=>{
+      b.disabled=true;
+      const sel = b.classList.contains('selected-O')||b.classList.contains('selected-X');
+      if(sel) b.classList.add(state.ox[qid]?'correct':'wrong');
+    });
+    document.getElementById('rev-'+qid).classList.add('show');
+  });
+
+  // 주관식 정답 공개
+  ['q4','q5','q5b','q5c','q8','q16','q17'].forEach(id=>{
+    const rev = document.getElementById('rev-'+id);
+    if(rev) rev.classList.add('show');
+  });
+
+  // 체크리스트 잠금
+  document.querySelectorAll('.check-item').forEach(el=>el.style.pointerEvents='none');
+
+  // 점수
+  const s1 = ['q1','q2','q3'].reduce((a,id)=>a+(state.mc[id]?5:0),0)   // 주관식 2문항(Q4,Q5) 제외 → 15점 자동
+          + 0; // 주관식은 강사채점
+  const sec1_auto = ['q1','q2','q3'].reduce((a,id)=>a+(state.mc[id]?5:0),0);
+  const sec2_auto = ['q6','q7'].reduce((a,id)=>a+(state.mc[id]?5:0),0);
+  const sec3_auto = ['q9','q10','q11','q12'].reduce((a,id)=>a+(state.mc[id]?4:0),0)
+                  + (state.ox['q13']?4:0);
+  const sec4_auto = ['q14','q15'].reduce((a,id)=>a+(state.mc[id]?5:0),0);
+  const ckCnt = ['ck1','ck2','ck3','ck4','ck5','ck6','ck7','ck8'].filter(id=>state.ck[id]).length;
+  const sec5 = Math.min(ckCnt*2.5, 20);
+
+  const total = sec1_auto + sec2_auto + sec3_auto + sec4_auto + sec5;
+
+  function color(id, score, max){
+    const el = document.getElementById(id);
+    el.textContent = score+'/'+max;
+    const r = score/max;
+    el.className='si-score '+(r>=.8?'good':r>=.5?'mid':'low');
+  }
+  color('sc1', sec1_auto, 15);
+  color('sc2', sec2_auto, 10);
+  color('sc3', sec3_auto, 20);
+  color('sc4', sec4_auto, 10);
+  color('sc5', sec5, 20);
+
+  document.getElementById('badge-sec1').textContent = sec1_auto+' / 15 (자동)';
+  document.getElementById('badge-sec2').textContent = sec2_auto+' / 10 (자동)';
+  document.getElementById('badge-sec3').textContent = sec3_auto+' / 20';
+  document.getElementById('badge-sec4').textContent = sec4_auto+' / 10 (자동)';
+  document.getElementById('badge-sec5').textContent = sec5+' / 20';
+
+  document.getElementById('totalNum').textContent = total;
+  document.getElementById('totalNum').style.color = total>=55?'#00b894':total>=35?'#fdcb6e':'#ff4d6d';
+
+  const msgs = [[55,'🎉 객관식 아주 잘했어요! 주관식까지 합치면 더 높아질 거예요!'],[35,'👍 잘 하고 있어요! 틀린 부분 다시 한번 확인해보세요.'],[0,'💪 조금 더 복습해봐요! 강의 자료 보면서 다시 도전!']];
+  document.getElementById('totalMsg').textContent = msgs.find(([t])=>total>=t)[1];
+  document.getElementById('sc-name').textContent = document.getElementById('stu-name').value||'미입력';
+
+  document.getElementById('scoreBox').classList.add('show');
+  document.getElementById('scoreBox').scrollIntoView({behavior:'smooth',block:'start'});
+
+  document.getElementById('teacher-subj').addEventListener('input', function(){
+    const auto = parseInt(document.getElementById('totalNum').textContent) || 0;
+    const subj = parseInt(this.value) || 0;
+    const final = auto + subj;
+    const el = document.getElementById('final-total');
+    el.textContent = final + '점';
+    el.style.color = final >= 85 ? '#00b894' : final >= 60 ? '#fdcb6e' : '#ff4d6d';
+  });
+}
+</script>
+</body>
+</html>
