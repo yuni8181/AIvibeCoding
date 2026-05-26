@@ -175,7 +175,7 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 <div class="student-info">
   <div class="info-field"><label>이름 Name</label><input type="text" id="stu-name" placeholder="홍길동"></div>
   <div class="info-field"><label>수강 과정 Course</label><input type="text" id="stu-course" placeholder="AI Vibe Coding"></div>
-  <div class="info-field"><label>제출 날짜 Date</label><div style="font-size:15px;font-weight:700;color:var(--ink2);padding:4px 0;border-bottom:2px solid var(--border)">2026년 5월 19일</div></div>
+  <div class="info-field"><label>제출 날짜 Date</label><input type="date" id="stu-date"></div>
 </div>
 
 <!-- 안내 -->
@@ -542,7 +542,9 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 const state = { mc:{}, ox:{}, ck:{}, scored:false };
 
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('printDate').textContent = '제출일: 2026.05.19';
+  const d = new Date();
+  document.getElementById('stu-date').value = d.toISOString().split('T')[0];
+  document.getElementById('printDate').textContent = `제출일: ${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 });
 
 function pick(qid, key, correct){
